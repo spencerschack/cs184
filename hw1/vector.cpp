@@ -12,25 +12,25 @@ class Vector {
 		z = vector->z;
 	}
 
-	Vector* operator+(Vector vector) {
+	Vector* operator+(Vector* vector) {
 		return *new Vector(this) += vector;
 	}
 
-	Vector* operator+=(Vector vector) {
-		x += vector.x;
-		y += vector.y;
-		z += vector.z;
+	Vector* operator+=(Vector* vector) {
+		x += vector->x;
+		y += vector->y;
+		z += vector->z;
 		return this;
 	}
 
-	Vector* operator-(Vector vector) {
+	Vector* operator-(Vector* vector) {
 		return *new Vector(this) -= vector;
 	}
 
-	Vector* operator-=(Vector vector) {
-		x -= vector.x;
-		y -= vector.y;
-		z -= vector.z;
+	Vector* operator-=(Vector* vector) {
+		x -= vector->x;
+		y -= vector->y;
+		z -= vector->z;
 		return this;
 	}
 
