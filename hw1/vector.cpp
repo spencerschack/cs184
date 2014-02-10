@@ -1,15 +1,19 @@
+#include <cmath>
+
 class Vector {
 
 	float x, y, z;
 
 	Vector(float x, float y, float z) : x(x), y(y), z(z) { }
 
-	Vector(Vector vector) {
-		return new Vector(vector.x, vector.y, vector.z);
+	Vector(Vector* vector) {
+		x = vector->x;
+		y = vector->y;
+		z = vector->z;
 	}
 
 	Vector* operator+(Vector vector) {
-		return new Vector(this) += vector;
+		return *new Vector(this) += vector;
 	}
 
 	Vector* operator+=(Vector vector) {
@@ -20,7 +24,7 @@ class Vector {
 	}
 
 	Vector* operator-(Vector vector) {
-		return new Vector(this) -= vector;
+		return *new Vector(this) -= vector;
 	}
 
 	Vector* operator-=(Vector vector) {
@@ -31,7 +35,7 @@ class Vector {
 	}
 
 	Vector* operator*(float factor) {
-		return new Vector(this) *= factor;
+		return *new Vector(this) *= factor;
 	}
 
 	Vector* operator*=(float factor) {
@@ -42,7 +46,7 @@ class Vector {
 	}
 
 	Vector* operator/(float divisor) {
-		return new Vector(this) /= divisor;
+		return *new Vector(this) /= divisor;
 	}
 
 	Vector* operator/=(float divisor) {
@@ -57,11 +61,11 @@ class Vector {
 	}
 
 	Vector* normalized() {
-		return new Vector(this).normalize();
+		return (new Vector(this))->normalize();
 	}
 
 	Vector* normalize() {
-		return this /= magnitude();
+		return *this /= magnitude();
 	}
 
 };
