@@ -68,14 +68,4 @@ class Vector {
 		return *this /= magnitude();
 	}
 
-	float dot(Vector* vector) {
-		return x*(vector->x) + y*(vector->y) + z*(vector->z);
-	}
-
-	Vector* cross(Vector* vector) {
-		float newx = y*(vector->z) - z*(vector->y);
-		float newy = -(x*(vector->z) - z*(vector->x));
-		float newz = x*(vector->y) - y*(vector->x);
-		return new Vector(newx, newy, newz);
-	}
 };
