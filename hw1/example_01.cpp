@@ -156,8 +156,8 @@ void myDisplay() {
 }
 
 void parseOptions(int argc, char* argv[]) {
-  // Must start from 1, don't want to parse the program name.
   char* option;
+  // Must start from 1, don't want to parse the program name.
   for(int i = 1; i < argc; i++) {
     option = argv[i];
 
