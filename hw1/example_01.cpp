@@ -155,12 +155,66 @@ void myDisplay() {
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
 }
 
+void parseOptions(int argc, char* argv[]) {
+  // Must start from 1, don't want to parse the program name.
+  char[] option;
+  for(int i = 1; i < argc; i++) {
+    option = argv[i];
 
+    // Ambient color coefficients of the sphere material.
+    if(strcmp(option, "-ka") == 0) {
+      float r = atof(argv[++i]);
+      float g = atof(argv[++i]);
+      float b = atof(argv[++i]);
+
+    // Diffuse color coefficients of the sphere material.
+    } else if(strcmp(option, "-kd") == 0) {
+      float r = atof(argv[++i]);
+      float g = atof(argv[++i]);
+      float b = atof(argv[++i]);
+
+    // Specfular color coefficients of the sphere material.
+    } else if(strcmp(option, "-ks") == 0) {
+      float r = atof(argv[++i]);
+      float g = atof(argv[++i]);
+      float b = atof(argv[++i]);
+
+    // Power coefficient on the specular term.
+    } else if(strcmp(option, "-sp") == 0) {
+      float specPower = atof(argv[++i]);
+
+    // Point light.
+    } else if(strcmp(option, "-pl") == 0) {
+      float x = atof(argv[++i]);
+      float y = atof(argv[++i]);
+      float z = atof(argv[++i]);
+      float r = atof(argv[++i]);
+      float g = atof(argv[++i]);
+      float b = atof(argv[++i]);
+
+    // Directional light.
+    } else if(strcmp(option, "-dl") == 0) {
+      float x = atof(argv[++i]);
+      float y = atof(argv[++i]);
+      float z = atof(argv[++i]);
+      float r = atof(argv[++i]);
+      float g = atof(argv[++i]);
+      float b = atof(argv[++i]);
+
+    } else {
+      print("Incorrect command line argument.");
+      exit(1);
+    }
+  }
+}
 
 //****************************************************
 // the usual stuff, nothing exciting here
 //****************************************************
 int main(int argc, char *argv[]) {
+
+  parseOptions(argc, argv);
+
   //This initializes glut
   glutInit(&argc, argv);
 
