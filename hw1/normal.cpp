@@ -6,6 +6,8 @@ public:
 
 	float x, y, z;
 
+	Normal () { }
+
 	Normal(float x, float y, float z) : x(x), y(y), z(z) { }
 
 	Normal(Normal* normal) {

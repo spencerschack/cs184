@@ -3,6 +3,9 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -25,7 +28,13 @@
 #include "ray.cpp"
 #include "color.cpp"
 #include "light.cpp"
+#include "brdf.cpp"
+#include "normal.cpp"
+#include "localgeo.cpp"
+#include "matrix.cpp"
+#include "sample.cpp"
 #include "sphere.cpp"
+
 
 using namespace std;
 
@@ -92,21 +101,43 @@ void draw() {
 
   int x, y, l;
   Color color;
-  Ray ray;
+  Ray ray, lray;
+  bool isRIntersect, isLIntersect;
   Vector* intersection;
-  Vector* normal;
+  Normal normal;
+  LocalGeo raylocalgeo, lraylocalgeo;
+  float thit, lthit;
 
   glBegin(GL_POINTS);
 
+
+  // What happens if a point/directional light source is behind sphere?
   for(x = 0; x < viewport.w; x++) {
     for(y = 0; y < viewport.h; y++) {
+      // Why 1000.0?
       ray = Ray(Vector(x, y, 1000.0), camera);
-      intersection = sphere->intersect(ray);
-      if(intersection != NULL) {
-        normal = sphere->normal(intersection);
+      isRIntersect = sphere->intersectP(ray);
+      if(isRIntersect) {
+        intersection = sphere->intersect(ray, &thit, &raylocalgeo);
+        normal = raylocalgeo.normal;
         color = Color(sphere->ambientColor);
+        // Go through each directional light source to see if a ray intersects
         for(l = 0; l < numDirectionalLights; l++) {
-          // color += directionalLights[k]->at(x, y);
+          lray = Ray(directionalLights[l]->position, camera);
+          isLIntersect = sphere->intersectP(lray);
+          if (isLIntersect) {
+            // Calculate the overall effect of the light ray reflected from point of intersection 
+            // color += shading(lraylocalgeo, sphere.getBRDF(), lray, directionalLights[l].color)
+          }
+        }
+        // Go through each point light source and see if it intersects
+        for (l = 0; l < numPointLights; l++) {
+          lray = Ray(directionalLights[l]->position, camera);
+          isLIntersect = sphere->intersectP(lray);
+          if (isLIntersect) {
+            // Calculate the overall effect of the light ray reflected from point of intersection 
+            // color += shading(lraylocalgeo, sphere.getBRDF(), lray, directionalLights[l].color)
+          } 
         }
         glColor3f(color.r, color.g, color.b);
         glVertex2f(x + 0.5, y + 0.5);
@@ -154,28 +185,31 @@ void parseOptions(int argc, char* argv[]) {
   char* option;
   // Must start from 1, don't want to parse the program name.
   for(int i = 1; i < argc; i++) {
+  //int i = 1;
+  //while (i < argc) {
     option = argv[i];
 
     // Ambient color coefficients of the sphere material.
     if(strcmp(option, "-ka") == 0) {
       sphere->ambientColor = colorFromArgs(i, argc, argv);
-
+      //i += 4;
     // Diffuse color coefficients of the sphere material.
     } else if(strcmp(option, "-kd") == 0) {
       sphere->diffuseColor = colorFromArgs(i, argc, argv);
-
+      //i += 4;
     // Specfular color coefficients of the sphere material.
     } else if(strcmp(option, "-ks") == 0) {
       sphere->specularColor = colorFromArgs(i, argc, argv);
-
+      //i += 4;
     // Power coefficient on the specular term.
     } else if(strcmp(option, "-sp") == 0) {
       sphere->specularPower = parseOption(i, argc, argv);
-
+      //i += 2;
     // Point light.
     } else if(strcmp(option, "-pl") == 0) {
       if(numPointLights < 4) {
         pointLights[numPointLights++] = lightFromArgs(i, argc, argv);
+        //i += 7;
       } else {
         printf("Too many point lights.\n");
         exit(1);
@@ -185,6 +219,7 @@ void parseOptions(int argc, char* argv[]) {
     } else if(strcmp(option, "-dl") == 0) {
       if(numDirectionalLights < 4) {
         directionalLights[numDirectionalLights++] = lightFromArgs(i, argc, argv);
+        //i += 7;
       } else {
         printf("Too many directional lights.\n");
         exit(1);

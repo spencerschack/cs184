@@ -1,3 +1,5 @@
+#include <cmath>
+
 class Sample {
 
 	float x, y;
