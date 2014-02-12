@@ -92,18 +92,22 @@ void draw() {
   int x, y, l;
   Color color;
   Ray ray;
+  Vector intersection;
 
   glBegin(GL_POINTS);
 
   for(x = 0; x < viewport.w; x++) {
     for(y = 0; y < viewport.h; y++) {
       ray = Ray(Vector(x, y, 1000.0), camera);
-      color = Color(sphere->ambientColor);
-      for(l = 0; l < numDirectionalLights; l++) {
-        // color += directionalLights[k]->at(x, y);
+      intersection = sphere->intersect(ray);
+      if(intersection != NULL) {
+        color = Color(sphere->ambientColor);
+        for(l = 0; l < numDirectionalLights; l++) {
+          // color += directionalLights[k]->at(x, y);
+        }
+        glColor3f(color.r, color.g, color.b);
+        glVertex2f(x + 0.5, y + 0.5);
       }
-      glColor3f(color.r, color.g, color.b);
-      glVertex2f(x + 0.5, y + 0.5);
     }
   }
 

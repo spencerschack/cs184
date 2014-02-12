@@ -16,4 +16,14 @@ public:
 		position = Vector(x, y, z);
 	}
 
+	Vector* intersect(Ray ray) {
+		Vector v = ray.position - position;
+		float determinant = pow(v.dot(ray.direction), 2);
+		if(determinant >= 0) {
+			
+		} else {
+			return NULL;
+		}
+	}
+
 };
