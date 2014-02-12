@@ -21,9 +21,6 @@
 #include <time.h>
 #include <math.h>
 
-#define PI 3.14159265  // Should be used from mathlib
-inline float sqr(float x) { return x*x; }
-
 #include "vector.cpp"
 #include "color.cpp"
 #include "light.cpp"
@@ -42,7 +39,6 @@ class Viewport {
     int w, h; // width and height
 };
 
-
 //****************************************************
 // Global Variables
 //****************************************************
@@ -57,41 +53,28 @@ int    numDirectionalLights = 0;
 //****************************************************
 // Simple init function
 //****************************************************
-void initScene(){
+void init() {
 
 }
-
 
 //****************************************************
 // reshape viewport if the window is resized
 //****************************************************
-void myReshape(int w, int h) {
+void resize(int w, int h) {
   viewport.w = w;
   viewport.h = h;
 
-  glViewport (0,0,viewport.w,viewport.h);
+  glViewport(0, 0, viewport.w, viewport.h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluOrtho2D(0, viewport.w, 0, viewport.h);
 
 }
 
-
-//****************************************************
-// A routine to set a pixel by drawing a GL point.  This is not a
-// general purpose routine as it assumes a lot of stuff specific to
-// this example.
-//****************************************************
-
-void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
-  glColor3f(r, g, b);
-  glVertex2f(x + 0.5, y + 0.5); // The 0.5 is to target pixel centers
-}
-
 //****************************************************
 // function that does the actual drawing of stuff
 //***************************************************
-void myDisplay() {
+void draw() {
 
   glClear(GL_COLOR_BUFFER_BIT); // clear the color buffer
 
@@ -104,7 +87,7 @@ void myDisplay() {
   sphere->position.x = x;
   sphere->position.y = y;
   sphere->radius = r;
-  sphere->draw(setPixel);
+  sphere->draw();
 
   glFlush();
   glutSwapBuffers(); // swap buffers (we earlier set double buffer)
@@ -118,7 +101,7 @@ float parseOption(int &index, int argc, char* argv[]) {
   if(++index < argc) {
     return atof(argv[index]);
   } else {
-    printf("Not enough arguments.");
+    printf("Not enough arguments.\n");
     exit(1);
   }
 }
@@ -167,7 +150,7 @@ void parseOptions(int argc, char* argv[]) {
       if(numPointLights < 4) {
         pointLights[numPointLights++] = lightFromArgs(i, argc, argv);
       } else {
-        printf("Too many point lights.");
+        printf("Too many point lights.\n");
         exit(1);
       }
 
@@ -176,12 +159,12 @@ void parseOptions(int argc, char* argv[]) {
       if(numDirectionalLights < 4) {
         directionalLights[numDirectionalLights++] = lightFromArgs(i, argc, argv);
       } else {
-        printf("Too many directional lights.");
+        printf("Too many directional lights.\n");
         exit(1);
       }
 
     } else {
-      printf("Incorrect command line argument.");
+      printf("Incorrect command line argument.\n");
       exit(1);
     }
   }
@@ -211,13 +194,12 @@ int main(int argc, char *argv[]) {
 
   glutKeyboardFunc(keyboardFunc);
 
-  initScene();							// quick function to set up scene
+  init(); // quick function to set up scene
 
-  glutDisplayFunc(myDisplay);				// function to run when its time to draw something
-  glutReshapeFunc(myReshape);				// function to run when the window gets resized
+  glutDisplayFunc(draw); // function to run when its time to draw something
+  glutReshapeFunc(resize); // function to run when the window gets resized
 
-  glutMainLoop();							// infinite loop that will keep drawing and resizing
-  // and whatever else
+  glutMainLoop(); // infinite loop that will keep drawing and resizing
 
   return 0;
 }

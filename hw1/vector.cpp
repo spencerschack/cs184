@@ -73,13 +73,16 @@ public:
 	}
 
 	float dot(Vector* vector) {
-		return x*(vector->x) + y*(vector->y) + z*(vector->z);
+		return x * vector->x +
+		       y * vector->y +
+		       z * vector->z;
 	}
 
 	Vector* cross(Vector* vector) {
-		float newx = y*(vector->z) - z*(vector->y);
-		float newy = -(x*(vector->z) - z*(vector->x));
-		float newz = x*(vector->y) - y*(vector->x);
-		return new Vector(newx, newy, newz);
+		return new Vector(
+			y * vector->z - z * vector->y,
+			-x * vector->z + z * vector->x,
+			x * vector->y - y * vector->x
+		);
 	}
 };
