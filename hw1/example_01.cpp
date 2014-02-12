@@ -21,6 +21,7 @@
 #include <time.h>
 #include <math.h>
 
+#include "vector.cpp"
 #include "color.cpp"
 #include "light.cpp"
 
@@ -126,7 +127,6 @@ void circle(float centerX, float centerY, float radius) {
       setPixel(i, j, color.r, color.g, color.b);
     }
   }
-
 
   glEnd();
 }

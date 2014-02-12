@@ -2,10 +2,12 @@ class Light {
 
 public:
 
-	float x, y, z;
-	float r, g, b;
+	Vector position;
+	Color color;
 
-	Light(float x, float y, float z, float r, float g, float b) : 
-		x(x), y(y), z(z), r(r), g(g), b(b) { }
+	Light(float x, float y, float z, float r, float g, float b) {
+		position = Vector(x, y, z);
+		color = Color(r, g, b);
+	}
 
 };
