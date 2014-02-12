@@ -44,6 +44,7 @@ class Viewport {
 //****************************************************
 Viewport	viewport;
 
+Vector* camera = new Vector(0, 0, 1);
 Sphere* sphere = new Sphere();
 Light* pointLights[5];
 Light* directionalLights[5];
@@ -64,6 +65,13 @@ void resize(int w, int h) {
   viewport.w = w;
   viewport.h = h;
 
+  float x = w / 2.0;
+  float y = h / 2.0;
+  float r = min(w, h) / 3.0;
+  sphere->position.x = x;
+  sphere->position.y = y;
+  sphere->radius = r;
+
   glViewport(0, 0, viewport.w, viewport.h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -81,13 +89,25 @@ void draw() {
   glMatrixMode(GL_MODELVIEW); // indicate we are specifying camera transformations
   glLoadIdentity();	
 
-  float x = viewport.w / 2.0;
-  float y = viewport.h / 2.0;
-  float r = min(viewport.w, viewport.h) / 3.0;
-  sphere->position.x = x;
-  sphere->position.y = y;
-  sphere->radius = r;
-  sphere->draw();
+  int x, y, l;
+  Color color;
+  Ray ray;
+
+  glBegin(GL_POINTS);
+
+  for(x = 0; x < viewport.w; x++) {
+    for(y = 0; y < viewport.h; y++) {
+      ray = Ray(Vector(x, y, 1000.0), camera);
+      color = Color(sphere->ambientColor);
+      for(l = 0; l < numDirectionalLights; l++) {
+        // color += directionalLights[k]->at(x, y);
+      }
+      glColor3f(color.r, color.g, color.b);
+      glVertex2f(x + 0.5, y + 0.5);
+    }
+  }
+
+  glEnd();
 
   glFlush();
   glutSwapBuffers(); // swap buffers (we earlier set double buffer)
