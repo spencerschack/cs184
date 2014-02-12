@@ -113,8 +113,8 @@ void circle(float centerX, float centerY, float radius) {
     maxJ = (int) ceil(sqrt(radiusSquared - sqr(i - centerX)) + centerX);
     minJ = 2 * centerX - maxJ;
     for (j = minJ; j < maxJ; j++) {
-      /*
       color = Color(ambientColor);
+      /*
       for(k = 0; k < numPointLights; k++) {
         color += pointLights[k]->at(x, y);
       }
@@ -123,7 +123,7 @@ void circle(float centerX, float centerY, float radius) {
       }
       setPixel(i, j, color.r, color.g, color.b);
       */
-      setPixel(i, j, 1.0, 0.0, 0.0);
+      setPixel(i, j, color.r, color.g, color.b);
     }
   }
 
