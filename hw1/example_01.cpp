@@ -21,12 +21,13 @@
 #include <time.h>
 #include <math.h>
 
+#define PI 3.14159265  // Should be used from mathlib
+inline float sqr(float x) { return x*x; }
+
 #include "vector.cpp"
 #include "color.cpp"
 #include "light.cpp"
-
-#define PI 3.14159265  // Should be used from mathlib
-inline float sqr(float x) { return x*x; }
+#include "sphere.cpp"
 
 using namespace std;
 
@@ -47,10 +48,7 @@ class Viewport {
 //****************************************************
 Viewport	viewport;
 
-Color* ambientColor  = new Color();
-Color* diffuseColor  = new Color();
-Color* specularColor = new Color();
-float  specularPower = 0;
+Sphere* sphere = new Sphere();
 Light* pointLights[5];
 Light* directionalLights[5];
 int    numPointLights       = 0;
@@ -60,8 +58,6 @@ int    numDirectionalLights = 0;
 // Simple init function
 //****************************************************
 void initScene(){
-
-  // Nothing to do here for this simple example.
 
 }
 
@@ -93,44 +89,6 @@ void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
 }
 
 //****************************************************
-// Draw a filled circle.  
-//****************************************************
-
-
-void circle(float centerX, float centerY, float radius) {
-
-  glBegin(GL_POINTS);
-
-  int i,    j,
-      minI, minJ,
-      maxI, maxJ;
-  float radiusSquared = sqr(radius);
-  Color color;
-
-  minI = max(0, (int) floor(centerX - radius));
-  maxI = min(viewport.w - 1, (int) ceil(centerX + radius));
-
-  for (i = minI; i < maxI; i++) {
-    maxJ = (int) ceil(sqrt(radiusSquared - sqr(i - centerX)) + centerX);
-    minJ = 2 * centerX - maxJ;
-    for (j = minJ; j < maxJ; j++) {
-      color = Color(ambientColor);
-      /*
-      for(k = 0; k < numPointLights; k++) {
-        color += pointLights[k]->at(x, y);
-      }
-      for(k = 0; k < numDirectionalLights; k++) {
-        color += directionalLights[k]->at(x, y);
-      }
-      setPixel(i, j, color.r, color.g, color.b);
-      */
-      setPixel(i, j, color.r, color.g, color.b);
-    }
-  }
-
-  glEnd();
-}
-//****************************************************
 // function that does the actual drawing of stuff
 //***************************************************
 void myDisplay() {
@@ -140,17 +98,20 @@ void myDisplay() {
   glMatrixMode(GL_MODELVIEW); // indicate we are specifying camera transformations
   glLoadIdentity();	
 
-  // Start drawing
-  circle(viewport.w / 2.0 , viewport.h / 2.0 , min(viewport.w, viewport.h) / 3.0);
+  float x = viewport.w / 2.0;
+  float y = viewport.h / 2.0;
+  float r = min(viewport.w, viewport.h) / 3.0;
+  sphere->position.x = x;
+  sphere->position.y = y;
+  sphere->radius = r;
+  sphere->draw(setPixel);
 
   glFlush();
   glutSwapBuffers(); // swap buffers (we earlier set double buffer)
 }
 
 void keyboardFunc(unsigned char key, int x, int y) {
-  if(key == 32) {
-    exit(0);
-  }
+  if(key == 32) exit(0);
 }
 
 float parseOption(int &index, int argc, char* argv[]) {
@@ -187,19 +148,19 @@ void parseOptions(int argc, char* argv[]) {
 
     // Ambient color coefficients of the sphere material.
     if(strcmp(option, "-ka") == 0) {
-      ambientColor = colorFromArgs(i, argc, argv);
+      sphere->ambientColor = colorFromArgs(i, argc, argv);
 
     // Diffuse color coefficients of the sphere material.
     } else if(strcmp(option, "-kd") == 0) {
-      diffuseColor = colorFromArgs(i, argc, argv);
+      sphere->diffuseColor = colorFromArgs(i, argc, argv);
 
     // Specfular color coefficients of the sphere material.
     } else if(strcmp(option, "-ks") == 0) {
-      specularColor = colorFromArgs(i, argc, argv);
+      sphere->specularColor = colorFromArgs(i, argc, argv);
 
     // Power coefficient on the specular term.
     } else if(strcmp(option, "-sp") == 0) {
-      specularPower = parseOption(i, argc, argv);
+      sphere->specularPower = parseOption(i, argc, argv);
 
     // Point light.
     } else if(strcmp(option, "-pl") == 0) {
