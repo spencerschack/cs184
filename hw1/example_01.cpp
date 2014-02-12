@@ -46,12 +46,14 @@ class Viewport {
 //****************************************************
 Viewport	viewport;
 
-Color* ambientColor;
-Color* diffuseColor;
-Color* specularColor;
-float specularPower;
+Color* ambientColor  = new Color();
+Color* diffuseColor  = new Color();
+Color* specularColor = new Color();
+float  specularPower = 0;
 Light* pointLights[5];
 Light* directionalLights[5];
+int    numPointLights       = 0;
+int    numDirectionalLights = 0;
 
 //****************************************************
 // Simple init function
@@ -86,10 +88,7 @@ void myReshape(int w, int h) {
 
 void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
   glColor3f(r, g, b);
-  glVertex2f(x + 0.5, y + 0.5);   // The 0.5 is to target pixel
-  // centers 
-  // Note: Need to check for gap
-  // bug on inst machines.
+  glVertex2f(x + 0.5, y + 0.5); // The 0.5 is to target pixel centers
 }
 
 //****************************************************
@@ -98,43 +97,33 @@ void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
 
 
 void circle(float centerX, float centerY, float radius) {
-  // Draw inner circle
+
   glBegin(GL_POINTS);
 
-  // We could eliminate wasted work by only looping over the pixels
-  // inside the sphere's radius.  But the example is more clear this
-  // way.  In general drawing an object by loopig over the whole
-  // screen is wasteful.
+  int i,    j,
+      minI, minJ,
+      maxI, maxJ;
+  float radiusSquared = sqr(radius);
+  Color color;
 
-  int i,j;  // Pixel indices
+  minI = max(0, (int) floor(centerX - radius));
+  maxI = min(viewport.w - 1, (int) ceil(centerX + radius));
 
-  int minI = max(0,(int)floor(centerX-radius));
-  int maxI = min(viewport.w-1,(int)ceil(centerX+radius));
-
-  int minJ = max(0,(int)floor(centerY-radius));
-  int maxJ = min(viewport.h-1,(int)ceil(centerY+radius));
-
-  for (i=0;i<viewport.w;i++) {
-    for (j=0;j<viewport.h;j++) {
-
-      // Location of the center of pixel relative to center of sphere
-      float x = (i+0.5-centerX);
-      float y = (j+0.5-centerY);
-
-      float dist = sqrt(sqr(x) + sqr(y));
-
-      if (dist<=radius) {
-
-        // This is the front-facing Z coordinate
-        float z = sqrt(radius*radius-dist*dist);
-
-        // setPixel(i,j, 1.0, 0.0, 0.0);
-
-        // This is amusing, but it assumes negative color values are treated reasonably.
-        setPixel(i,j, x/radius, y/radius, z/radius );
+  for (i = minI; i < maxI; i++) {
+    maxJ = (int) ceil(sqrt(radiusSquared - sqr(i - centerX)) + centerX);
+    minJ = 2 * centerX - maxJ;
+    for (j = minJ; j < maxJ; j++) {
+      /*
+      color = Color(ambientColor);
+      for(k = 0; k < numPointLights; k++) {
+        color += pointLights[k]->at(x, y);
       }
-
-
+      for(k = 0; k < numDirectionalLights; k++) {
+        color += directionalLights[k]->at(x, y);
+      }
+      setPixel(i, j, color.r, color.g, color.b);
+      */
+      setPixel(i, j, 1.0, 0.0, 0.0);
     }
   }
 
@@ -146,16 +135,16 @@ void circle(float centerX, float centerY, float radius) {
 //***************************************************
 void myDisplay() {
 
-  glClear(GL_COLOR_BUFFER_BIT);				// clear the color buffer
+  glClear(GL_COLOR_BUFFER_BIT); // clear the color buffer
 
-  glMatrixMode(GL_MODELVIEW);			        // indicate we are specifying camera transformations
+  glMatrixMode(GL_MODELVIEW); // indicate we are specifying camera transformations
   glLoadIdentity();	
 
   // Start drawing
   circle(viewport.w / 2.0 , viewport.h / 2.0 , min(viewport.w, viewport.h) / 3.0);
 
   glFlush();
-  glutSwapBuffers();					// swap buffers (we earlier set double buffer)
+  glutSwapBuffers(); // swap buffers (we earlier set double buffer)
 }
 
 void keyboardFunc(unsigned char key, int x, int y) {
@@ -164,51 +153,58 @@ void keyboardFunc(unsigned char key, int x, int y) {
   }
 }
 
-Color* colorFromArgs(int &index, char* argv[]) {
-  float r = atof(argv[++index]);
-  float g = atof(argv[++index]);
-  float b = atof(argv[++index]);
+float parseOption(int &index, int argc, char* argv[]) {
+  if(++index < argc) {
+    return atof(argv[index]);
+  } else {
+    printf("Not enough arguments.");
+    exit(1);
+  }
+}
+
+Color* colorFromArgs(int &index, int argc, char* argv[]) {
+  float r = parseOption(index, argc, argv);
+  float g = parseOption(index, argc, argv);
+  float b = parseOption(index, argc, argv);
   return new Color(r, g, b);
 }
 
-Light* lightFromArgs(int &index, char* argv[]) {
-  float x = atof(argv[++index]);
-  float y = atof(argv[++index]);
-  float z = atof(argv[++index]);
-  float r = atof(argv[++index]);
-  float g = atof(argv[++index]);
-  float b = atof(argv[++index]);
+Light* lightFromArgs(int &index, int argc, char* argv[]) {
+  float x = parseOption(index, argc, argv);
+  float y = parseOption(index, argc, argv);
+  float z = parseOption(index, argc, argv);
+  float r = parseOption(index, argc, argv);
+  float g = parseOption(index, argc, argv);
+  float b = parseOption(index, argc, argv);
   return new Light(x, y, z, r, g, b);
 }
 
 void parseOptions(int argc, char* argv[]) {
   char* option;
-  int numPointLights = 0;
-  int numDirectionalLights = 0;
   // Must start from 1, don't want to parse the program name.
   for(int i = 1; i < argc; i++) {
     option = argv[i];
 
     // Ambient color coefficients of the sphere material.
     if(strcmp(option, "-ka") == 0) {
-      ambientColor = colorFromArgs(i, argv);
+      ambientColor = colorFromArgs(i, argc, argv);
 
     // Diffuse color coefficients of the sphere material.
     } else if(strcmp(option, "-kd") == 0) {
-      diffuseColor = colorFromArgs(i, argv);
+      diffuseColor = colorFromArgs(i, argc, argv);
 
     // Specfular color coefficients of the sphere material.
     } else if(strcmp(option, "-ks") == 0) {
-      specularColor = colorFromArgs(i, argv);
+      specularColor = colorFromArgs(i, argc, argv);
 
     // Power coefficient on the specular term.
     } else if(strcmp(option, "-sp") == 0) {
-      specularPower = atof(argv[++i]);
+      specularPower = parseOption(i, argc, argv);
 
     // Point light.
     } else if(strcmp(option, "-pl") == 0) {
-      if(numPointLights < 5) {
-        pointLights[numPointLights++] = lightFromArgs(i, argv);
+      if(numPointLights < 4) {
+        pointLights[numPointLights++] = lightFromArgs(i, argc, argv);
       } else {
         printf("Too many point lights.");
         exit(1);
@@ -216,8 +212,8 @@ void parseOptions(int argc, char* argv[]) {
 
     // Directional light.
     } else if(strcmp(option, "-dl") == 0) {
-      if(numDirectionalLights < 5) {
-        directionalLights[numDirectionalLights++] = lightFromArgs(i, argv);
+      if(numDirectionalLights < 4) {
+        directionalLights[numDirectionalLights++] = lightFromArgs(i, argc, argv);
       } else {
         printf("Too many directional lights.");
         exit(1);
