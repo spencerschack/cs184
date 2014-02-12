@@ -22,6 +22,7 @@
 #include <math.h>
 
 #include "vector.cpp"
+#include "ray.cpp"
 #include "color.cpp"
 #include "light.cpp"
 #include "sphere.cpp"
@@ -92,7 +93,8 @@ void draw() {
   int x, y, l;
   Color color;
   Ray ray;
-  Vector intersection;
+  Vector* intersection;
+  Vector* normal;
 
   glBegin(GL_POINTS);
 
@@ -101,6 +103,7 @@ void draw() {
       ray = Ray(Vector(x, y, 1000.0), camera);
       intersection = sphere->intersect(ray);
       if(intersection != NULL) {
+        normal = sphere->normal(intersection);
         color = Color(sphere->ambientColor);
         for(l = 0; l < numDirectionalLights; l++) {
           // color += directionalLights[k]->at(x, y);
