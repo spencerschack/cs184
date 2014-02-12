@@ -21,7 +21,6 @@
 #include <time.h>
 #include <math.h>
 
-
 #define PI 3.14159265  // Should be used from mathlib
 inline float sqr(float x) { return x*x; }
 
@@ -145,14 +144,19 @@ void myDisplay() {
   glClear(GL_COLOR_BUFFER_BIT);				// clear the color buffer
 
   glMatrixMode(GL_MODELVIEW);			        // indicate we are specifying camera transformations
-  glLoadIdentity();				        // make sure transformation is "zero'd"
-
+  glLoadIdentity();	
 
   // Start drawing
   circle(viewport.w / 2.0 , viewport.h / 2.0 , min(viewport.w, viewport.h) / 3.0);
 
   glFlush();
   glutSwapBuffers();					// swap buffers (we earlier set double buffer)
+}
+
+void keyboardFunc(unsigned char key, int x, int y) {
+  if(key == 32) {
+    exit(0);
+  }
 }
 
 void parseOptions(int argc, char* argv[]) {
@@ -229,6 +233,8 @@ int main(int argc, char *argv[]) {
   glutInitWindowSize(viewport.w, viewport.h);
   glutInitWindowPosition(0,0);
   glutCreateWindow(argv[0]);
+
+  glutKeyboardFunc(keyboardFunc);
 
   initScene();							// quick function to set up scene
 
