@@ -21,6 +21,9 @@
 #include <time.h>
 #include <math.h>
 
+#include "color.cpp"
+#include "light.cpp"
+
 #define PI 3.14159265  // Should be used from mathlib
 inline float sqr(float x) { return x*x; }
 
@@ -43,8 +46,12 @@ class Viewport {
 //****************************************************
 Viewport	viewport;
 
-
-
+Color* ambientColor;
+Color* diffuseColor;
+Color* specularColor;
+float specularPower;
+Light* pointLights[5];
+Light* directionalLights[5];
 
 //****************************************************
 // Simple init function
@@ -107,8 +114,6 @@ void circle(float centerX, float centerY, float radius) {
   int minJ = max(0,(int)floor(centerY-radius));
   int maxJ = min(viewport.h-1,(int)ceil(centerY+radius));
 
-
-
   for (i=0;i<viewport.w;i++) {
     for (j=0;j<viewport.h;j++) {
 
@@ -159,51 +164,64 @@ void keyboardFunc(unsigned char key, int x, int y) {
   }
 }
 
+Color* colorFromArgs(int &index, char* argv[]) {
+  float r = atof(argv[++index]);
+  float g = atof(argv[++index]);
+  float b = atof(argv[++index]);
+  return new Color(r, g, b);
+}
+
+Light* lightFromArgs(int &index, char* argv[]) {
+  float x = atof(argv[++index]);
+  float y = atof(argv[++index]);
+  float z = atof(argv[++index]);
+  float r = atof(argv[++index]);
+  float g = atof(argv[++index]);
+  float b = atof(argv[++index]);
+  return new Light(x, y, z, r, g, b);
+}
+
 void parseOptions(int argc, char* argv[]) {
   char* option;
+  int numPointLights = 0;
+  int numDirectionalLights = 0;
   // Must start from 1, don't want to parse the program name.
   for(int i = 1; i < argc; i++) {
     option = argv[i];
 
     // Ambient color coefficients of the sphere material.
     if(strcmp(option, "-ka") == 0) {
-      float r = atof(argv[++i]); // [0.0, 1.0]
-      float g = atof(argv[++i]); // [0.0, 1.0]
-      float b = atof(argv[++i]); // [0.0, 1.0]
+      ambientColor = colorFromArgs(i, argv);
 
     // Diffuse color coefficients of the sphere material.
     } else if(strcmp(option, "-kd") == 0) {
-      float r = atof(argv[++i]); // [0.0, 1.0]
-      float g = atof(argv[++i]); // [0.0, 1.0]
-      float b = atof(argv[++i]); // [0.0, 1.0]
+      diffuseColor = colorFromArgs(i, argv);
 
     // Specfular color coefficients of the sphere material.
     } else if(strcmp(option, "-ks") == 0) {
-      float r = atof(argv[++i]); // [0.0, 1.0]
-      float g = atof(argv[++i]); // [0.0, 1.0]
-      float b = atof(argv[++i]); // [0.0, 1.0]
+      specularColor = colorFromArgs(i, argv);
 
     // Power coefficient on the specular term.
     } else if(strcmp(option, "-sp") == 0) {
-      float specPower = atof(argv[++i]); // [0.0, max_float]
+      specularPower = atof(argv[++i]);
 
     // Point light.
     } else if(strcmp(option, "-pl") == 0) {
-      float x = atof(argv[++i]); // [0.0, max_float]
-      float y = atof(argv[++i]); // [0.0, max_float]
-      float z = atof(argv[++i]); // [0.0, max_float]
-      float r = atof(argv[++i]); // [0.0, max_float]
-      float g = atof(argv[++i]); // [0.0, max_float]
-      float b = atof(argv[++i]); // [0.0, max_float]
+      if(numPointLights < 5) {
+        pointLights[numPointLights++] = lightFromArgs(i, argv);
+      } else {
+        printf("Too many point lights.");
+        exit(1);
+      }
 
     // Directional light.
     } else if(strcmp(option, "-dl") == 0) {
-      float x = atof(argv[++i]); // [0.0, max_float]
-      float y = atof(argv[++i]); // [0.0, max_float]
-      float z = atof(argv[++i]); // [0.0, max_float]
-      float r = atof(argv[++i]); // [0.0, max_float]
-      float g = atof(argv[++i]); // [0.0, max_float]
-      float b = atof(argv[++i]); // [0.0, max_float]
+      if(numDirectionalLights < 5) {
+        directionalLights[numDirectionalLights++] = lightFromArgs(i, argv);
+      } else {
+        printf("Too many directional lights.");
+        exit(1);
+      }
 
     } else {
       printf("Incorrect command line argument.");
