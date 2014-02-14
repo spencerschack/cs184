@@ -23,6 +23,10 @@ public:
 		z = normal->z;
 	}
 
+	Vector* vector() {
+		return new Vector(x, y, z);
+	}
+
 	void print() {
 		printf("Normal<x: %f, y: %f, z: %f>\n", x, y, z);
 	}
@@ -51,12 +55,16 @@ public:
 		return this;
 	}
 
-	Vector* operator*(float factor) {
-		return new Vector(
-			x * factor,
-			y * factor,
-			z * factor
-		);
+	Normal* operator*=(float factor) {
+		x *= factor;
+		y *= factor;
+		z *= factor;
+		normalize();
+		return this;
+	}
+
+	Normal* operator*(float factor) {
+		return *new Normal(this) *= factor;
 	}
 
 	float dot(Normal* normal) {
@@ -69,6 +77,10 @@ public:
 		return x * vector->x +
 		       y * vector->y +
 		       z * vector->z;
+	}
+
+	Normal* reflect(Normal* normal) {
+		return *(*(*normal * dot(normal)) *= 2) - this;
 	}
 
 private:

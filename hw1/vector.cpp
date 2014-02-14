@@ -89,4 +89,5 @@ public:
 			x * vector->y - y * vector->x
 		);
 	}
+	
 };

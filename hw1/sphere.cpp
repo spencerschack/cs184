@@ -45,7 +45,7 @@ public:
 		}
 		if(t1 < 0) return NULL;
 		float t = t0 < 0 ? t1 : t0;
-		return *(ray.position + (ray.direction * t)) + &position;
+		return *(ray.position + (*ray.direction.vector() * t)) + &position;
 	}
 
 	// Returns true if given ray intersects the sphere
