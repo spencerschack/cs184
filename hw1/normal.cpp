@@ -9,13 +9,15 @@ public:
 	Normal () { }
 
 	Normal(Vector* vector) {
-		vector = vector->normalize();
 		x = vector->x;
 		y = vector->y;
 		z = vector->z;
+		normalize();
 	}
 
-	Normal(float x, float y, float z) : x(x), y(y), z(z) { }
+	Normal(float x, float y, float z) : x(x), y(y), z(z) {
+		normalize();
+	}
 
 	Normal(Normal* normal) {
 		x = normal->x;
@@ -77,10 +79,6 @@ public:
 		return x * vector->x +
 		       y * vector->y +
 		       z * vector->z;
-	}
-
-	Normal* reflect(Normal* normal) {
-		return *(*(*normal * dot(normal)) *= 2) - this;
 	}
 
 private:

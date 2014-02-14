@@ -89,5 +89,13 @@ public:
 			x * vector->y - y * vector->x
 		);
 	}
-	
+
+	Vector* reflect(Vector* vector) {
+		float coeff = dot(vector) * 2;
+		Vector* reflection = new Vector(vector);
+		*reflection *= coeff;
+		*reflection -= this;
+		return reflection;
+	}
+
 };

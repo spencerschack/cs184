@@ -128,16 +128,26 @@ void draw() {
           light = pointLights[l];
           light_position = sphere->position - &light->position;
           light_normal = Normal(*intersection - &light_position);
-          dot = normal.dot(&light_normal);
+          dot = max(0.0f, normal.dot(&light_normal));
           color += *(sphere->diffuseColor * &light->color) * dot;
           // Specular
-          reflection = light_normal.reflect(&normal);
-          viewer = Normal(*intersection - &ray.position);
-          dot = pow(reflection.dot(&viewer), sphere->specularPower);
+          reflection = Normal(light_normal.vector()->reflect(normal.vector()));
+          viewer = Normal(ray.position - intersection);
+          dot = pow(max(0.0f, reflection.dot(&viewer)), sphere->specularPower);
           color += *(sphere->specularColor * &light->color) * dot;
         }
 
         for (l = 0; l < numDirectionalLights; l++) {
+          // Diffuse
+          light = directionalLights[l];
+          light_normal = Normal(&light->position);
+          dot = max(0.0f, normal.dot(&light_normal));
+          color += *(sphere->diffuseColor * &light->color) * dot;
+          // Specular
+          reflection = Normal(light_normal.vector()->reflect(normal.vector()));
+          viewer = Normal(ray.position - intersection);
+          dot = pow(max(0.0f, reflection.dot(&viewer)), sphere->specularPower);
+          color += *(sphere->specularColor * &light->color) * dot;
         }
 
         glColor3f(color.r, color.g, color.b);
