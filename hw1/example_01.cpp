@@ -25,11 +25,11 @@
 #include <math.h>
 
 #include "vector.cpp"
+#include "normal.cpp"
 #include "ray.cpp"
 #include "color.cpp"
 #include "light.cpp"
 #include "brdf.cpp"
-#include "normal.cpp"
 #include "localgeo.cpp"
 #include "matrix.cpp"
 #include "sample.cpp"
@@ -54,7 +54,7 @@ class Viewport {
 //****************************************************
 Viewport	viewport;
 
-Vector* camera = new Vector(0, 0, -1);
+Normal* camera = new Normal(0, 0, -1);
 Sphere* sphere = new Sphere();
 Light* pointLights[5];
 Light* directionalLights[5];
@@ -100,13 +100,13 @@ void draw() {
   glLoadIdentity();	
 
   int x, y, l;
+  float dot;
   Color color;
-  Ray ray, lray;
-  bool isLIntersect;
+  Ray ray;
   Vector* intersection;
-  Normal normal;
-  LocalGeo raylocalgeo, lraylocalgeo;
-  float thit, lthit;
+  Vector light_position;
+  Normal normal, light_normal;
+  Light* light;
 
   glBegin(GL_POINTS);
 
@@ -114,30 +114,29 @@ void draw() {
   // What happens if a point/directional light source is behind sphere?
   for(x = 0; x < viewport.w; x++) {
     for(y = 0; y < viewport.h; y++) {
-      // Why 1000.0?
-      ray = Ray(Vector(x, y, 1000.0), camera);
-      intersection = sphere->intersect(ray, thit, raylocalgeo);
+
+      ray = Ray(Vector(x - sphere->position.x, y - sphere->position.y, 1000.0), camera);
+      intersection = sphere->intersect(ray);
+
       if(intersection != NULL) {
-        normal = raylocalgeo.normal;
+
+        normal = sphere->normal(intersection);
         color = Color(sphere->ambientColor);
-        // Go through each directional light source to see if a ray intersects
-        for(l = 0; l < numDirectionalLights; l++) {
-          lray = Ray(directionalLights[l]->position, camera);
-          isLIntersect = sphere->intersectP(lray);
-          if (isLIntersect) {
-            // Calculate the overall effect of the light ray reflected from point of intersection 
-            // color += shading(lraylocalgeo, sphere.getBRDF(), lray, directionalLights[l].color)
-          }
+
+        for(l = 0; l < numPointLights; l++) {
+          light = pointLights[l];
+          light_position = sphere->position + &light->position;
+          light_position.x -= sphere->position.x;
+          light_position.y -= sphere->position.y;
+          light_normal = Normal(*intersection - &light_position);
+          dot = normal.dot(&light_normal);
+          color += *(sphere->diffuseColor * &light->color) * dot;
         }
-        // Go through each point light source and see if it intersects
-        for (l = 0; l < numPointLights; l++) {
-          lray = Ray(directionalLights[l]->position, camera);
-          isLIntersect = sphere->intersectP(lray);
-          if (isLIntersect) {
-            // Calculate the overall effect of the light ray reflected from point of intersection 
-            // color += shading(lraylocalgeo, sphere.getBRDF(), lray, directionalLights[l].color)
-          } 
+
+        for (l = 0; l < numDirectionalLights; l++) {
+          
         }
+
         glColor3f(color.r, color.g, color.b);
         glVertex2f(x + 0.5, y + 0.5);
       }

@@ -49,6 +49,17 @@ public:
 		return this;
 	}
 
+	Color* operator*(Color* color) {
+		return *new Color(this) *= color;
+	}
+
+	Color* operator*=(Color* color) {
+		r *= color->r;
+		g *= color->g;
+		b *= color->b;
+		return this;
+	}
+
 	Color* operator/(float divisor) {
 		return *new Color(this) /= divisor;
 	}

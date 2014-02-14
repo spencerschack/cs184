@@ -16,6 +16,10 @@ public:
 		z = vector->z;
 	}
 
+	void print() {
+		printf("Vector<x: %f, y: %f, z: %f>\n", x, y, z);
+	}
+
 	Vector* operator+(Vector* vector) {
 		return *new Vector(this) += vector;
 	}
