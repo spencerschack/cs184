@@ -54,7 +54,7 @@ class Viewport {
 //****************************************************
 Viewport	viewport;
 
-Vector* camera = new Vector(0, 0, 1);
+Vector* camera = new Vector(0, 0, -1);
 Sphere* sphere = new Sphere();
 Light* pointLights[5];
 Light* directionalLights[5];
@@ -102,7 +102,7 @@ void draw() {
   int x, y, l;
   Color color;
   Ray ray, lray;
-  bool isRIntersect, isLIntersect;
+  bool isLIntersect;
   Vector* intersection;
   Normal normal;
   LocalGeo raylocalgeo, lraylocalgeo;
@@ -116,9 +116,8 @@ void draw() {
     for(y = 0; y < viewport.h; y++) {
       // Why 1000.0?
       ray = Ray(Vector(x, y, 1000.0), camera);
-      isRIntersect = sphere->intersectP(ray);
-      if(isRIntersect) {
-        intersection = sphere->intersect(ray, thit, &raylocalgeo);
+      intersection = sphere->intersect(ray, thit, raylocalgeo);
+      if(intersection != NULL) {
         normal = raylocalgeo.normal;
         color = Color(sphere->ambientColor);
         // Go through each directional light source to see if a ray intersects
