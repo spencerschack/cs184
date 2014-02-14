@@ -118,7 +118,7 @@ void draw() {
       ray = Ray(Vector(x, y, 1000.0), camera);
       isRIntersect = sphere->intersectP(ray);
       if(isRIntersect) {
-        intersection = sphere->intersect(ray, &thit, &raylocalgeo);
+        intersection = sphere->intersect(ray, thit, &raylocalgeo);
         normal = raylocalgeo.normal;
         color = Color(sphere->ambientColor);
         // Go through each directional light source to see if a ray intersects

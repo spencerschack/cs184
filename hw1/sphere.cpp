@@ -26,7 +26,7 @@ public:
 
 	// Returns intersection point and normal to it if given ray intersects the sphere
 	// Need to implement "Intersection with ray at t outside range [t_min, t_max] should return false"
-	Vector* intersect(Ray ray, float *thit, LocalGeo *localgeo) {
+	Vector* intersect(Ray ray, float &thit, LocalGeo *localgeo) {
 		float a = ray.direction.dot(&ray.direction);
 		float b = 2 * ray.direction.dot(&ray.position);
 		float c = ray.position.dot(&ray.position) - pow(radius, 2);
@@ -43,7 +43,7 @@ public:
 		}
 		if(t1 < 0) return NULL;
 		float t = t0 < 0 ? t1 : t0;
-		*thit = t;
+		thit = t;
 		Vector pos = ray.position + (ray.direction * t);
 		Vector n = normal(&pos);
 		Normal norm = new Normal(n.x, n.y, n.z);
