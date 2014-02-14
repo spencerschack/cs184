@@ -115,7 +115,7 @@ void draw() {
   for(x = 0; x < viewport.w; x++) {
     for(y = 0; y < viewport.h; y++) {
 
-      ray = Ray(Vector(x - sphere->position.x, y - sphere->position.y, 1000.0), camera);
+      ray = Ray(Vector(x, y, 2000.0), camera);
       intersection = sphere->intersect(ray);
 
       if(intersection != NULL) {
@@ -125,9 +125,7 @@ void draw() {
 
         for(l = 0; l < numPointLights; l++) {
           light = pointLights[l];
-          light_position = sphere->position + &light->position;
-          light_position.x -= sphere->position.x;
-          light_position.y -= sphere->position.y;
+          light_position = sphere->position - &light->position;
           light_normal = Normal(*intersection - &light_position);
           dot = normal.dot(&light_normal);
           color += *(sphere->diffuseColor * &light->color) * dot;

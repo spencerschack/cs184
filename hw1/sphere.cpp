@@ -26,7 +26,9 @@ public:
 
 	// Returns intersection point and normal to it if given ray intersects the sphere
 	// Need to implement "Intersection with ray at t outside range [t_min, t_max] should return false"
-	Vector* intersect(Ray ray) {
+	Vector* intersect(Ray untranslated) {
+		Ray ray = Ray(&untranslated);
+		ray.position -= &position;
 		float a = ray.direction.dot(&ray.direction);
 		float b = 2 * ray.direction.dot(&ray.position);
 		float c = ray.position.dot(&ray.position) - pow(radius, 2);
@@ -43,7 +45,7 @@ public:
 		}
 		if(t1 < 0) return NULL;
 		float t = t0 < 0 ? t1 : t0;
-		return ray.position + (ray.direction * t);
+		return *(ray.position + (ray.direction * t)) + &position;
 	}
 
 	// Returns true if given ray intersects the sphere
