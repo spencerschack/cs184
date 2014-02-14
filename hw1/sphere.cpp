@@ -21,7 +21,7 @@ public:
 
 	// Returns normal to a position on the sphere
 	Vector* normal(Vector* vector) {
-		return (position - vector)->normalize();
+		return ((*vector) - &position)->normalize();
 	}
 
 	// Returns intersection point and normal to it if given ray intersects the sphere
