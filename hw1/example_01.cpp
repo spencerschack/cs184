@@ -161,13 +161,17 @@ void keyboardFunc(unsigned char key, int x, int y) {
   if(key == 32) exit(0);
 }
 
-float parseOption(int &index, int argc, char* argv[]) {
+char* getOption(int &index, int argc, char* argv[]) {
   if(++index < argc) {
-    return atof(argv[index]);
+    return argv[index];
   } else {
     printf("Not enough arguments.\n");
     exit(1);
   }
+}
+
+float parseOption(int &index, int argc, char* argv[]) {
+  return atof(getOption(index, argc, argv));
 }
 
 Color* colorFromArgs(int &index, int argc, char* argv[]) {
@@ -233,7 +237,7 @@ void parseOptions(int argc, char* argv[]) {
 
     // Export to file.
     } else if(strcmp(option, "-f") == 0) {
-      filename = argv[++i];
+      filename = getOption(i, argc, argv);
 
     } else {
       printf("Incorrect command line argument.\n");
