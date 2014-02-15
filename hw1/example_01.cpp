@@ -252,7 +252,6 @@ void parseOptions(int argc, char* argv[]) {
 int main(int argc, char *argv[]) {
 
   parseOptions(argc, argv);
-  printf("%s", filename);
 
   //This initializes glut
   glutInit(&argc, argv);
