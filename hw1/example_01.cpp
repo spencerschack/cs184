@@ -1,4 +1,3 @@
-
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -59,9 +58,15 @@ Normal* camera = new Normal(0, 0, -1);
 Sphere* sphere = new Sphere();
 Light* pointLights[5];
 Light* directionalLights[5];
+
 int    numPointLights       = 0;
 int    numDirectionalLights = 0;
 char*  filename = NULL;
+
+char* frameBuffer = NULL;
+int  frameNo = 0;
+int      frameWidth,frameHeight;
+char     *frameName;
 
 //****************************************************
 // Simple init function
@@ -83,17 +88,6 @@ void resize(int w, int h) {
   gluOrtho2D(0, viewport.w, 0, viewport.h);
 
 }
-
-
-#ifdef _WIN32
-static DWORD lastTime;
-#else
-static struct timeval lastTime;
-#endif
-
-#define PI 3.14159265
-
-using namespace std;
 
 //Draws the 3D scene
 void drawSphere(bool isFile) {
@@ -154,81 +148,50 @@ void drawSphere(bool isFile) {
   }
 }
 
+
 //*****************************************************************
 // function that does the actual drawing and file writing of stuff
 //*****************************************************************
-
-void drawToImage()
-{
-  //Clear information from last draw
-  //glClear(GL_COLOR_BUFFER_BIT);
- 
-  glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
-  glLoadIdentity(); //Reset the drawing perspective 
-
-  // glEnable(GL_DEPTH_TEST);
- 
-  static unsigned char texture[3 * 400 * 400];
-  static unsigned int texture_id;
- 
-  // Texture setting
-  // glEnable(GL_TEXTURE_2D);
-  // glGenTextures(1, &texture_id);
-  // glBindTexture(GL_TEXTURE_2D, texture_id);
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 400, 400, 0, GL_RGB, GL_UNSIGNED_BYTE, texture);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
- 
-  //glLoadIdentity();
-  glTranslatef(0, 0, -10);  
- 
-  /* Define a view-port adapted to the texture */
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(20, 1, 5, 15);
-  glViewport(0, 0, 400, 400);
-  glMatrixMode(GL_MODELVIEW);
- 
-  /* Render to buffer */
-  glClearColor(0, 0, 0, 0);
-  glClear(GL_COLOR_BUFFER_BIT); 
- 
-  glColor3f(1.0,0.0,1.0);
- 
-  glBegin(GL_TRIANGLES);
-  
-  glVertex2f( 0.0f, 1.0f);             
- 
-  glVertex2f(-1.0f,-1.0f);             
- 
-  glVertex2f( 1.0f,-1.0f);             
- 
-  //drawSphere(true);
-
-  glEnd();            
- 
-  glEnd();  
-  glFlush();
-  // Image Writing  
-  unsigned char* imageData = (unsigned char *)malloc((int)(400*400*(3)));
-  glReadPixels(0, 0, 400, 400, GL_RGB, GL_UNSIGNED_BYTE, imageData);
-  //write 
-  bitmap_image image(400,400);
-  image_drawer draw(image);
- 
-  for (unsigned int i = 0; i < image.width(); ++i)
-  {
-    for (unsigned int j = 0; j < image.height(); ++j)
-    {
-      image.set_pixel(i,j,*(++imageData),*(++imageData),*(++imageData));    
+int outputFrame() {
+  FILE *frameFile;
+  //char filename[80];
+  int i,j;
+  int errno;
+    
+    unsigned char* imageData = (unsigned char *)malloc((int)(400*400*(3))); 
+    glReadPixels(0,0,viewport.w,viewport.h,GL_RGBA,GL_UNSIGNED_BYTE,imageData);
+    //sprintf(filename,"%s%03d.ppm",frameName,frameNo);
+    printf("output to file %s\n",filename);
+        
+    if ( (frameFile = fopen(filename,"w")) == NULL) {
+      printf("** outputFrame error: fopen of frame file failed\n");
+      exit(1);
     }
-  }
- 
-  image.save_image(filename);
-  glutSwapBuffers(); 
+    else {
+      if ( (errno = fprintf(frameFile,"P3\n")) < 0) {
+        printf("** outputFrame error: print to file error (%d)\n",errno);
+      }
+      fprintf(frameFile,"%d %d\n",viewport.w,viewport.h);
+      fprintf(frameFile,"255\n");
+      for (j=viewport.h-1; j>=0; j--) {
+        for (i=0; i<viewport.w; i++) {
+          fprintf(frameFile,"%u %u %u ",
+          (unsigned char)imageData[viewport.w*4*j+4*i],
+          (unsigned char)imageData[viewport.w*4*j+4*i+1],
+          (unsigned char)imageData[viewport.w*4*j+4*i+2]);
+        }
+        fprintf(frameFile,"\n");
+      }
+      if ( (errno = fclose(frameFile)) != 0) {
+        printf("** outputFrame error: frame file close error (%d)\n",errno);
+        return 0;
+      }
+      frameNo++;
+      return 1;
+    }
+  
 }
+
 
 //****************************************************
 // function that does the actual drawing of stuff
@@ -251,7 +214,8 @@ void draw() {
 }
 
 void keyboardFunc(unsigned char key, int x, int y) {
-  if(key == 32) exit(0);
+  if(key == ' ') exit(0);
+  if (key == 's') {outputFrame(); exit(0);}
 }
 
 char* getOption(int &index, int argc, char* argv[]) {
@@ -339,6 +303,8 @@ void parseOptions(int argc, char* argv[]) {
   }
 }
 
+
+
 //****************************************************
 // the usual stuff, nothing exciting here
 //****************************************************
@@ -360,29 +326,16 @@ int main(int argc, char *argv[]) {
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
   
+  glutInitWindowPosition(0,0);
+  glutCreateWindow(argv[0]);
+  glutKeyboardFunc(keyboardFunc);
 
-  if (filename != NULL) {
-    glutCreateWindow("Test"); 
-    drawToImage();
-  } else {
-    glutInitWindowPosition(0,0);
-    glutCreateWindow(argv[0]);
-    glutKeyboardFunc(keyboardFunc);
+  init(); // quick function to set up scene
 
-    init(); // quick function to set up scene
+  glutDisplayFunc(draw); // function to run when its time to draw something
+  glutReshapeFunc(resize); // function to run when the window gets resized
 
-    glutDisplayFunc(draw); // function to run when its time to draw something
-    glutReshapeFunc(resize); // function to run when the window gets resized
+  glutMainLoop(); // infinite loop that will keep drawing and resizing
 
-    glutMainLoop(); // infinite loop that will keep drawing and resizing
-  }
   return 0;
 }
-
-
-
-
-
-
-
-
