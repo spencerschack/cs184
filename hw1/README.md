@@ -4,4 +4,7 @@ This project contains the assignments for CS184. All projects were completed by 
 
 Resources Used:
 [Phong Reflection Model](http://en.wikipedia.org/wiki/Phong_reflection_model)
+
 [Ray Sphere Intersection](http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection)
+
+[Output to .ppm file function](http://www.cse.ohio-state.edu/~parent/classes/581/Notes/MakingMovies/outputFrame.c)
