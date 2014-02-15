@@ -34,6 +34,7 @@
 #include "matrix.cpp"
 #include "sample.cpp"
 #include "sphere.cpp"
+#include "bitmap_image.hpp"
 
 
 using namespace std;
@@ -83,16 +84,19 @@ void resize(int w, int h) {
 
 }
 
-//****************************************************
-// function that does the actual drawing of stuff
-//***************************************************
-void draw() {
 
-  glClear(GL_COLOR_BUFFER_BIT); // clear the color buffer
+#ifdef _WIN32
+static DWORD lastTime;
+#else
+static struct timeval lastTime;
+#endif
 
-  glMatrixMode(GL_MODELVIEW); // indicate we are specifying camera transformations
-  glLoadIdentity();	
+#define PI 3.14159265
 
+using namespace std;
+
+//Draws the 3D scene
+void drawSphere(bool isFile) {
   int i, j, l;
   float x, y, r, dot;
   Color color;
@@ -101,10 +105,6 @@ void draw() {
   Normal normal, light_normal, reflection, viewer;
   Light* light;
 
-  glBegin(GL_POINTS);
-
-
-  // What happens if a point/directional light source is behind sphere?
   for(i = 0; i < viewport.w; i++) {
     for(j = 0; j < viewport.h; j++) {
 
@@ -146,10 +146,103 @@ void draw() {
         }
 
         glColor3f(color.r, color.g, color.b);
+        //printf("i+0.5 = %f, j+0.5 = %f\n", i + 0.5, j + 0.5);
+        // Need to adjust this according to bool isFile
         glVertex2f(i + 0.5, j + 0.5);
       }
     }
   }
+}
+
+//*****************************************************************
+// function that does the actual drawing and file writing of stuff
+//*****************************************************************
+
+void drawToImage()
+{
+  //Clear information from last draw
+  //glClear(GL_COLOR_BUFFER_BIT);
+ 
+  glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
+  glLoadIdentity(); //Reset the drawing perspective 
+
+  // glEnable(GL_DEPTH_TEST);
+ 
+  static unsigned char texture[3 * 400 * 400];
+  static unsigned int texture_id;
+ 
+  // Texture setting
+  // glEnable(GL_TEXTURE_2D);
+  // glGenTextures(1, &texture_id);
+  // glBindTexture(GL_TEXTURE_2D, texture_id);
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 400, 400, 0, GL_RGB, GL_UNSIGNED_BYTE, texture);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+ 
+  //glLoadIdentity();
+  glTranslatef(0, 0, -10);  
+ 
+  /* Define a view-port adapted to the texture */
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(20, 1, 5, 15);
+  glViewport(0, 0, 400, 400);
+  glMatrixMode(GL_MODELVIEW);
+ 
+  /* Render to buffer */
+  glClearColor(0, 0, 0, 0);
+  glClear(GL_COLOR_BUFFER_BIT); 
+ 
+  glColor3f(1.0,0.0,1.0);
+ 
+  glBegin(GL_TRIANGLES);
+  
+  glVertex2f( 0.0f, 1.0f);             
+ 
+  glVertex2f(-1.0f,-1.0f);             
+ 
+  glVertex2f( 1.0f,-1.0f);             
+ 
+  //drawSphere(true);
+
+  glEnd();            
+ 
+  glEnd();  
+  glFlush();
+  // Image Writing  
+  unsigned char* imageData = (unsigned char *)malloc((int)(400*400*(3)));
+  glReadPixels(0, 0, 400, 400, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+  //write 
+  bitmap_image image(400,400);
+  image_drawer draw(image);
+ 
+  for (unsigned int i = 0; i < image.width(); ++i)
+  {
+    for (unsigned int j = 0; j < image.height(); ++j)
+    {
+      image.set_pixel(i,j,*(++imageData),*(++imageData),*(++imageData));    
+    }
+  }
+ 
+  image.save_image(filename);
+  glutSwapBuffers(); 
+}
+
+//****************************************************
+// function that does the actual drawing of stuff
+//***************************************************
+
+void draw() {
+
+  glClear(GL_COLOR_BUFFER_BIT); // clear the color buffer
+
+  glMatrixMode(GL_MODELVIEW); // indicate we are specifying camera transformations
+  glLoadIdentity();
+  glBegin(GL_POINTS);
+
+  drawSphere(false);
 
   glEnd();
 
@@ -252,6 +345,7 @@ void parseOptions(int argc, char* argv[]) {
 int main(int argc, char *argv[]) {
 
   parseOptions(argc, argv);
+  //printf("%s", filename);
 
   //This initializes glut
   glutInit(&argc, argv);
@@ -265,18 +359,23 @@ int main(int argc, char *argv[]) {
 
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
-  glutInitWindowPosition(0,0);
-  glutCreateWindow(argv[0]);
+  
 
-  glutKeyboardFunc(keyboardFunc);
+  if (filename != NULL) {
+    glutCreateWindow("Test"); 
+    drawToImage();
+  } else {
+    glutInitWindowPosition(0,0);
+    glutCreateWindow(argv[0]);
+    glutKeyboardFunc(keyboardFunc);
 
-  init(); // quick function to set up scene
+    init(); // quick function to set up scene
 
-  glutDisplayFunc(draw); // function to run when its time to draw something
-  glutReshapeFunc(resize); // function to run when the window gets resized
+    glutDisplayFunc(draw); // function to run when its time to draw something
+    glutReshapeFunc(resize); // function to run when the window gets resized
 
-  glutMainLoop(); // infinite loop that will keep drawing and resizing
-
+    glutMainLoop(); // infinite loop that will keep drawing and resizing
+  }
   return 0;
 }
 
