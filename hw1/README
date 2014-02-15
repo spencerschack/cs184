@@ -1,0 +1,13 @@
+Name                    : Aditya Kaulagi (cs184-ea)
+Partner's Name          : Spencer Schack (cs184-cf)
+Platform                : Linux (Tested on Ubuntu 12.04 and Mac OSX Mountain Lion)
+Source code's location	: ~/work/as1/hw1
+Link to web page        : http://inst.cs.berkeley.edu/~cs184-ea/a1.html
+
+Bonus Features:
+
+Saving image to a .ppm file:
+
+Please specify the filename (along with the .ppm extension) after the "-f" option. For example, "-f 123.ppm".
+Then, after you open the image, press "s" to save the file in the same directory under the specified filename.
+The program will exit and you can then open the image.

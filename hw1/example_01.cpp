@@ -33,8 +33,6 @@
 #include "matrix.cpp"
 #include "sample.cpp"
 #include "sphere.cpp"
-#include "bitmap_image.hpp"
-
 
 using namespace std;
 
