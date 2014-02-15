@@ -233,8 +233,7 @@ void parseOptions(int argc, char* argv[]) {
 
     // Export to file.
     } else if(strcmp(option, "-f") == 0) {
-      filename = new char[strlen(argv[++i])];
-      strcpy(filename, argv[i]);
+      filename = argv[++i];
 
     } else {
       printf("Incorrect command line argument.\n");
