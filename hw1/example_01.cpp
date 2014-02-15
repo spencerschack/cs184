@@ -60,6 +60,7 @@ Light* pointLights[5];
 Light* directionalLights[5];
 int    numPointLights       = 0;
 int    numDirectionalLights = 0;
+char*  filename = NULL;
 
 //****************************************************
 // Simple init function
@@ -230,6 +231,11 @@ void parseOptions(int argc, char* argv[]) {
         exit(1);
       }
 
+    // Export to file.
+    } else if(strcmp(option, "-f") == 0) {
+      filename = new char[strlen(argv[++i])];
+      strcpy(filename, argv[i]);
+
     } else {
       printf("Incorrect command line argument.\n");
       exit(1);
@@ -243,6 +249,7 @@ void parseOptions(int argc, char* argv[]) {
 int main(int argc, char *argv[]) {
 
   parseOptions(argc, argv);
+  printf("%s", filename);
 
   //This initializes glut
   glutInit(&argc, argv);
