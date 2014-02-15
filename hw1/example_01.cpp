@@ -75,13 +75,6 @@ void resize(int w, int h) {
   viewport.w = w;
   viewport.h = h;
 
-  float x = w / 2.0;
-  float y = h / 2.0;
-  float r = min(w, h) / 3.0;
-  sphere->position.x = x;
-  sphere->position.y = y;
-  sphere->radius = r;
-
   glViewport(0, 0, viewport.w, viewport.h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -99,12 +92,11 @@ void draw() {
   glMatrixMode(GL_MODELVIEW); // indicate we are specifying camera transformations
   glLoadIdentity();	
 
-  int x, y, l;
-  float dot;
+  int i, j, l;
+  float x, y, r, dot;
   Color color;
   Ray ray;
   Vector* intersection;
-  Vector light_position;
   Normal normal, light_normal, reflection, viewer;
   Light* light;
 
@@ -112,10 +104,13 @@ void draw() {
 
 
   // What happens if a point/directional light source is behind sphere?
-  for(x = 0; x < viewport.w; x++) {
-    for(y = 0; y < viewport.h; y++) {
+  for(i = 0; i < viewport.w; i++) {
+    for(j = 0; j < viewport.h; j++) {
 
-      ray = Ray(Vector(x, y, 2000.0), camera);
+      r = min(viewport.w, viewport.h) / 2.25;
+      x = i / r - (viewport.w / 2.0 / r);
+      y = j / r - (viewport.h / 2.0 / r);
+      ray = Ray(Vector(x, y, 2.0), camera);
       intersection = sphere->intersect(ray);
 
       if(intersection != NULL) {
@@ -126,8 +121,7 @@ void draw() {
         for(l = 0; l < numPointLights; l++) {
           // Diffuse
           light = pointLights[l];
-          light_position = sphere->position - &light->position;
-          light_normal = Normal(*intersection - &light_position);
+          light_normal = Normal(*intersection - &light->position);
           dot = max(0.0f, normal.dot(&light_normal));
           color += *(sphere->diffuseColor * &light->color) * dot;
           // Specular
@@ -151,7 +145,7 @@ void draw() {
         }
 
         glColor3f(color.r, color.g, color.b);
-        glVertex2f(x + 0.5, y + 0.5);
+        glVertex2f(i + 0.5, j + 0.5);
       }
     }
   }
@@ -183,9 +177,9 @@ Color* colorFromArgs(int &index, int argc, char* argv[]) {
 }
 
 Light* lightFromArgs(int &index, int argc, char* argv[]) {
-  float x = parseOption(index, argc, argv);
-  float y = parseOption(index, argc, argv);
-  float z = parseOption(index, argc, argv);
+  float x = -parseOption(index, argc, argv);
+  float y = -parseOption(index, argc, argv);
+  float z = -parseOption(index, argc, argv);
   float r = parseOption(index, argc, argv);
   float g = parseOption(index, argc, argv);
   float b = parseOption(index, argc, argv);
