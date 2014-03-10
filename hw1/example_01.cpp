@@ -1,4 +1,3 @@
-
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -35,7 +34,6 @@
 #include "sample.cpp"
 #include "sphere.cpp"
 
-
 using namespace std;
 
 //****************************************************
@@ -58,9 +56,15 @@ Normal* camera = new Normal(0, 0, -1);
 Sphere* sphere = new Sphere();
 Light* pointLights[5];
 Light* directionalLights[5];
+
 int    numPointLights       = 0;
 int    numDirectionalLights = 0;
 char*  filename = NULL;
+
+char* frameBuffer = NULL;
+int  frameNo = 0;
+int      frameWidth,frameHeight;
+char     *frameName;
 
 //****************************************************
 // Simple init function
@@ -83,16 +87,8 @@ void resize(int w, int h) {
 
 }
 
-//****************************************************
-// function that does the actual drawing of stuff
-//***************************************************
-void draw() {
-
-  glClear(GL_COLOR_BUFFER_BIT); // clear the color buffer
-
-  glMatrixMode(GL_MODELVIEW); // indicate we are specifying camera transformations
-  glLoadIdentity();	
-
+//Draws the 3D scene
+void drawSphere(bool isFile) {
   int i, j, l;
   float x, y, r, dot;
   Color color;
@@ -101,10 +97,6 @@ void draw() {
   Normal normal, light_normal, reflection, viewer;
   Light* light;
 
-  glBegin(GL_POINTS);
-
-
-  // What happens if a point/directional light source is behind sphere?
   for(i = 0; i < viewport.w; i++) {
     for(j = 0; j < viewport.h; j++) {
 
@@ -146,10 +138,72 @@ void draw() {
         }
 
         glColor3f(color.r, color.g, color.b);
+        //printf("i+0.5 = %f, j+0.5 = %f\n", i + 0.5, j + 0.5);
+        // Need to adjust this according to bool isFile
         glVertex2f(i + 0.5, j + 0.5);
       }
     }
   }
+}
+
+
+//*****************************************************************
+// function that does the actual drawing and file writing of stuff
+//*****************************************************************
+int outputFrame() {
+  FILE *frameFile;
+  //char filename[80];
+  int i,j;
+  int errno;
+    
+    unsigned char* imageData = (unsigned char *)malloc((int)(400*400*(3))); 
+    glReadPixels(0,0,viewport.w,viewport.h,GL_RGBA,GL_UNSIGNED_BYTE,imageData);
+    //sprintf(filename,"%s%03d.ppm",frameName,frameNo);
+    printf("output to file %s\n",filename);
+        
+    if ( (frameFile = fopen(filename,"w")) == NULL) {
+      printf("** outputFrame error: fopen of frame file failed\n");
+      exit(1);
+    }
+    else {
+      if ( (errno = fprintf(frameFile,"P3\n")) < 0) {
+        printf("** outputFrame error: print to file error (%d)\n",errno);
+      }
+      fprintf(frameFile,"%d %d\n",viewport.w,viewport.h);
+      fprintf(frameFile,"255\n");
+      for (j=viewport.h-1; j>=0; j--) {
+        for (i=0; i<viewport.w; i++) {
+          fprintf(frameFile,"%u %u %u ",
+          (unsigned char)imageData[viewport.w*4*j+4*i],
+          (unsigned char)imageData[viewport.w*4*j+4*i+1],
+          (unsigned char)imageData[viewport.w*4*j+4*i+2]);
+        }
+        fprintf(frameFile,"\n");
+      }
+      if ( (errno = fclose(frameFile)) != 0) {
+        printf("** outputFrame error: frame file close error (%d)\n",errno);
+        return 0;
+      }
+      frameNo++;
+      return 1;
+    }
+  
+}
+
+
+//****************************************************
+// function that does the actual drawing of stuff
+//***************************************************
+
+void draw() {
+
+  glClear(GL_COLOR_BUFFER_BIT); // clear the color buffer
+
+  glMatrixMode(GL_MODELVIEW); // indicate we are specifying camera transformations
+  glLoadIdentity();
+  glBegin(GL_POINTS);
+
+  drawSphere(false);
 
   glEnd();
 
@@ -158,7 +212,8 @@ void draw() {
 }
 
 void keyboardFunc(unsigned char key, int x, int y) {
-  if(key == 32) exit(0);
+  if(key == ' ') exit(0);
+  if (key == 's') {outputFrame(); exit(0);}
 }
 
 char* getOption(int &index, int argc, char* argv[]) {
@@ -246,12 +301,15 @@ void parseOptions(int argc, char* argv[]) {
   }
 }
 
+
+
 //****************************************************
 // the usual stuff, nothing exciting here
 //****************************************************
 int main(int argc, char *argv[]) {
 
   parseOptions(argc, argv);
+  //printf("%s", filename);
 
   //This initializes glut
   glutInit(&argc, argv);
@@ -265,9 +323,9 @@ int main(int argc, char *argv[]) {
 
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
+  
   glutInitWindowPosition(0,0);
   glutCreateWindow(argv[0]);
-
   glutKeyboardFunc(keyboardFunc);
 
   init(); // quick function to set up scene
@@ -279,11 +337,3 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
-
-
-
-
-
-
-
