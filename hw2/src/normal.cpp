@@ -1,12 +1,33 @@
+#include <cmath>
+
 #include "normal.h"
 #include "vector.h"
 
-Normal::Normal(Vector* v) : Vector(v) {
+Normal::Normal() : x(0), y(0), z(0) { };
+
+Normal::Normal(Vector* vector) : x(vector->x), y(vector->y), z(vector->x) {
 	normalize();
 };
 
+Normal::Normal(Normal* normal) : x(normal->x), y(normal->y), z(normal->x) { };
+
+Normal Normal::operator+(Normal normal) {
+	return Normal(x + normal.x, y + normal.y, z + normal.z);
+}
+
+Normal Normal::operator-(Normal normal) {
+	return Normal(x - normal.x, y - normal.y, z - normal.z);
+}
+
+Normal Normal::cross(Normal normal) {
+	return Normal(
+		y * normal.z - z * normal.y,
+		-x * normal.z + z * normal.x,
+		x * normal.y - y * normal.x);
+}
+
 void Normal::normalize() {
-	float mag = magnitude();
+	float mag = sqrt(x * x + y * y + z * z);
 	if(mag == 0) { return; }
 	x /= mag;
 	y /= mag;

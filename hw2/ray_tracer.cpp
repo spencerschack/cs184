@@ -2,11 +2,12 @@
 #include <iostream>
 
 // Our classes
-#include "lib/options.cpp"
-#include "lib/vector.cpp"
-#include "lib/normal.cpp"
+#include "src/options.cpp"
+#include "src/vector.cpp"
+#include "src/normal.cpp"
+#include "src/ray.cpp"
+#include "src/matrix.cpp"
 
-using namespace Eigen;
 using namespace std;
 
 int main(int argc, char* argv[]) {
