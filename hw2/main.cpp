@@ -7,6 +7,7 @@
 #include "src/point.cpp"
 #include "src/normal.cpp"
 #include "src/local_geo.cpp"
+#include "src/camera.cpp"
 #include "src/color.cpp"
 #include "src/ray.cpp"
 #include "src/sample.cpp"
