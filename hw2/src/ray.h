@@ -9,11 +9,13 @@ public:
 
 	Ray();
 
-	Ray(Vector position, Vector direction);
+	Ray(Point position, Vector direction);
 
-	Ray(Vector position, Vector direction, float t_min, float t_max);
+	Ray(Point position, Vector direction, float t_min, float t_max);
 
-	Vector position, direction;
+	Point position;
+	
+	Vector direction;
 
 	float t_min, t_max;
 

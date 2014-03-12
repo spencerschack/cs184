@@ -11,6 +11,8 @@ public:
 
 	Matrix();
 
+	Vector operator*(Vector vector);
+
 };
 
 #endif
