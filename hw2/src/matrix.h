@@ -11,7 +11,7 @@ public:
 
 	Matrix();
 
-	Vector operator*(Vector vector);
+	Vector operator*(const Vector& vector);
 
 };
 

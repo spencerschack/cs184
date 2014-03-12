@@ -9,11 +9,13 @@ private:
 
 	char** argv;
 
+	bool has_next();
+
+	char* next();
+
 public:
 
 	Options(int argc, char* argv[]);
-
-	char* next(bool skipAssert = false);
 
 	char* filename;
 

@@ -20,9 +20,9 @@ public:
 
 	int width, height;
 
-	void commit(Sample sample, Color color);
+	void commit(const Sample& sample, const Color& color);
 
-	void writeToFile(char* filename);
+	void writeToFile(const char& filename);
 
 };
 

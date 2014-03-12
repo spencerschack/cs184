@@ -13,9 +13,9 @@ public:
 
 	Point(float x, float y, float z);
 
-	Vector operator-(Point point);
+	Vector operator-(const Point& point);
 
-	Point operator+(Vector vector);
+	Point operator+(const Vector& vector);
 
 };
 

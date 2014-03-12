@@ -9,21 +9,21 @@ public:
 
 	Vector(float x, float y, float z);
 
-	Vector(Vector* vector);
+	Vector(const Vector& vector);
 
 	float x, y, z;
 
-	Vector operator+(Vector vector);
+	Vector operator+(const Vector& vector);
 
-	Vector operator-(Vector vector);
+	Vector operator-(const Vector& vector);
 
 	Vector operator*(float factor);
 
 	Vector operator/(float divisor);
 
-	float dot(Vector vector);
+	float dot(const Vector& vector);
 
-	Vector cross(Vector vector);
+	Vector cross(const Vector& vector);
 
 	float magnitude();
 

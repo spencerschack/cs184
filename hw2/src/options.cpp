@@ -1,8 +1,22 @@
 #include "options.h"
 
-Options::Options(int argc, char* argv[]) : argc(argc), argv(argv), index(0) {
+bool Options::has_next() {
+	return index < argc;
+}
+
+char* Options::next() {
+	if(has_next()) {
+		return argv[index++];
+	} else {
+		printf("Not enough arguments.\n");
+		exit(1);
+	}
+}
+
+Options::Options(int argc, char* argv[]) : argc(argc), argv(argv), index(1) {
 	char* option;
-	while((option = next(true)) != NULL) {
+	while(has_next()) {
+		option = next();
 		// Ensure the flag is in the format "-f".
 		if(option[0] == '-' && option[1] != 0 && option[2] == 0) {
 			switch(option[1]) {
@@ -23,16 +37,5 @@ Options::Options(int argc, char* argv[]) : argc(argc), argv(argv), index(0) {
 			printf("Expected flag, got: %s\n", option);
 			exit(1);
 		}
-	}
-}
-
-char* Options::next(bool skipAssert) {
-	if(++index < argc) {
-		return argv[index];
-	} else if(skipAssert) {
-		return NULL;
-	} else {
-		printf("Not enough arguments.\n");
-		exit(1);
 	}
 }

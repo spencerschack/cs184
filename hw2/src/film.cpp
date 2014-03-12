@@ -8,11 +8,11 @@ Film::Film(int width, int height) : width(width), height(height) {
 
 // ATTENTION: the following method is not bound-checked, if you attempt to write
 // of the end of film, the program may SEGFAULT.
-void Film::commit(Sample sample, Color color) {
+void Film::commit(const Sample& sample, const Color& color) {
 	film[sample.y * width + sample.x] = color;
 }
 
-void Film::writeToFile(char* filename) {
+void Film::writeToFile(const char& filename) {
 	printf("Film::writeToFile has not been implemented.\n");
 	exit(1);
 }

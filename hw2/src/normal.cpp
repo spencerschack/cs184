@@ -5,21 +5,21 @@
 
 Normal::Normal() : x(0), y(0), z(0) { };
 
-Normal::Normal(Vector* vector) : x(vector->x), y(vector->y), z(vector->x) {
+Normal::Normal(const Vector& vector) : x(vector.x), y(vector.y), z(vector.x) {
 	normalize();
 };
 
-Normal::Normal(Normal* normal) : x(normal->x), y(normal->y), z(normal->x) { };
+Normal::Normal(const Normal& normal) : x(normal.x), y(normal.y), z(normal.x) { };
 
-Normal Normal::operator+(Normal normal) {
+Normal Normal::operator+(const Normal& normal) {
 	return Normal(x + normal.x, y + normal.y, z + normal.z);
 }
 
-Normal Normal::operator-(Normal normal) {
+Normal Normal::operator-(const Normal& normal) {
 	return Normal(x - normal.x, y - normal.y, z - normal.z);
 }
 
-Normal Normal::cross(Normal normal) {
+Normal Normal::cross(const Normal& normal) {
 	return Normal(
 		y * normal.z - z * normal.y,
 		-x * normal.z + z * normal.x,

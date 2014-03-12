@@ -4,19 +4,19 @@ Color::Color() : r(0), g(0), b(0) { };
 
 Color::Color(float r, float g, float b) : r(r), g(b), b(b) { };
 
-Color Color::operator+(Color color) {
+Color Color::operator+(const Color& color) {
 	return Color(r + color.r, g + color.g, b + color.b);
 };
 
-Color Color::operator-(Color color) {
+Color Color::operator-(const Color& color) {
 	return Color(r - color.r, g - color.g, b - color.b);
 };
 
-Color Color::operator*(Color color) {
+Color Color::operator*(const Color& color) {
 	return Color(r * color.r, g * color.g, b * color.b);
 };
 
-Color Color::operator/(Color color) {
+Color Color::operator/(const Color& color) {
 	return Color(r / color.r, g / color.g, b / color.b);
 };
 

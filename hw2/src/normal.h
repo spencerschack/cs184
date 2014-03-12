@@ -13,15 +13,15 @@ public:
 
 	Normal(float x, float y, float z) : x(x), y(y), z(z) { };
 
-	Normal(Vector* vector);
+	Normal(const Vector& vector);
 
-	Normal(Normal* vector);
+	Normal(const Normal& vector);
 
-	Normal operator+(Normal normal);
+	Normal operator+(const Normal& normal);
 
-	Normal operator-(Normal normal);
+	Normal operator-(const Normal& normal);
 
-	Normal cross(Normal normal);
+	Normal cross(const Normal& normal);
 
 private:
 
