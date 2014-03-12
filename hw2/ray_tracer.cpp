@@ -6,6 +6,7 @@
 #include "src/vector.cpp"
 #include "src/point.cpp"
 #include "src/normal.cpp"
+#include "src/color.cpp"
 #include "src/ray.cpp"
 #include "src/matrix.cpp"
 
