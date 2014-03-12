@@ -7,13 +7,16 @@
 #include "src/point.cpp"
 #include "src/normal.cpp"
 #include "src/local_geo.cpp"
-#include "src/ray_tracer.cpp"
-#include "src/camera.cpp"
 #include "src/color.cpp"
 #include "src/ray.cpp"
 #include "src/sample.cpp"
 #include "src/matrix.cpp"
+#include "src/ray_tracer.cpp"
+#include "src/camera.cpp"
+#include "src/scene.cpp"
 #include "src/film.cpp"
+#include "src/light_ray.cpp"
+#include "src/light.cpp"
 
 using namespace std;
 
