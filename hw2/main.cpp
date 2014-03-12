@@ -16,7 +16,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 	Options options(argc, argv);
-	cout << options.filename;
+	cout << options.filename << "\n";
 	Film film = Film(options.width, options.height);
 	return 0;
 }
