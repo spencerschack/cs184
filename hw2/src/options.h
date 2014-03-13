@@ -1,25 +1,26 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#include "vector.h"
+#include "point.h"
+
+using namespace std;
+
 class Options {
 
 private:
 
-	int argc, index;
-
-	char** argv;
-
-	bool has_next();
-
-	char* next();
-
 public:
 
-	Options(int argc, char* argv[]);
+	Options(char* commands);
 
-	char* filename;
+	string filename;
 
-	int width, height;
+	unsigned int width, height;
+
+	// Camera.
+	Point camera_position;
+	Vector camera_direction, camera_up;
 
 };
 

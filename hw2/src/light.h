@@ -10,7 +10,7 @@ public:
 
 	Light();
 
-	LightRay generateRay(const LocalGeo& local);
+	LightRay generate_ray(const LocalGeo& local);
 	
 };
 

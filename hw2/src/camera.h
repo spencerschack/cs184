@@ -8,9 +8,13 @@ class Camera {
 
 public:
 
-	Camera();
+	Point position;
 
-	Ray generateRay(const Sample& sample);
+	Vector direction, up;
+
+	Camera(Point position, Vector direction, Vector up);
+
+	void generate_ray(const Sample& sample, Ray& ray);
 
 };
 

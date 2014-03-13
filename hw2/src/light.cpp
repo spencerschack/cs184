@@ -2,7 +2,7 @@
 
 Light::Light() { };
 
-LightRay Light::generateRay(const LocalGeo& local) {
+LightRay Light::generate_ray(const LocalGeo& local) {
 	printf("Light::generateLightRay is not implemented.\n");
 	exit(1);
 }

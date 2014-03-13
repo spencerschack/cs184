@@ -1,13 +1,17 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include "options.h"
+
 class Scene {
 
 public:
 
-	Scene();
+	Scene(Options options);
 
-	void render();
+	Options options;
+
+	int render();
 	
 };
 

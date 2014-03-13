@@ -1,0 +1,4 @@
+# Generates a sphere with ambient, diffuse, and specular shading.
+size 1440 900
+output raytracer.png
+camera 

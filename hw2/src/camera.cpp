@@ -1,8 +1,9 @@
 #include "camera.h"
 
-Camera::Camera() { };
+Camera::Camera(Point position, Vector direction, Vector up) :
+	position(position), direction(direction), up(up) { };
 
-Ray Camera::generateRay(const Sample& sample) {
-	printf("Camera::generateRay is not implemented.\n");
+void Camera::generate_ray(const Sample& sample, Ray& ray) {
+	printf("Camera::generate_ray is not implemented.\n");
 	exit(1);
 };

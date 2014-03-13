@@ -1,7 +1,5 @@
-// Standard libraries
 #include <iostream>
 
-// Our classes
 #include "src/options.cpp"
 #include "src/vector.cpp"
 #include "src/point.cpp"
@@ -10,6 +8,7 @@
 #include "src/color.cpp"
 #include "src/ray.cpp"
 #include "src/sample.cpp"
+#include "src/sampler.cpp"
 #include "src/matrix.cpp"
 #include "src/ray_tracer.cpp"
 #include "src/camera.cpp"
@@ -21,8 +20,11 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-	Options options(argc, argv);
-	cout << options.filename << "\n";
-	Film film = Film(options.width, options.height);
-	return 0;
+	if(argc != 2) {
+		printf("USAGE: raytracer commands.txt\n");
+		exit(1);
+	}
+	Options options(argv[1]);
+	Scene scene(options);
+	return scene.render();
 }

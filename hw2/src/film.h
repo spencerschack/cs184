@@ -22,7 +22,7 @@ public:
 
 	void commit(const Sample& sample, const Color& color);
 
-	void writeToFile(const char& filename);
+	int write_to_file(string filename);
 
 };
 
