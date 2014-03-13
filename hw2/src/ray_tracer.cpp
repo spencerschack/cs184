@@ -2,7 +2,7 @@
 
 RayTracer::RayTracer() { };
 
-void RayTracer::trace(const Ray& ray, Color& color, int depth = 0) {
+void RayTracer::trace(const Ray& ray, Color& color, int depth) {
 	printf("RayTracer::trace is not implemented.\n");
 	exit(1);
 };

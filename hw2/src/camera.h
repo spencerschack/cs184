@@ -12,7 +12,9 @@ public:
 
 	Vector direction, up;
 
-	Camera(Point position, Vector direction, Vector up);
+	float fov;
+
+	Camera();
 
 	void generate_ray(const Sample& sample, Ray& ray);
 

@@ -1,8 +1,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include "vector.h"
-#include "point.h"
+#include "scene.h"
 
 using namespace std;
 
@@ -10,17 +9,23 @@ class Options {
 
 private:
 
+	ifstream commands;
+
+	string line;
+
+	string parse_string();
+
+	int parse_int();
+
+	unsigned int parse_uint();
+
+	float parse_float();
+
+	void fail();
+
 public:
 
-	Options(char* commands);
-
-	string filename;
-
-	unsigned int width, height;
-
-	// Camera.
-	Point camera_position;
-	Vector camera_direction, camera_up;
+	Options(char* commands, Scene& scene);
 
 };
 

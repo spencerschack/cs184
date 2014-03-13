@@ -1,6 +1,7 @@
 #ifndef RAY_H
 #define RAY_H
 
+#include "point.h"
 #include "vector.h"
 
 class Ray {

@@ -2,20 +2,19 @@
 #include "film.h"
 #include "sampler.h"
 
-Scene::Scene(Options options) : options(options) { };
+Scene::Scene() { };
 
 int Scene::render() {
 	RayTracer raytracer;
-	Camera camera(options.camera_position, options.camera_direction, options.camera_up);
-	Film film(options.width, options.height);
-	Sampler sampler(options.width, options.height);
+	Film film(width, height);
+	Sampler sampler(width, height);
 	Sample sample;
 	Ray ray;
 	Color color;
 	while(sampler.generate_sample(sample)) {
 		camera.generate_ray(sample, ray);
-		raytracer.trace(ray, color);
+		raytracer.trace(ray, color, maxdepth);
 		film.commit(sample, color);
 	}
-	return film.write_to_file(options.filename);
+	return film.write_to_file(filename);
 };
