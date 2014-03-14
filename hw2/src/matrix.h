@@ -11,6 +11,8 @@ public:
 
 	Matrix();
 
+	Matrix(float m[16]);
+
 	Matrix(
 		float aa, float ab, float ac, float ad,
 		float ba, float bb, float bc, float bd,
