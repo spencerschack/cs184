@@ -129,36 +129,28 @@ Options::Options(char* commands_filename) {
 			root_primitive.primitives.push_back(primitive);
 		} else if (command == "translate") {
 			// Get translation matrix
-			if (push) {
-				Matrix toMult = Matrix::Translation(parse_float(), parse_float(), parse_float());
-				Matrix toPush = toMult * transformStack.top();
-				transformStack.pop();
-				transformStack.push(toPush);
-			}
+			Matrix toMult = Matrix::Translation(parse_float(), parse_float(), parse_float());
+			Matrix toPush = toMult * transformStack.top();
+			transformStack.pop();
+			transformStack.push(toPush);
 		} else if (command == "rotate") {
 			// Get the rotation matrix
-			if (push) {
-				Matrix toMult = Matrix::Rotate(parse_float(), parse_float(), parse_float(), parse_float());
-				Matrix toPush = toMult * transformStack.top();
-				transformStack.pop();
-				transformStack.push(toPush);
-			}
+			Matrix toMult = Matrix::Rotate(parse_float(), parse_float(), parse_float(), parse_float());
+			Matrix toPush = toMult * transformStack.top();
+			transformStack.pop();
+			transformStack.push(toPush);
 		} else if (command == "scale") {
 			// Get the scaling matrix
-			if (push) {
-				Matrix toMult = Matrix::Scale(parse_float(), parse_float(), parse_float());
-				Matrix toPush = toMult * transformStack.top();
-				transformStack.pop();
-				transformStack.push(toPush);
-			}
+			Matrix toMult = Matrix::Scale(parse_float(), parse_float(), parse_float());
+			Matrix toPush = toMult * transformStack.top();
+			transformStack.pop();
+			transformStack.push(toPush);
 		} else if (command == "pushTransform") {
 			// Push the incoming transformations onto transformation stack
-			push = true;
+			transformStack.push(identity);
 		} else if (command == "popTransform") {
 			// Pop one matrix off the transformation stack
-			push = false;
 			transformStack.pop();
-			if (transformStack.size() == 0) transformStack.push(identity);
 		} else if (command == "point") {
 			Light* light = new PointLight(
 				parse_float(),
