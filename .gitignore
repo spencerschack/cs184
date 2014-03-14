@@ -1,1 +1,10 @@
-raytracer.dSYM
+hw0
+as1
+hw2/ray_tracer
+*.o
+#*.*#
+*.bmp
+*.ppm
+*.png
+*~
+hw2/raytracer.dSYM/*
