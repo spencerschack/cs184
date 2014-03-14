@@ -1,6 +1,8 @@
 #ifndef SAMPLER_H
 #define SAMPLER_H
 
+#include "options.h"
+
 class Sampler {
 
 	int current = 0;

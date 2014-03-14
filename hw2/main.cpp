@@ -23,8 +23,8 @@
 #include "src/transformation.cpp"
 #include "src/intersection.cpp"
 #include "src/primitive.cpp"
-#include "src/aggregate_primitive.cpp"
 #include "src/geometric_primitive.cpp"
+#include "src/aggregate_primitive.cpp"
 #include "src/material.cpp"
 
 using namespace std;

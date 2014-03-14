@@ -2,6 +2,7 @@
 #define OPTIONS_H
 
 #include <vector>
+#include <fstream>
 
 #include "primitive.h"
 #include "aggregate_primitive.h"

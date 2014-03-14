@@ -20,7 +20,7 @@ public:
 
 	GeometricPrimitive(Transformation& world_to_obj, Shape& s);
 
-	bool intersect(const Ray& ray, float& t_hit, Intersection& in);
+	bool intersect(const Ray& ray, float& t_hit, Intersection& in) const;
 
 	void getBRDF(LocalGeo& local, BRDF& brdf);
 
