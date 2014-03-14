@@ -9,6 +9,7 @@
 #include "geometric_primitive.h"
 #include "sphere.h"
 #include "directional_light.h"
+#include "point_light.h"
 
 using namespace std;
 
@@ -157,13 +158,15 @@ Options::Options(char* commands_filename) {
 			transformStack.pop();
 			if (transformStack.size() == 0) transformStack.push(identity);
 		} else if (command == "point") {
-			//	Parse next args as point 
+			Light* light = new PointLight(
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float());
 		} else if (command == "attenuation") {
 			//	Sets attenuation
-		} else if (command == "specular") {
-			//	Sets specular coefficients
-		} else if (command == "shininess") {
-			//	Sets shininess coefficient (specular power)
 		} else if (command == "emission") {
 			// Set emissive color of the surface
 		} else if(command == "diffuse") {

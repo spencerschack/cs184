@@ -17,6 +17,7 @@
 #include "src/film.cpp"
 #include "src/light.cpp"
 #include "src/directional_light.cpp"
+#include "src/point_light.cpp"
 #include "src/shape.cpp"
 #include "src/sphere.cpp"
 #include "src/triangle.cpp"
