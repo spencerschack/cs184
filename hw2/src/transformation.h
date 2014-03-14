@@ -9,19 +9,21 @@ class Transformation {
 
 public:
 
+	Transformation();
+
 	Transformation(Matrix& matrix);
 
 	Transformation inverse();
 
-	Vector operator*(Vector& vector);
+	Vector operator*(const Vector& vector);
 
-	Point operator*(Point& point);
+	Point operator*(const Point& point);
 
-	Normal operator*(Normal& normal);
+	Normal operator*(const Normal& normal);
 
-	Ray operator*(Ray& ray);
+	Ray operator*(const Ray& ray);
 
-	LocalGeo operator*(LocalGeo& local);
+	LocalGeo operator*(const LocalGeo& local);
 
 };
 

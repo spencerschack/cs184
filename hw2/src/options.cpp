@@ -3,6 +3,10 @@
 
 #include "options.h"
 #include "scene.h"
+#include "matrix.h"
+#include "transformation.h"
+#include "geometric_primitive.h"
+#include "sphere.h"
 
 using namespace std;
 
@@ -66,9 +70,16 @@ Options::Options(char* commands_filename) {
 			camera_up_z = parse_float();
 			camera_fov_y = parse_float();
 		} else if(command == "sphere") {
-			Transformation transformation;
-			GeometricPrimitive primitive(transformation, Sphere());
-			root_primitive.primitives.push_back(primitive);
+			Matrix translate = Matrix::Translation(
+				parse_float(),
+				parse_float(),
+				parse_float());
+			Matrix scale = Matrix::Scale(parse_float());
+			Matrix matrix = translate * scale;
+			Transformation transformation(matrix);
+			Sphere sphere;
+			GeometricPrimitive primitive(transformation, sphere);
+			root_primitive.primitives.push_back(&primitive);
 		}
 	}
 	if(width == 0) {

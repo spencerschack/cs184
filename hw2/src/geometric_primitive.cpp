@@ -1,11 +1,11 @@
 #include "geometric_primitive.h"
 
 GeometricPrimitive::GeometricPrimitive(Transformation& world_to_obj, Shape& shape) :
-	world_to_obj(wto), shape(shape) {
+	world_to_obj(world_to_obj), shape(shape) {
 	obj_to_world = world_to_obj.inverse();
 };
 
-bool GeometricPrimitive::intersect(Ray& ray, float& t_hit, Intersection& in) {
+bool GeometricPrimitive::intersect(const Ray& ray, float& t_hit, Intersection& in) {
 	Ray obj_ray = world_to_obj * ray;
 	LocalGeo obj_local;
 	float t_test;

@@ -8,13 +8,13 @@
 
 using namespace std;
 
-class AggregatePrimitive {
+class AggregatePrimitive : public Primitive {
 
 public:
 
 	vector<Primitive*> primitives;
 
-	bool intersect(Ray& ray, float& t_hit, Intersection& in);
+	bool intersect(const Ray& ray, float& t_hit, Intersection& in) const;
 
 	void getBRDF(LocalGeo& local, BRDF& brdf);
 

@@ -37,6 +37,10 @@ Matrix Matrix::Translation(float x, float y, float z) {
 		0, 0, 0, 1);
 }
 
+Matrix Matrix::Scale(float s) {
+	return Matrix::Scale(s, s, s);
+}
+
 Matrix Matrix::Scale(float x, float y, float z) {
 	return Matrix(
 		x, 0, 0, 0,
@@ -46,7 +50,7 @@ Matrix Matrix::Scale(float x, float y, float z) {
 }
 
 Matrix Matrix::inverse() {
-	
+	exit(1);
 }
 
 Matrix Matrix::operator*(Matrix& factor) {

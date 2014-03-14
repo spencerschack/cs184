@@ -1,6 +1,6 @@
 #include "aggregate_primitive.h"
 
-bool AggregatePrimitive::intersect(Ray& ray, float& t_hit, Intersection& in) {
+bool AggregatePrimitive::intersect(const Ray& ray, float& t_hit, Intersection& in) const {
 	int len = primitives.size(), i;
 	float t_min = std::numeric_limits<float>::infinity(), t_test;
 	Intersection in_min, in_test;

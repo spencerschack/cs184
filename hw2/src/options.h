@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "primitive.h"
+#include "aggregate_primitive.h"
+#include "light.h"
 
 using namespace std;
 
@@ -28,6 +30,8 @@ private:
 public:
 
 	AggregatePrimitive root_primitive;
+
+	vector<Light> lights;
 
 	string filename;
 

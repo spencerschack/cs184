@@ -19,6 +19,8 @@ public:
 
 	static Matrix Translation(float x, float y, float z);
 
+	static Matrix Scale(float s);
+
 	static Matrix Scale(float x, float y, float z);
 
 	Matrix inverse();

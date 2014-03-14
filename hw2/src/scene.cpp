@@ -14,7 +14,7 @@ int Scene::render() {
 	Color color;
 	while(sampler.generate_sample(sample)) {
 		camera.generate_ray(sample, ray);
-		raytracer.trace(ray, color, options.maxdepth);
+		raytracer.trace(options, ray, color, options.maxdepth);
 		film.commit(sample, color);
 	}
 	return film.write_image();
