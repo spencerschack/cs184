@@ -13,6 +13,10 @@ public:
 
 	void print();
 
+	void reset();
+
+	Color operator=(const Color& color);
+
 	Color operator+(const Color& color);
 
 	Color operator-(const Color& color);

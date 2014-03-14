@@ -8,11 +8,15 @@ class Intersection {
 
 public:
 
-	Intersection(LocalGeo& local, Primitive& primitive);
+	Intersection();
+
+	Intersection(LocalGeo& local, Primitive* primitive);
 
 	LocalGeo local;
 
-	Primitive& primitive;
+	Primitive* primitive;
+
+	Intersection operator=(Intersection& in);
 
 };
 

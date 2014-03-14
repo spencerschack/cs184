@@ -22,6 +22,8 @@
 #include "src/triangle.cpp"
 #include "src/intersection.cpp"
 #include "src/primitive.cpp"
+#include "src/aggregate_primitive.cpp"
+#include "src/geometric_primitive.cpp"
 
 using namespace std;
 

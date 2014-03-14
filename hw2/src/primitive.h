@@ -13,6 +13,8 @@ class Primitive {
 
 public:
 
+	Primitive();
+
 	bool intersect(Ray& ray, float& t_hit, Intersection& in);
 
 	void getBRDF(LocalGeo& local, BRDF& brdf);

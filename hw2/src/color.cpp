@@ -8,6 +8,19 @@ void Color::print() {
 	printf("Color<r: %f, g: %f, b: %f>\n", r, g, b);
 }
 
+void Color::reset() {
+	r = 0;
+	b = 0;
+	g = 0;
+}
+
+Color Color::operator=(const Color& color) {
+	r = color.r;
+	g = color.g;
+	b = color.b;
+	return *this;
+};
+
 Color Color::operator+(const Color& color) {
 	return Color(r + color.r, g + color.g, b + color.b);
 };

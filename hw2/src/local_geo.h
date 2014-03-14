@@ -12,6 +12,8 @@ public:
 
 	Normal normal;
 
+	LocalGeo();
+
 	LocalGeo(Point position, Normal normal);
 
 };
