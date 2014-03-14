@@ -241,6 +241,14 @@ Normal Matrix::operator*(const Normal& normal) const {
   return Normal(*this * Vector(normal.x, normal.y, normal.z));
 };
 
-Ray Matrix::operator*(const Ray& ray) const;
+Ray Matrix::operator*(const Ray& ray) const {
+  Point p = *this * ray.position;
+  Vector dir = *this * ray.direction;
+  return Ray(p, dir);
+}
 
-LocalGeo Matrix::operator*(const LocalGeo& local) const;
+LocalGeo Matrix::operator*(const LocalGeo& local) const {
+  Point point = *this * local.position;
+  Normal normal = *this * local.normal;
+  return LocalGeo(point, normal);   
+}
