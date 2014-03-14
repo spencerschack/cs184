@@ -116,16 +116,18 @@ Options::Options(char* commands_filename) {
 				Point(v[parse_uint()]),
 				Point(v[parse_uint()]),
 				Point(v[parse_uint()]));
+			Transformation transform(transformStack.top());
 			GeometricPrimitive* primitive =
-				new GeometricPrimitive(transformStack.top(), triangle, material);
+				new GeometricPrimitive(transform, triangle, material);
 			root_primitive.primitives.push_back(primitive);
 		} else if (command == "trinormal") {
 			Triangle* triangle = new Triangle(
 				LocalGeo(vn[parse_uint()]),
 				LocalGeo(vn[parse_uint()]),
 				LocalGeo(vn[parse_uint()]));
+			Transformation transform(transformStack.top());
 			GeometricPrimitive* primitive =
-				new GeometricPrimitive(transformStack.top(), triangle, material);
+				new GeometricPrimitive(transform, triangle, material);
 			root_primitive.primitives.push_back(primitive);
 		} else if (command == "translate") {
 			// Get translation matrix
