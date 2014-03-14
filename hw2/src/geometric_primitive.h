@@ -18,7 +18,7 @@ public:
 
 	Shape* shape;
 
-	GeometricPrimitive(Transformation& world_to_obj, Shape* s, Material& material);
+	GeometricPrimitive(Transformation& obj_to_world, Shape* s, Material& material);
 
 	bool intersect(const Ray& ray, float& t_hit, Intersection& in) const;
 

@@ -56,6 +56,7 @@ float Vector::magnitude() const {
 
 void Vector::normalize() {
 	float mag = magnitude();
+	if(mag == 0) { return; }
 	x /= mag;
 	y /= mag;
 	z /= mag;
