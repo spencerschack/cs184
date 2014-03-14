@@ -9,22 +9,22 @@ Transformation Transformation::inverse() {
 	return Transformation(inverse);
 };
 
-Vector operator*(const Vector& vector) {
+Vector Transformation::operator*(const Vector& vector) const {
 	exit(1);
 };
 
-Point Transformation::operator*(const Point& point) {
+Point Transformation::operator*(const Point& point) const {
 	exit(1);
 };
 
-Normal Transformation::operator*(const Normal& normal) {
+Normal Transformation::operator*(const Normal& normal) const {
 	exit(1);
 };
 
-Ray Transformation::operator*(const Ray& ray) {
+Ray Transformation::operator*(const Ray& ray) const {
 	exit(1);
 };
 
-LocalGeo Transformation::operator*(const LocalGeo& local) {
+LocalGeo Transformation::operator*(const LocalGeo& local) const {
 	exit(1);
 };

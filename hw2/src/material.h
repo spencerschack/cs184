@@ -11,9 +11,9 @@ public:
 
 	Material();
 
-	Material(BRDF b);
+	Material(BRDF& b);
 
-	void getBRDF(LocalGeo& local, BRDF& brdf);
+	void getBRDF(LocalGeo& local, BRDF& brdf) const;
 
 };
 

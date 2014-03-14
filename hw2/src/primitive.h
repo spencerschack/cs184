@@ -17,7 +17,7 @@ public:
 
 	virtual bool intersect(const Ray& ray, float& t_hit, Intersection& in) const = 0;
 
-	virtual void getBRDF(LocalGeo& local, BRDF& brdf) = 0;
+	virtual void getBRDF(LocalGeo& local, BRDF& brdf) const = 0;
 
 };
 

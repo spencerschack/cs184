@@ -14,7 +14,7 @@ public:
 
 	LocalGeo local;
 
-	Primitive* primitive;
+	const Primitive* primitive;
 
 	Intersection operator=(Intersection& in);
 

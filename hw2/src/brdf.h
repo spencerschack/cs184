@@ -13,7 +13,7 @@ public:
 
 	BRDF(Color kd, Color ks, Color ka, Color kr);
 
-	BRDF operator=(BRDF& brdf);
+	BRDF operator=(const BRDF& brdf);
 
 };
 

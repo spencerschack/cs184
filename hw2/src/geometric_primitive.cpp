@@ -16,6 +16,6 @@ bool GeometricPrimitive::intersect(const Ray& ray, float& t_hit, Intersection& i
 	return true;
 }
 
-void GeometricPrimitive::getBRDF(LocalGeo& local, BRDF& brdf) {
+void GeometricPrimitive::getBRDF(LocalGeo& local, BRDF& brdf) const {
 	material.getBRDF(local, brdf);
 }

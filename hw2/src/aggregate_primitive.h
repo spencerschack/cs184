@@ -16,7 +16,7 @@ public:
 
 	bool intersect(const Ray& ray, float& t_hit, Intersection& in) const;
 
-	void getBRDF(LocalGeo& local, BRDF& brdf);
+	void getBRDF(LocalGeo& local, BRDF& brdf) const;
 
 };
 

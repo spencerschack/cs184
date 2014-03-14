@@ -2,10 +2,10 @@
 
 Material::Material() { };
 
-Material::Material(BRDF b) {
+Material::Material(BRDF& b) {
 	constantBRDF = b;
 }
 
-void Material::getBRDF(LocalGeo& local, BRDF& brdf) {
+void Material::getBRDF(LocalGeo& local, BRDF& brdf) const {
 	brdf = constantBRDF;
 }
