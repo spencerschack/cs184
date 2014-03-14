@@ -10,7 +10,7 @@ public:
 
 	Light();
 
-	LightRay generate_ray(const LocalGeo& local);
+	virtual void generate_ray(const LocalGeo& local, Ray& ray, Color& color) const = 0;
 	
 };
 

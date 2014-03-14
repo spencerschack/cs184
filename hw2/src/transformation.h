@@ -10,9 +10,9 @@
 
 class Transformation {
 
-	Matrix matrix, minvt;
-
 public:
+
+	Matrix matrix, minvt;
 
 	Transformation();
 

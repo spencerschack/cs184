@@ -25,7 +25,7 @@ Camera::Camera(const Options& options) {
 	z.normalize();
 	// Assumes the view plane is 1 unit away from the camera position.
 	float world_height = tan(options.camera_fov_y);
-	v = up * world_height;
+	v = y * world_height;
 	u = x * (width / height * world_height);
 };
 
@@ -40,5 +40,7 @@ void Camera::generate_ray(const Sample& sample, Ray& ray) {
 		// Add the camera's direction to the view plane to move it 1 unit away
 		// along the z-axis;
 		z;
+	sample.print();
+	ray.direction.print();
 	ray.position = position;
 };

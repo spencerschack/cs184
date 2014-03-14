@@ -80,6 +80,16 @@ Options::Options(char* commands_filename) {
 			Sphere* sphere = new Sphere();
 			GeometricPrimitive* primitive = new GeometricPrimitive(transformation, sphere);
 			root_primitive.primitives.push_back(primitive);
+		} else if(command == "diffuse") {
+
+		} else if(command == "directional") {
+			Light light = new DirectionalLight(
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float());
 		}
 	}
 	if(width == 0) {

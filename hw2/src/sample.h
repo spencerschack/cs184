@@ -11,7 +11,7 @@ public:
 
 	float x, y;
 
-	void print();
+	void print() const;
 
 };
 

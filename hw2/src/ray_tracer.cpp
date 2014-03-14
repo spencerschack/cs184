@@ -11,10 +11,12 @@ void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsi
 	const AggregatePrimitive& primitive = options.root_primitive;
 	if(!primitive.intersect(ray, t_hit, in)) { return; }
 	BRDF brdf;
-	in.primitive->getBRDF(in.local, brdf);
-	const vector<Light>& lights = options.lights;
+	//in.primitive->getBRDF(in.local, brdf);
+	const vector<Light*>& lights = options.lights;
+	Light light;
 	int len = lights.size(), i;
 	for(i = 0; i < len; i++) {
-
+		light = *lights[i];
+		
 	}
 };

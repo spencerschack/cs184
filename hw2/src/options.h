@@ -32,7 +32,7 @@ public:
 
 	AggregatePrimitive root_primitive;
 
-	vector<Light> lights;
+	vector<Light*> lights;
 
 	string filename;
 
