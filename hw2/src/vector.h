@@ -17,21 +17,21 @@ public:
 
 	Vector operator=(const Vector& vector);
 
-	Vector operator+(const Vector& vector);
+	Vector operator+(const Vector& vector) const;
 
-	Vector operator-(const Vector& vector);
+	Vector operator-(const Vector& vector) const;
 
-	Vector operator-();
+	Vector operator-() const;
 
-	Vector operator*(float factor);
+	Vector operator*(float factor) const;
 
-	Vector operator/(float divisor);
+	Vector operator/(float divisor) const;
 
-	float dot(const Vector& vector);
+	float dot(const Vector& vector) const;
 
-	Vector cross(const Vector& vector);
+	Vector cross(const Vector& vector) const;
 
-	float magnitude();
+	float magnitude() const;
 
 	void normalize();
 

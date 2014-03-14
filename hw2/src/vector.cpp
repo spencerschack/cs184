@@ -19,38 +19,38 @@ Vector Vector::operator=(const Vector& vector) {
 	return *this;
 }
 
-Vector Vector::operator+(const Vector& vector) {
+Vector Vector::operator+(const Vector& vector) const {
 	return Vector(x + vector.x, y + vector.y, z + vector.z);
 };
 
-Vector Vector::operator-(const Vector& vector) {
+Vector Vector::operator-(const Vector& vector) const {
 	return Vector(x - vector.x, y - vector.y, z - vector.z);
 };
 
-Vector Vector::operator-() {
+Vector Vector::operator-() const {
 	return Vector(-x, -y, -z);
 }
 
-Vector Vector::operator*(float factor) {
+Vector Vector::operator*(float factor) const {
 	return Vector(x * factor, y * factor, z * factor);
 };
 
-Vector Vector::operator/(float divisor) {
+Vector Vector::operator/(float divisor) const {
 	return Vector(x / divisor, y / divisor, z / divisor);
 };
 
-float Vector::dot(const Vector& vector) {
+float Vector::dot(const Vector& vector) const {
 	return x * vector.x + y * vector.y + z * vector.z;
 }
 
-Vector Vector::cross(const Vector& vector) {
+Vector Vector::cross(const Vector& vector) const {
 	return Vector(
 		y * vector.z - z * vector.y,
 		-x * vector.z + z * vector.x,
 		x * vector.y - y * vector.x);
 }
 
-float Vector::magnitude() {
+float Vector::magnitude() const {
 	return sqrt(x * x + y * y + z * z);
 }
 
