@@ -46,9 +46,7 @@ Normal Normal::cross(const Normal& normal) const {
 }
 
 Normal Normal::reflect(const Normal& normal) const {
-	// This is the negation of some reflection formulas because we want the
-	// reflection across the normal, not against the plane the normal defines.
-	return Normal(normal * dot(normal) * 2 - Vector(x, y, z));
+	return Normal(Vector(x, y, z) - normal * dot(normal) * 2);
 }
 
 void Normal::normalize() {
