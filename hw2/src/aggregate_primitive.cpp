@@ -23,5 +23,6 @@ bool AggregatePrimitive::intersect(const Ray& ray, float& t_hit, Intersection& i
 }
 
 void AggregatePrimitive::getBRDF(LocalGeo& local, BRDF& brdf) const {
+	printf("AggregatePrimitive::getBRDF should not be called.\n");
 	exit(1);
 }

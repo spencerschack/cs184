@@ -59,6 +59,18 @@ Matrix Matrix::Scale(float x, float y, float z) {
 		0, 0, 0, 1);
 }
 
+Matrix Matrix::transpose() {
+  float tmp;
+  int x, y;
+  Matrix transposed;
+  for(y = 0; y < 4; y++) {
+    for(x = 0; x < 4; x++) {
+      transposed.matrix[y][x] = matrix[x][y];
+    }
+  }
+  return transposed;
+}
+
 Matrix Matrix::inverse() {
 	float invOut[16];
 	float m[16];
@@ -208,3 +220,13 @@ Matrix Matrix::operator*(Matrix& factor) {
 	}
 	return product;
 }
+
+Vector operator*(const Vector& vector);
+
+Point operator*(const Point& point);
+
+Normal operator*(const Normal& normal);
+
+Ray operator*(const Ray& ray);
+
+LocalGeo operator*(const LocalGeo& local);

@@ -1,6 +1,12 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
+#include "vector.h"
+#include "point.h"
+#include "normal.h"
+#include "ray.h"
+#include "local_geo.h"
+
 class Matrix {
 
 private:
@@ -27,9 +33,19 @@ public:
 
 	Matrix inverse();
 
+	Matrix transpose();
+
 	Matrix operator*(Matrix& matrix);
 
 	Vector operator*(const Vector& vector);
+
+	Point operator*(const Point& point);
+
+	Normal operator*(const Normal& normal);
+
+	Ray operator*(const Ray& ray);
+
+	LocalGeo operator*(const LocalGeo& local);
 
 };
 

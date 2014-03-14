@@ -2,6 +2,11 @@
 #define TRANSFORMATION_H
 
 #include "matrix.h"
+#include "vector.h"
+#include "point.h"
+#include "normal.h"
+#include "ray.h"
+#include "local_geo.h"
 
 class Transformation {
 
