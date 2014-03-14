@@ -80,7 +80,7 @@ Matrix Matrix::Rotate(float x, float y, float z, float degree) {
   float txz = t * x * z;
   float sx = s * x;
   float sy = s * y;
-  float xz = x * z;
+  float sz = s * z;
   toRet[0] = tx2 + c;
   toRet[1] = txy - sz;
   toRet[2] = txz + sy;
