@@ -1,5 +1,6 @@
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "options.h"
 #include "scene.h"
@@ -50,7 +51,12 @@ void Options::fail() {
 Options::Options(char* commands_filename) {
 	ifstream commands(commands_filename);
 	Material material;
-	material.brdf.ka = Color(0.2, 0.2, 0.2);
+	material.brdf.ka = Color(0.2, 0.2, 0.2);	
+	std::stack<Matrix> transformStack;
+	std::vector<Point> v;
+	std::vector<LocalGeo> vn;
+	Matrix identity = Matrix(im);
+	transformStack.push(identity);
 	while(getline(commands, line)) {
 		if(line.empty() || line[0] == '#') { continue; }
 		string command = parse_string();
@@ -84,6 +90,82 @@ Options::Options(char* commands_filename) {
 			GeometricPrimitive* primitive =
 				new GeometricPrimitive(transformation, sphere, material);
 			root_primitive.primitives.push_back(primitive);
+		} else if (command == "maxverts") { 
+			// Always check thet vector v does not grow bigger than this
+			maxvertex = parse_uint(); 
+		} else if (command == "maxvertsnorms") { 
+			// Always check thet vector vn does not grow bigger than this
+			maxvertexnormal = parse_uint();
+		} else if (command == "vertex") {
+			// Put this vertex in the vertex vector if size(v) <= maxverts
+			if (v.size() <= maxvertex) {
+				v.push_back(Point(parse_float(), parse_float(), parse_float()));
+			}
+		} else if (command == "vertexnormal") {
+			// Put the vertexes and vertexnormals in the vertexnormal vector if size(vn) <= maxvertsnorms
+			if (vn.size() <= maxvertexnormal) {
+				vn.push_back(LocalGeo(
+							Point(parse_float(), parse_float(), parse_float()), 
+							Normal(Vector(parse_float(), parse_float(), parse_float()))));
+			}
+		} else if (command == "tri") {
+			// Take next 3 numbers as vertex indexes
+			// And put them into a triangle
+			Matrix tr = transformStack.top();
+			triangles.push_back(new Triangle(tr * (Point(v[parse_uint()])),
+											 tr * (Point(v[parse_uint()])),
+											 tr * (Point(v[parse_uint()]))));
+			transformStack.pop();
+			transformStack.push(tr);
+		} else if (command == "trinormal") {
+			Matrix tr = transformStack.top();
+			trianglesN.push_back(new Triangle(tr * (LocalGeo(vn[parse_uint()])),
+											  tr * (LocalGeo(vn[parse_uint()])),
+											  tr * (LocalGeo(vn[parse_uint()]))));
+			transformStack.pop();
+			transformStack.push(tr);
+		} else if (command == "translate") {
+			// Get translation matrix
+			if (push) {
+				Matrix toMult = Matrix::Translation(parse_float(), parse_float(), parse_float());
+				Matrix toPush = toMult * transformStack.top();
+				transformStack.pop();
+				transformStack.push(toPush);
+			}
+		} else if (command == "rotate") {
+			// Get the rotation matrix
+			if (push) {
+				Matrix toMult = Matrix::Rotate(parse_float(), parse_float(), parse_float(), parse_float());
+				Matrix toPush = toMult * transformStack.top();
+				transformStack.pop();
+				transformStack.push(toPush);
+			}
+		} else if (command == "scale") {
+			// Get the scaling matrix
+			if (push) {
+				Matrix toMult = Matrix::Scale(parse_float(), parse_float(), parse_float());
+				Matrix toPush = toMult * transformStack.top();
+				transformStack.pop();
+				transformStack.push(toPush);
+			}
+		} else if (command == "pushTransform") {
+			// Push the incoming transformations onto transformation stack
+			push = true;
+		} else if (command == "popTransform") {
+			// Pop one matrix off the transformation stack
+			push = false;
+			transformStack.pop();
+			if (transformStack.size() == 0) transformStack.push(identity);
+		} else if (command == "point") {
+			//	Parse next args as point 
+		} else if (command == "attenuation") {
+			//	Sets attenuation
+		} else if (command == "specular") {
+			//	Sets specular coefficients
+		} else if (command == "shininess") {
+			//	Sets shininess coefficient (specular power)
+		} else if (command == "emission") {
+			// Set emissive color of the surface
 		} else if(command == "diffuse") {
 			material.brdf.kd.r = parse_float();
 			material.brdf.kd.g = parse_float();

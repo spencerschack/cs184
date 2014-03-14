@@ -65,6 +65,15 @@ Matrix Matrix::Scale(float x, float y, float z) {
 		0, 0, 0, 1);
 }
 
+Matrix Matrix::Rotate(float x, float y, float z, float degree) {
+  printf("Implement rotation matrix!");
+  return Matrix(
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0);
+}
+
 void Matrix::print() {
   printf("Matrix<{");
   int x, y;

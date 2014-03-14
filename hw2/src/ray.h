@@ -1,6 +1,8 @@
 #ifndef RAY_H
 #define RAY_H
 
+#include <limits>
+
 #include "point.h"
 #include "vector.h"
 

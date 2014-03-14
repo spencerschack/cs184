@@ -3,10 +3,16 @@
 
 #include <vector>
 #include <fstream>
+#include <stack>
 
 #include "primitive.h"
 #include "aggregate_primitive.h"
 #include "light.h"
+#include "matrix.h"
+#include "point.h"
+#include "local_geo.h"
+#include "sphere.h"
+#include "triangle.h"
 
 using namespace std;
 
@@ -36,7 +42,13 @@ public:
 
 	string filename;
 
-	unsigned int width, height, maxdepth = 5;
+	std::vector<Triangle*> triangles;
+
+	std::vector<Triangle*> trianglesN;
+
+	std::vector<Sphere*> spheres;
+
+	unsigned int width, height, maxdepth, maxvertex = 0, maxvertexnormal = 0;
 
 	Point camera_position;
 
@@ -46,6 +58,9 @@ public:
 
 	Options(char* commands_filename);
 
+	float im[16] = {1,0,0,0,0,1,0,1,0,0,1,0,0,0,0,1};
+
+	bool push = false;
 };
 
 #endif
