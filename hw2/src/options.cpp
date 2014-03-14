@@ -165,6 +165,7 @@ Options::Options(char* commands_filename) {
 				parse_float(),
 				parse_float(),
 				parse_float());
+			lights.push_back(light);
 		} else if (command == "attenuation") {
 			//	Sets attenuation
 		} else if (command == "emission") {

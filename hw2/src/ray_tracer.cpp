@@ -40,6 +40,6 @@ Color RayTracer::shading(const LocalGeo& local, const BRDF& brdf,
 	// Specular.
 	Normal viewer = Normal(local.position - camera);
 	Normal reflection = light_normal.reflect(local.normal);
-	color += brdf.ks * light_color * pow(fmax(0.0, viewer.dot(reflection)), brdf.sp);
+	//color += brdf.ks * light_color * pow(fmax(0.0, viewer.dot(reflection)), brdf.sp);
 	return color;
 }
