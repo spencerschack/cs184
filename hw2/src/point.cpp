@@ -11,3 +11,10 @@ Vector Point::operator-(const Point& point) {
 Point Point::operator+(const Vector& vector) {
 	return Point(x + vector.x, y + vector.y, z + vector.z);
 }
+
+Point Point::operator=(const Point& point) {
+	x = point.x;
+	y = point.y;
+	z = point.z;
+	return *this;
+}

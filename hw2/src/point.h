@@ -17,6 +17,8 @@ public:
 
 	Point operator+(const Vector& vector);
 
+	Point operator=(const Point& point);
+
 };
 
 #endif

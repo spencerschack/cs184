@@ -21,6 +21,8 @@ public:
 
 	Normal operator-(const Normal& normal);
 
+	Vector operator*(float factor);
+
 	Normal cross(const Normal& normal);
 
 private:

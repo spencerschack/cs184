@@ -8,6 +8,17 @@ Vector::Vector(float x, float y, float z) : x(x), y(y), z(z) { };
 
 Vector::Vector(const Vector& vector) : x(vector.x), y(vector.y), z(vector.z) { };
 
+void Vector::print() {
+	printf("Vector<x: %f, y: %f, z: %f>\n", x, y, z);
+}
+
+Vector Vector::operator=(const Vector& vector) {
+	x = vector.x;
+	y = vector.y;
+	z = vector.z;
+	return *this;
+}
+
 Vector Vector::operator+(const Vector& vector) {
 	return Vector(x + vector.x, y + vector.y, z + vector.z);
 };
@@ -15,6 +26,10 @@ Vector Vector::operator+(const Vector& vector) {
 Vector Vector::operator-(const Vector& vector) {
 	return Vector(x - vector.x, y - vector.y, z - vector.z);
 };
+
+Vector Vector::operator-() {
+	return Vector(-x, -y, -z);
+}
 
 Vector Vector::operator*(float factor) {
 	return Vector(x * factor, y * factor, z * factor);
@@ -37,4 +52,11 @@ Vector Vector::cross(const Vector& vector) {
 
 float Vector::magnitude() {
 	return sqrt(x * x + y * y + z * z);
+}
+
+void Vector::normalize() {
+	float mag = magnitude();
+	x /= mag;
+	y /= mag;
+	z /= mag;
 }

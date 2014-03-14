@@ -13,9 +13,15 @@ public:
 
 	float x, y, z;
 
+	void print();
+
+	Vector operator=(const Vector& vector);
+
 	Vector operator+(const Vector& vector);
 
 	Vector operator-(const Vector& vector);
+
+	Vector operator-();
 
 	Vector operator*(float factor);
 
@@ -26,6 +32,8 @@ public:
 	Vector cross(const Vector& vector);
 
 	float magnitude();
+
+	void normalize();
 
 };
 

@@ -1,20 +1,28 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "vector.h"
+#include "point.h"
+#include "normal.h"
 #include "ray.h"
 #include "sample.h"
+#include "options.h"
 
 class Camera {
 
-public:
+private:
+
+	float width, height;
 
 	Point position;
 
-	Vector direction, up;
+	Vector x, y, z;
 
-	float fov;
+	Vector u, v;
 
-	Camera();
+public:
+
+	Camera(const Options& options);
 
 	void generate_ray(const Sample& sample, Ray& ray);
 

@@ -9,7 +9,7 @@ public:
 
 	int width, height;
 
-	Sampler(int width, int height);
+	Sampler(const Options& options);
 
 	bool generate_sample(Sample& sample);
 

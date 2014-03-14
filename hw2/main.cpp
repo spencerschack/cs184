@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 		printf("USAGE: raytracer commands.txt\n");
 		exit(1);
 	}
-	Scene scene;
-	Options(argv[1], scene);
+	Options options(argv[1]);
+	Scene scene(options);
 	return scene.render();
 }

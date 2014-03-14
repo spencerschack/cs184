@@ -1,23 +1,19 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "camera.h"
+#include "options.h"
 
 using namespace std;
 
 class Scene {
 
+private:
+
+	const Options& options;
+
 public:
 
-	Scene();
-
-	Camera camera;
-
-	string filename;
-
-	unsigned int width, height, maxdepth;
-
-	float camera_fov;
+	Scene(const Options& options);
 
 	int render();
 	

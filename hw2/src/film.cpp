@@ -4,7 +4,8 @@
 using namespace std;
 using namespace lodepng;
 
-Film::Film(int width, int height) : width(width), height(height) {
+Film::Film(const Options& options) :
+	width(options.width), height(options.height), filename(options.filename) {
 	film = vector<Color>(height * width);
 };
 
@@ -13,7 +14,7 @@ void Film::commit(const Sample& sample, const Color& color) {
 	film.at(y * width + x) = color;
 }
 
-int Film::write_to_file(string filename) {
+int Film::write_image() {
 	int length = width * height, i;
 	unsigned char image[3 * length];
 	Color color;

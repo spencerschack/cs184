@@ -10,7 +10,7 @@ public:
 
 	RayTracer();
 
-	void trace(const Ray& ray, Color& color, int depth);
+	void trace(const Ray& ray, Color& color, unsigned int depth);
 
 };
 

@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 
 #include "options.h"
 #include "scene.h"
@@ -41,44 +42,45 @@ void Options::fail() {
 	exit(1);
 }
 
-Options::Options(char* commands_filename, Scene& scene) {
+Options::Options(char* commands_filename) {
 	ifstream commands(commands_filename);
 	while(getline(commands, line)) {
 		if(line.empty() || line[0] == '#') { continue; }
 		string command = parse_string();
 		if(command == "size") {
-			scene.width = parse_uint();
-			scene.height = parse_uint();
+			width = parse_uint();
+			height = parse_uint();
 		} else if(command == "maxdepth") {
-			scene.maxdepth = parse_uint();
+			maxdepth = parse_uint();
 		} else if(command == "output") {
-			scene.filename = parse_string();
+			filename = parse_string();
 		} else if(command == "camera") {
-			scene.camera.position.x = parse_float();
-			scene.camera.position.y = parse_float();
-			scene.camera.position.z = parse_float();
-			scene.camera.direction.x = parse_float();
-			scene.camera.direction.y = parse_float();
-			scene.camera.direction.z = parse_float();
-			scene.camera.up.x = parse_float();
-			scene.camera.up.y = parse_float();
-			scene.camera.up.z = parse_float();
-			scene.camera.fov = parse_float();
+			camera_position_x = parse_float();
+			camera_position_y = parse_float();
+			camera_position_z = parse_float();
+			camera_direction_x = parse_float();
+			camera_direction_y = parse_float();
+			camera_direction_z = parse_float();
+			camera_up_x = parse_float();
+			camera_up_y = parse_float();
+			camera_up_z = parse_float();
+			camera_fov_y = parse_float();
 		} else if(command == "sphere") {
 
 		}
 	}
-	if(scene.width == 0) {
-		printf("Must specify a non-zero width, got: '%d'.\n", scene.width);
+	if(width == 0) {
+		printf("Must specify a non-zero width, got: '%d'.\n", width);
 		fail();
 	}
-	if(scene.height == 0) {
-		printf("Must specify a non-zero height, got: '%d'.\n", scene.height);
+	if(height == 0) {
+		printf("Must specify a non-zero height, got: '%d'.\n", height);
 		fail();
 	}
-	if(scene.filename.empty()) {
+	if(filename.empty()) {
 		printf("Must specify a filename.\n");
 		fail();
 	}
+	if(maxdepth == 0) { maxdepth = 5; }
 	commands.close();
 }

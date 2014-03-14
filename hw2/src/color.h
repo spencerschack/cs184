@@ -11,6 +11,8 @@ public:
 
 	float r, g, b;
 
+	void print();
+
 	Color operator+(const Color& color);
 
 	Color operator-(const Color& color);

@@ -19,6 +19,10 @@ Normal Normal::operator-(const Normal& normal) {
 	return Normal(x - normal.x, y - normal.y, z - normal.z);
 }
 
+Vector Normal::operator*(float factor) {
+	return Vector(x * factor, y * factor, z * factor);
+}
+
 Normal Normal::cross(const Normal& normal) {
 	return Normal(
 		y * normal.z - z * normal.y,

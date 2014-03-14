@@ -11,6 +11,8 @@ public:
 
 	float x, y;
 
+	void print();
+
 };
 
 #endif

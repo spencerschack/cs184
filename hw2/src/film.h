@@ -5,6 +5,7 @@
 
 #include "sample.h"
 #include "color.h"
+#include "options.h"
 
 using namespace std;
 
@@ -16,13 +17,15 @@ private:
 
 public:
 
-	Film(int width, int height);
+	Film(const Options& options);
+
+	string filename;
 
 	int width, height;
 
 	void commit(const Sample& sample, const Color& color);
 
-	int write_to_file(string filename);
+	int write_image();
 
 };
 

@@ -1,6 +1,7 @@
 #include "sampler.h"
 
-Sampler::Sampler(int width, int height) : width(width), height(height) { };
+Sampler::Sampler(const Options& options) :
+	width(options.width), height(options.height) { };
 
 bool Sampler::generate_sample(Sample& sample) {
 	if(current >= width * height) { return false; }
