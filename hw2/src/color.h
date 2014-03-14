@@ -17,17 +17,21 @@ public:
 
 	Color operator=(const Color& color);
 
-	Color operator+(const Color& color);
+	Color operator+(const Color& color) const;
 
-	Color operator-(const Color& color);
+	Color operator+=(const Color& color);
 
-	Color operator*(const Color& color);
+	Color operator-(const Color& color) const;
 
-	Color operator/(const Color& color);
+	Color operator*(const Color& color) const;
 
-	Color operator*(float factor);
+	Color operator/(const Color& color) const;
 
-	Color operator/(float divisor);
+	Color operator*(float factor) const;
+
+	Color operator/(float divisor) const;
+
+	bool black();
 
 };
 

@@ -1,7 +1,8 @@
 # Generates a sphere with ambient, diffuse, and specular shading.
-size 100 100
-camera -1 -1 -1 1 1 1 0 1 0 30
-diffuse 0.1 0.1 0.9
-sphere 1 1 1 1
-directional 0 2 2 1 1 1
+size 300 300
+camera -4 -4 -4 1 1 1 0 1 0 55
+diffuse 0.3 0.3 0.8
+ambient 0.05 0.05 0.2
+sphere 6 7 8 2
+directional 10 10 5 0.5 0.5 0.5
 output raytracer.png

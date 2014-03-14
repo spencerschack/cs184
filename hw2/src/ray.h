@@ -1,8 +1,12 @@
 #ifndef RAY_H
 #define RAY_H
 
+#include <float.h>
+
 #include "point.h"
 #include "vector.h"
+
+using namespace std;
 
 class Ray {
 
@@ -18,7 +22,7 @@ public:
 	
 	Vector direction;
 
-	float t_min, t_max;
+	float t_min = FLT_EPSILON, t_max = numeric_limits<float>::infinity();
 
 	void print();
 

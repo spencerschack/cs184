@@ -19,13 +19,17 @@ public:
 
 	Normal operator=(const Normal& normal);
 
-	Normal operator+(const Normal& normal);
+	Normal operator+(const Normal& normal) const;
 
-	Normal operator-(const Normal& normal);
+	Normal operator-(const Normal& normal) const;
 
-	Vector operator*(float factor);
+	Vector operator*(float factor) const;
 
-	Normal cross(const Normal& normal);
+	float dot(const Normal& normal) const;
+
+	Normal cross(const Normal& normal) const;
+
+	Normal reflect(const Normal& normal) const;
 
 private:
 

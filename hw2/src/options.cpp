@@ -7,6 +7,7 @@
 #include "transformation.h"
 #include "geometric_primitive.h"
 #include "sphere.h"
+#include "directional_light.h"
 
 using namespace std;
 
@@ -48,6 +49,8 @@ void Options::fail() {
 
 Options::Options(char* commands_filename) {
 	ifstream commands(commands_filename);
+	Material material;
+	material.brdf.ka = Color(0.2, 0.2, 0.2);
 	while(getline(commands, line)) {
 		if(line.empty() || line[0] == '#') { continue; }
 		string command = parse_string();
@@ -59,15 +62,15 @@ Options::Options(char* commands_filename) {
 		} else if(command == "output") {
 			filename = parse_string();
 		} else if(command == "camera") {
-			camera_position_x = parse_float();
-			camera_position_y = parse_float();
-			camera_position_z = parse_float();
-			camera_direction_x = parse_float();
-			camera_direction_y = parse_float();
-			camera_direction_z = parse_float();
-			camera_up_x = parse_float();
-			camera_up_y = parse_float();
-			camera_up_z = parse_float();
+			camera_position.x = parse_float();
+			camera_position.y = parse_float();
+			camera_position.z = parse_float();
+			camera_direction.x = parse_float();
+			camera_direction.y = parse_float();
+			camera_direction.z = parse_float();
+			camera_up.x = parse_float();
+			camera_up.y = parse_float();
+			camera_up.z = parse_float();
 			camera_fov_y = parse_float();
 		} else if(command == "sphere") {
 			Matrix translate = Matrix::Translation(
@@ -78,18 +81,26 @@ Options::Options(char* commands_filename) {
 			Matrix matrix = translate * scale;
 			Transformation transformation(matrix);
 			Sphere* sphere = new Sphere();
-			GeometricPrimitive* primitive = new GeometricPrimitive(transformation, sphere);
+			GeometricPrimitive* primitive =
+				new GeometricPrimitive(transformation, sphere, material);
 			root_primitive.primitives.push_back(primitive);
 		} else if(command == "diffuse") {
-
+			material.brdf.kd.r = parse_float();
+			material.brdf.kd.g = parse_float();
+			material.brdf.kd.b = parse_float();
+		} else if(command == "ambient") {
+			material.brdf.ka.r = parse_float();
+			material.brdf.ka.g = parse_float();
+			material.brdf.ka.b = parse_float();
 		} else if(command == "directional") {
-			Light light = new DirectionalLight(
+			Light* light = new DirectionalLight(
 				parse_float(),
 				parse_float(),
 				parse_float(),
 				parse_float(),
 				parse_float(),
 				parse_float());
+			lights.push_back(light);
 		}
 	}
 	if(width == 0) {
@@ -104,6 +115,5 @@ Options::Options(char* commands_filename) {
 		printf("Must specify a filename.\n");
 		fail();
 	}
-	if(maxdepth == 0) { maxdepth = 5; }
 	commands.close();
 }

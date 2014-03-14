@@ -7,11 +7,11 @@ class Material {
 
 public:
 
-	BRDF constantBRDF;
+	BRDF brdf;
 
 	Material();
 
-	Material(BRDF& b);
+	Material(BRDF& brdf);
 
 	void getBRDF(LocalGeo& local, BRDF& brdf) const;
 

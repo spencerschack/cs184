@@ -1,10 +1,11 @@
 #ifndef DIRECTIONAL_LIGHT
 #define DIRECTIONAL_LIGHT
 
+#include "light.h"
 #include "color.h"
 #include "point.h"
 
-class DirectionalLight {
+class DirectionalLight : public Light {
 
 public:
 
