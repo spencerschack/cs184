@@ -7,3 +7,4 @@ hw2/ray_tracer
 *.ppm
 *.png
 *~
+hw2/raytracer.dSYM/*
