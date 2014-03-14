@@ -44,3 +44,16 @@ Matrix Matrix::Scale(float x, float y, float z) {
 		0, 0, z, 0,
 		0, 0, 0, 1);
 }
+
+Matrix Matrix::operator*(Matrix& factor) {
+	Matrix product;
+	int i, j, k;
+	for(i = 0; i < 4; i++) {
+		for(j = 0; j < 4; j++) {
+			for(k = 0; k < 4; k++) {
+				product.matrix[i][j] += matrix[i][k] * factor.matrix[k][j];
+			}
+		}
+	}
+	return product;
+}
