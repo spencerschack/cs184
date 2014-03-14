@@ -1,6 +1,10 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#include <vector>
+
+#include "primitive.h"
+
 using namespace std;
 
 class Options {
@@ -22,6 +26,8 @@ private:
 	void fail();
 
 public:
+
+	vector<Primitive*> primitives;
 
 	string filename;
 

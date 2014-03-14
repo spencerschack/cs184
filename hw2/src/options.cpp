@@ -66,7 +66,7 @@ Options::Options(char* commands_filename) {
 			camera_up_z = parse_float();
 			camera_fov_y = parse_float();
 		} else if(command == "sphere") {
-
+			
 		}
 	}
 	if(width == 0) {

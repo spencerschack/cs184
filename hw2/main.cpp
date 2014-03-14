@@ -6,6 +6,7 @@
 #include "src/normal.cpp"
 #include "src/local_geo.cpp"
 #include "src/color.cpp"
+#include "src/brdf.cpp"
 #include "src/ray.cpp"
 #include "src/sample.cpp"
 #include "src/sampler.cpp"
@@ -19,6 +20,8 @@
 #include "src/shape.cpp"
 #include "src/sphere.cpp"
 #include "src/triangle.cpp"
+#include "src/intersection.cpp"
+#include "src/primitive.cpp"
 
 using namespace std;
 
