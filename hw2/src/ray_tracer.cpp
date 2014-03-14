@@ -22,7 +22,6 @@ void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsi
 	int len = lights.size(), i;
 	for(i = 0; i < len; i++) {
 		lights[i]->generate_ray(in.local, light_ray, light_color);
-		light_ray.position.print();
 		if(!primitive.intersect(light_ray)) {
 			color += shading(in.local, brdf, options.camera_position, light_ray, light_color);
 		}
@@ -41,6 +40,6 @@ Color RayTracer::shading(const LocalGeo& local, const BRDF& brdf,
 	// Specular.
 	Normal viewer = Normal(local.position - camera);
 	Normal reflection = light_normal.reflect(local.normal);
-	//color += brdf.ks * light_color * pow(fmax(0.0, viewer.dot(reflection)), brdf.sp);
+	color += brdf.ks * light_color * pow(fmax(0.0, viewer.dot(reflection)), brdf.sp);
 	return color;
 }

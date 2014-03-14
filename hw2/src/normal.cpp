@@ -5,11 +5,15 @@
 
 Normal::Normal() : x(0), y(0), z(0) { };
 
-Normal::Normal(const Vector& vector) : x(vector.x), y(vector.y), z(vector.x) {
+Normal::Normal(const Vector& vector) : x(vector.x), y(vector.y), z(vector.z) {
 	normalize();
 };
 
-Normal::Normal(const Normal& normal) : x(normal.x), y(normal.y), z(normal.x) { };
+Normal::Normal(const Normal& normal) : x(normal.x), y(normal.y), z(normal.z) { };
+
+void Normal::print() const {
+	printf("Normal<x: %f, y: %f, z: %f>\n", x, y, z);
+}
 
 Normal Normal::operator=(const Normal& normal) {
 	x = normal.x;

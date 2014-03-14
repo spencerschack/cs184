@@ -8,7 +8,7 @@ Vector::Vector(float x, float y, float z) : x(x), y(y), z(z) { };
 
 Vector::Vector(const Vector& vector) : x(vector.x), y(vector.y), z(vector.z) { };
 
-void Vector::print() {
+void Vector::print() const {
 	printf("Vector<x: %f, y: %f, z: %f>\n", x, y, z);
 }
 

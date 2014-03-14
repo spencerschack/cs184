@@ -13,7 +13,7 @@ public:
 
 	float x, y, z;
 
-	void print();
+	void print() const;
 
 	Vector operator=(const Vector& vector);
 

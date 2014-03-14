@@ -17,6 +17,8 @@ public:
 
 	Normal(const Normal& vector);
 
+	void print() const;
+
 	Normal operator=(const Normal& normal);
 
 	Normal operator+(const Normal& normal) const;

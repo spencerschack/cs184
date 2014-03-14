@@ -52,7 +52,7 @@ public:
 
 	std::vector<Sphere*> spheres;
 
-	unsigned int width = 640, height = 480, maxdepth, maxvertex = 0, maxvertexnormal = 0;
+	unsigned int width = 640, height = 480, maxdepth = 5, maxvertex = 0, maxvertexnormal = 0;
 
 	Point camera_position;
 
