@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "matrix.h"
 
 Matrix::Matrix() {
@@ -66,12 +68,36 @@ Matrix Matrix::Scale(float x, float y, float z) {
 }
 
 Matrix Matrix::Rotate(float x, float y, float z, float degree) {
-  printf("Implement rotation matrix!");
-  return Matrix(
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0,
-    0, 0, 0, 0);
+  float toRet[16];
+  float c = cos(degree * M_PI / 180);
+  float s = sin(degree * M_PI / 180);
+  float t = 1.0 - c;
+  float tx2 = t * pow(x, 2.0);
+  float ty2 = t * pow(y, 2.0);
+  float tz2 = t * pow(z, 2.0);
+  float txy = t * x * y;
+  float tyz = t * y * z;
+  float txz = t * x * z;
+  float sx = s * x;
+  float sy = s * y;
+  float xz = x * z;
+  toRet[0] = tx2 + c;
+  toRet[1] = txy - sz;
+  toRet[2] = txz + sy;
+  toRet[3] = 0;
+  toRet[4] = txy + sz;
+  toRet[5] = ty2 + c;
+  toRet[6] = tyz - sx;
+  toRet[7] = 0;
+  toRet[8] = txz - sy;
+  toRet[9] = tyz + sx;
+  toRet[10] = tz2 + c;
+  toRet[11] = 0;
+  toRet[12] = 0;
+  toRet[13] = 0;
+  toRet[14] = 0;
+  toRet[15] = 1;
+  return Matrix(toRet);
 }
 
 void Matrix::print() const {

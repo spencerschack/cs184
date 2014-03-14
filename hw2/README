@@ -13,6 +13,9 @@ http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/
 How to get Inverse of a 4x4 matrix: 
 http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
 
+How to get Rotation Matrix from x,y,z,theta (in degrees):
+http://www.fastgraph.com/makegames/3drotation/
+
 Libraries Used
 --------------------------------------------------------------------------------
 LodePNG - http://lodev.org/lodepng/
