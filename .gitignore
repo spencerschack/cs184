@@ -8,3 +8,4 @@ hw2/ray_tracer
 *.png
 *~
 hw2/raytracer.dSYM/*
+hw2/raytracer
