@@ -4,7 +4,14 @@ Spencer Schack and Aditya Kaulagi
 
 Resource Used
 --------------------------------------------------------------------------------
-Ray-Sphere Intersection: http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
+Ray-Sphere Intersection: 
+http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
+
+Ray-Triangle Intersection: 
+http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
+
+How to get Inverse of a 4x4 matrix: 
+http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
 
 Libraries Used
 --------------------------------------------------------------------------------
