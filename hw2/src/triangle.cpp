@@ -3,6 +3,7 @@
 
 #include "triangle.h"
 
+// Vertexes are ALWAYS in teh counter clockwise direction
 Triangle::Triangle(Point v1, Point v2, Point v3) : v1(v1), v2(v2), v3(v3) { };
 
 // Returns intersection point and normal to it if given ray intersects the sphere

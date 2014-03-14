@@ -80,6 +80,89 @@ Options::Options(char* commands_filename) {
 			Sphere* sphere = new Sphere();
 			GeometricPrimitive* primitive = new GeometricPrimitive(transformation, sphere);
 			root_primitive.primitives.push_back(primitive);
+		} else if (command == "maxverts") { 
+			// Always check thet vector v does not grow bigger than this
+			maxverts = parse_uint(); 
+		} else if (command == "maxvertsnorms") { 
+			// Always check thet vector vn does not grow bigger than this
+			maxvertsnorms = parse_uint();
+		} else if (command == "vertex") {
+			// Put this vertex in the vertex vector if size(v) <= maxverts
+			if (v.size() <= maxverts) {
+				v.push_back(new Point(parse_float(), parse_float(), parse_float()));
+			}
+		} else if (command == "vertexnormal") {
+			// Put the vertexes and vertexnormals in the vertexnormal vector if size(vn) <= maxvertsnorms
+			if (vn.size() <= maxvertsnorms) {
+				v.push_back(new LocalGeo(
+							new Point(parse_float(), parse_float(), parse_float()), 
+							new Normal(new Vector(parse_float(), parse_float(), parse_float()));
+			}
+		} else if (command == "tri") {
+			// Take next 3 numbers as vertex indexes
+			// And put them into a triangle
+			Matrix tr = transformStack.top();
+			triangles.push_back(new Triangle(tr * (new Point(v[parse_uint()])),
+											 tr * (new Point(v[parse_uint()])),
+											 tr * (new Point(v[parse_uint()]))));
+			transformStack.pop();
+			transformStack.push(tr);
+		} else if (command == "trinormal") {
+			Matrix tr = transformStack.top();
+			trianglesN.push_back(new Triangle(tr * (new LocalGeo(vn[parse_uint()])),
+											  tr * (new LocalGeo(vn[parse_uint()])),
+											  tr * (new LocalGeo(vn[parse_uint()]))));
+			transformStack.pop();
+			transformStack.push(tr);
+		} else if (command == "translate") {
+			// Get translation matrix
+			if (push) {
+				Matrix toMult = new Matrix::translation(parse_float(), parse_float(), parse_float());
+				Matrix toPush = toMult * transformStack.top();
+				transformStack.pop();
+				transformStack.push(toPush);
+			}
+		} else if (command == "rotate") {
+			// Get the rotation matrix
+			if (push) {
+				Matrix toMult = new Matrix::rotate(parse_float(), parse_float(), parse_float(), parse_float());
+				Matrix toPush = toMult * transformStack.top();
+				transformStack.pop();
+				transformStack.push(toPush);
+			}
+		} else if (command == "scale") {
+			// Get the scaling matrix
+			if (push) {
+				Matrix toMult = new Matrix::scale(parse_float(), parse_float(), parse_float());
+				Matrix toPush = toMult * transformStack.top();
+				transformStack.pop();
+				transformStack.push(toPush);
+			}
+		} else if (command == "pushTransform") {
+			// Push the incoming transformations onto transformation stack
+			push = true;
+		} else if (command == "popTransform") {
+			// Pop one matrix off the transformation stack
+			push = false;
+			transformStack.pop();
+			if (transformStack.size() == 0) transformStack.push(im);
+		} else if (command == "directional") {
+			// Parse next args as light
+			
+		} else if (command == "point") {
+			//	Parse next args as point 
+		} else if (command == "attenuation") {
+			//	Sets attenuation
+		} else if (command == "ambient") {
+			//	Sets ambient light source
+		} else if (command == "diffuse") {
+			//	Sets diffuse coefficients
+		} else if (command == "specular") {
+			//	Sets specular coefficients
+		} else if (command == "shininess") {
+			//	Sets shininess coefficient (specular power)
+		} else if (command == "emission") {
+			// Set emissive color of the surface
 		}
 	}
 	if(width == 0) {

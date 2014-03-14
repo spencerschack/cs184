@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <fstream>
+#include <stack>
 
 #include "primitive.h"
 #include "aggregate_primitive.h"
@@ -36,7 +37,19 @@ public:
 
 	string filename;
 
-	unsigned int width, height, maxdepth;
+	std::stack<Matrix> transformStack;
+
+	std::vector<Point> v;
+
+	std::vector<LocalGeo> vn;
+
+	std::vector<Triangle> triangles;
+
+	std::vector<Triangle> trianglesN;
+
+	stf::vector<Sphere> spheres;
+
+	unsigned int width, height, maxdepth, maxvertex = 0, maxvertexnormal = 0;
 
 	float camera_position_x, camera_position_y, camera_position_z,
 		camera_direction_x, camera_direction_y, camera_direction_z,
@@ -44,6 +57,9 @@ public:
 
 	Options(char* commands_filename);
 
+	float im[16] = {1,0,0,0,0,1,0,1,0,0,1,0,0,0,0,1};
+	Matrix identity = new Matrix(im);
+	transformStack.push(identity);
 };
 
 #endif
