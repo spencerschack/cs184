@@ -5,7 +5,10 @@
 
 class Sampler {
 
-	int current = 0;
+	int pixel = 0;
+	int sub = 0;
+
+	bool antialias;
 
 public:
 
