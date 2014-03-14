@@ -1,5 +1,7 @@
 #include "brdf.h"
 
+BRDF::BRDF() { };
+
 BRDF::BRDF(Color kd, Color ks, Color ka, Color kr) :
 	kd(kd), ks(ks), ka(ka), kr(kr) { };
 

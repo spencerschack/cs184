@@ -1,12 +1,11 @@
-class Material {
-public:
-	BRDF constantBRDF;
+#include "material.h"
 
-	Material(BRDF b) {
-		constantBRDF = b;
-	}
+Material::Material() { };
 
-	void getBRDF(LocalGeo& local, BREF& brdf) {
-		brdf = constantBRDF;
-	}
+Material::Material(BRDF b) {
+	constantBRDF = b;
+}
+
+void Material::getBRDF(LocalGeo& local, BRDF& brdf) {
+	brdf = constantBRDF;
 }

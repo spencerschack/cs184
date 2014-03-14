@@ -6,10 +6,13 @@
 #include "shape.h"
 #include "ray.h"
 #include "brdf.h"
+#include "material.h"
 
 class GeometricPrimitive : public Primitive {
 
 public:
+
+	Material material;
 
 	Transformation& obj_to_world, world_to_obj;
 

@@ -15,9 +15,9 @@ public:
 
 	Primitive();
 
-	bool intersect(Ray& ray, float& t_hit, Intersection& in);
+	virtual bool intersect(Ray& ray, float& t_hit, Intersection& in) = 0;
 
-	void getBRDF(LocalGeo& local, BRDF& brdf);
+	virtual void getBRDF(LocalGeo& local, BRDF& brdf) = 0;
 
 };
 

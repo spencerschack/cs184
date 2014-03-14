@@ -9,6 +9,8 @@ public:
 
 	Color kd, ks, ka, kr;
 
+	BRDF();
+
 	BRDF(Color kd, Color ks, Color ka, Color kr);
 
 	BRDF operator=(BRDF& brdf);
