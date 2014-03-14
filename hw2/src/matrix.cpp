@@ -227,8 +227,18 @@ Vector Matrix::operator*(const Vector& vector) {
 
 Point Matrix::operator*(const Point& point);
 
-Normal Matrix::operator*(const Normal& normal);
+Normal Matrix::operator*(const Normal& normal) {
+  
+}
 
-Ray Matrix::operator*(const Ray& ray);
+Ray Matrix::operator*(const Ray& ray) {
+  Point p = this * ray->position;
+  Vector dir = this * ray->direction;
+  return Ray(p, dir);
+}
 
-LocalGeo Matrix::operator*(const LocalGeo& local);
+LocalGeo Matrix::operator*(const LocalGeo& local) {
+  Point p = local->position * this;
+  Normal normal = local->normal * this;
+  return LocalGeo(p, normal);   
+}
