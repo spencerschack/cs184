@@ -26,6 +26,10 @@ Normal Normal::operator+(const Normal& normal) const {
 	return Normal(x + normal.x, y + normal.y, z + normal.z);
 }
 
+Normal Normal::operator-() const {
+	return Normal(-x, -y, -z);
+}
+
 Normal Normal::operator-(const Normal& normal) const {
 	return Normal(x - normal.x, y - normal.y, z - normal.z);
 }

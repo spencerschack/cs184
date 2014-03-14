@@ -16,8 +16,8 @@ bool GeometricPrimitive::intersect(const Ray& ray, float& t_hit, Intersection& i
 	return true;
 }
 
-bool GeometricPrimitive::intersect(const Ray& ray) const {
-	return Primitive::intersect(ray);
+bool GeometricPrimitive::intersect(const Ray& ray, const Primitive* ignore) const {
+	return Primitive::intersect(ray, ignore);
 }
 
 void GeometricPrimitive::getBRDF(LocalGeo& local, BRDF& brdf) const {

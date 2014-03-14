@@ -23,6 +23,8 @@ public:
 
 	Normal operator+(const Normal& normal) const;
 
+	Normal operator-() const;
+
 	Normal operator-(const Normal& normal) const;
 
 	Vector operator*(float factor) const;

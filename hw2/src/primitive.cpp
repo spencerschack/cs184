@@ -3,8 +3,8 @@
 
 Primitive::Primitive() { };
 
-bool Primitive::intersect(const Ray& ray) const {
+bool Primitive::intersect(const Ray& ray, const Primitive* ignore) const {
 	float t_hit;
 	Intersection in;
-	return intersect(ray, t_hit, in);
+	return intersect(ray, t_hit, in) && in.primitive != ignore;
 }

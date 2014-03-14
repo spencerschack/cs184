@@ -22,8 +22,8 @@ bool AggregatePrimitive::intersect(const Ray& ray, float& t_hit, Intersection& i
 	return false;
 }
 
-bool AggregatePrimitive::intersect(const Ray& ray) const {
-	return Primitive::intersect(ray);
+bool AggregatePrimitive::intersect(const Ray& ray, const Primitive* ignore) const {
+	return Primitive::intersect(ray, ignore);
 }
 
 void AggregatePrimitive::getBRDF(LocalGeo& local, BRDF& brdf) const {
