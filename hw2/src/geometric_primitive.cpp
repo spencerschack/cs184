@@ -6,13 +6,13 @@ GeometricPrimitive::GeometricPrimitive(Transformation& world_to_obj, Shape* shap
 };
 
 bool GeometricPrimitive::intersect(const Ray& ray, float& t_hit, Intersection& in) const {
-	Ray obj_ray = world_to_obj * ray;
+	Ray obj_ray = obj_to_world * ray;
 	LocalGeo obj_local;
 	float t_test;
 	if(!shape->intersect(obj_ray, t_test, obj_local)) { return false; }
 	t_hit = t_test;
 	in.primitive = this;
-	in.local = obj_to_world * obj_local;
+	in.local = world_to_obj * obj_local;
 	return true;
 }
 
