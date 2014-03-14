@@ -221,12 +221,14 @@ Matrix Matrix::operator*(Matrix& factor) {
 	return product;
 }
 
-Vector operator*(const Vector& vector);
+Vector Matrix::operator*(const Vector& vector) {
 
-Point operator*(const Point& point);
+};
 
-Normal operator*(const Normal& normal);
+Point Matrix::operator*(const Point& point);
 
-Ray operator*(const Ray& ray);
+Normal Matrix::operator*(const Normal& normal);
 
-LocalGeo operator*(const LocalGeo& local);
+Ray Matrix::operator*(const Ray& ray);
+
+LocalGeo Matrix::operator*(const LocalGeo& local);
