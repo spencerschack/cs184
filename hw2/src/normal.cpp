@@ -11,6 +11,13 @@ Normal::Normal(const Vector& vector) : x(vector.x), y(vector.y), z(vector.x) {
 
 Normal::Normal(const Normal& normal) : x(normal.x), y(normal.y), z(normal.x) { };
 
+Normal Normal::operator=(const Normal& normal) {
+	x = normal.x;
+	y = normal.y;
+	z = normal.z;
+	return *this;
+}
+
 Normal Normal::operator+(const Normal& normal) {
 	return Normal(x + normal.x, y + normal.y, z + normal.z);
 }

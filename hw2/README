@@ -2,6 +2,10 @@ Assignment 02 for CS184 Spring 2014
 --------------------------------------------------------------------------------
 Spencer Schack and Aditya Kaulagi
 
+Resource Used
+--------------------------------------------------------------------------------
+Ray-Sphere Intersection: http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection
+
 Libraries Used
 --------------------------------------------------------------------------------
 LodePNG - http://lodev.org/lodepng/

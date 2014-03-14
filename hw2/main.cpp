@@ -16,6 +16,8 @@
 #include "src/film.cpp"
 #include "src/light_ray.cpp"
 #include "src/light.cpp"
+#include "src/shape.cpp"
+#include "src/sphere.cpp"
 
 using namespace std;
 

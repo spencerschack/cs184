@@ -7,7 +7,7 @@ public:
 
 	Shape();
 
-	bool intersect(const Ray& ray, float* t_hit, LocalGeo& local);
+	virtual bool intersect(Ray& ray, float& t_hit, LocalGeo& local);
 
 };
 
