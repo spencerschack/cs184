@@ -46,13 +46,9 @@ public:
 
 	string filename;
 
-	std::vector<Triangle*> triangles;
-
-	std::vector<Triangle*> trianglesN;
-
 	std::vector<Sphere*> spheres;
 
-	unsigned int width = 640, height = 480, maxdepth = 5, maxvertex = 0, maxvertexnormal = 0;
+	unsigned int width = 640, height = 480, maxdepth = 5;
 
 	Point camera_position;
 

@@ -100,40 +100,33 @@ Options::Options(char* commands_filename) {
 			GeometricPrimitive* primitive =
 				new GeometricPrimitive(transformation, sphere, material);
 			root_primitive.primitives.push_back(primitive);
-		} else if (command == "maxverts") { 
-			// Always check thet vector v does not grow bigger than this
-			maxvertex = parse_uint(); 
-		} else if (command == "maxvertsnorms") { 
-			// Always check thet vector vn does not grow bigger than this
-			maxvertexnormal = parse_uint();
+		} else if (command == "maxverts" || command == "maxvertsnorms") { 
+			// We can ignore these because we're using vectors which are
+			// dynamically sized.
 		} else if (command == "vertex") {
-			// Put this vertex in the vertex vector if size(v) <= maxverts
-			if (v.size() <= maxvertex) {
-				v.push_back(Point(parse_float(), parse_float(), parse_float()));
-			}
+			v.push_back(Point(parse_float(), parse_float(), parse_float()));
 		} else if (command == "vertexnormal") {
-			// Put the vertexes and vertexnormals in the vertexnormal vector if size(vn) <= maxvertsnorms
-			if (vn.size() <= maxvertexnormal) {
-				vn.push_back(LocalGeo(
-							Point(parse_float(), parse_float(), parse_float()), 
-							Normal(Vector(parse_float(), parse_float(), parse_float()))));
-			}
+			vn.push_back(LocalGeo(
+				Point(parse_float(), parse_float(), parse_float()), 
+				Normal(parse_float(), parse_float(), parse_float())));
 		} else if (command == "tri") {
 			// Take next 3 numbers as vertex indexes
 			// And put them into a triangle
-			Matrix tr = transformStack.top();
-			triangles.push_back(new Triangle(tr * (Point(v[parse_uint()])),
-											 tr * (Point(v[parse_uint()])),
-											 tr * (Point(v[parse_uint()]))));
-			transformStack.pop();
-			transformStack.push(tr);
+			Triangle* triangle = new Triangle(
+				Point(v[parse_uint()]),
+				Point(v[parse_uint()]),
+				Point(v[parse_uint()]));
+			GeometricPrimitive* primitive =
+				new GeometricPrimitive(transformStack.top(), triangle, material);
+			root_primitive.primitives.push_back(primitive);
 		} else if (command == "trinormal") {
-			Matrix tr = transformStack.top();
-			trianglesN.push_back(new Triangle(tr * (LocalGeo(vn[parse_uint()])),
-											  tr * (LocalGeo(vn[parse_uint()])),
-											  tr * (LocalGeo(vn[parse_uint()]))));
-			transformStack.pop();
-			transformStack.push(tr);
+			Triangle* triangle = new Triangle(
+				LocalGeo(vn[parse_uint()]),
+				LocalGeo(vn[parse_uint()]),
+				LocalGeo(vn[parse_uint()]));
+			GeometricPrimitive* primitive =
+				new GeometricPrimitive(transformStack.top(), triangle, material);
+			root_primitive.primitives.push_back(primitive);
 		} else if (command == "translate") {
 			// Get translation matrix
 			if (push) {
