@@ -92,6 +92,12 @@ Options::Options(char* commands_filename) {
 			material.brdf.ka.r = parse_float();
 			material.brdf.ka.g = parse_float();
 			material.brdf.ka.b = parse_float();
+		} else if(command == "specular") {
+			material.brdf.ks.r = parse_float();
+			material.brdf.ks.g = parse_float();
+			material.brdf.ks.b = parse_float();
+		} else if(command == "shininess") {
+			material.brdf.sp = parse_float();
 		} else if(command == "directional") {
 			Light* light = new DirectionalLight(
 				parse_float(),
@@ -101,6 +107,9 @@ Options::Options(char* commands_filename) {
 				parse_float(),
 				parse_float());
 			lights.push_back(light);
+		} else {
+			cout << "Unknown command: '" << command << "'.\n";
+			exit(1);
 		}
 	}
 	if(width == 0) {

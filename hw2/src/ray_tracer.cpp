@@ -24,10 +24,7 @@ void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsi
 		lights[i]->generate_ray(in.local, light_ray, light_color);
 		if(!primitive.intersect(light_ray)) {
 			color += shading(in.local, brdf, options.camera_position, light_ray, light_color);
-		} else {
-			printf("BAD = ");
 		}
-		light_ray.position.print();
 	}
 	if(!brdf.kr.black()) {
 		// TODO: reflection.

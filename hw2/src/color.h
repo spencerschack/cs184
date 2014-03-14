@@ -11,7 +11,7 @@ public:
 
 	float r, g, b;
 
-	void print();
+	void print() const;
 
 	void reset();
 

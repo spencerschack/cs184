@@ -1,5 +1,4 @@
 #include <cmath>
-#include <cfloat>
 
 #include "triangle.h"
 
@@ -14,7 +13,7 @@ bool Triangle::intersect(Ray& ray, float& t_hit, LocalGeo& local) const {
 	edge2 = Vector(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
 	pvec = ray.direction.cross(edge2);
 	det = edge1.dot(pvec);
-	if(fabs(det) < FLT_EPSILON) { return false; }
+	if(fabs(det) < 0.00001) { return false; }
 	inv_det = 1.0 / det;
 	tvec = ray.position - v1;
 	u = tvec.dot(pvec) * inv_det;

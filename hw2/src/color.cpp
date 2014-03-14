@@ -4,7 +4,7 @@ Color::Color() : r(0), g(0), b(0) { };
 
 Color::Color(float r, float g, float b) : r(r), g(g), b(b) { };
 
-void Color::print() {
+void Color::print() const {
 	printf("Color<r: %f, g: %f, b: %f>\n", r, g, b);
 }
 

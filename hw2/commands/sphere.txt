@@ -2,7 +2,9 @@
 size 300 300
 camera -4 -4 -4 1 1 1 0 1 0 55
 diffuse 0.3 0.3 0.8
-ambient 0.05 0.05 0.2
-sphere 6 7 8 2
-directional 10 10 5 0.5 0.5 0.5
+specular 1 1 1
+shininess 20
+ambient 0.1 0.1 0.5
+sphere 0.5 0.5 0.5 1
+directional -15 15 -5 0.5 0.5 0.5
 output raytracer.png
