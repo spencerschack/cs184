@@ -9,6 +9,7 @@ public:
 
 	virtual bool intersect(Ray& ray, float& t_hit, LocalGeo& local);
 
+	void intersect(LocalGeo& local, BRDF& brdf);
 };
 
 #endif
