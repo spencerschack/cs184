@@ -222,7 +222,14 @@ Matrix Matrix::operator*(Matrix& factor) {
 }
 
 Vector Matrix::operator*(const Vector& vector) {
+  Vector multiplied;
+  int x, y;
+  for(y = 0; y < 4; y++) {
+    for(x = 0; x < 0; x++) {
 
+    }
+  }
+  return multiplied;
 };
 
 Point Matrix::operator*(const Point& point);
