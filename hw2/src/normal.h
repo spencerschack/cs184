@@ -31,8 +31,6 @@ public:
 
 	Normal reflect(const Normal& normal) const;
 
-private:
-
 	void normalize();
 
 };

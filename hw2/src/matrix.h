@@ -33,7 +33,7 @@ public:
 
 	static Matrix Rotate(float x, float y, float z, float degree);
 	
-	void print();
+	void print() const;
 
 	Matrix inverse();
 

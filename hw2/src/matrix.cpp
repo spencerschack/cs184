@@ -74,7 +74,7 @@ Matrix Matrix::Rotate(float x, float y, float z, float degree) {
     0, 0, 0, 0);
 }
 
-void Matrix::print() {
+void Matrix::print() const {
   printf("Matrix<{");
   int x, y;
   for(y = 0; y < 4; y++) {
@@ -266,7 +266,12 @@ Point Matrix::operator*(const Point& point) const {
 };
 
 Normal Matrix::operator*(const Normal& normal) const {
-  return Normal(*this * Vector(normal.x, normal.y, normal.z));
+  Normal multiplied;
+  multiplied.x = matrix[0][0] * normal.x + matrix[0][1] * normal.y + matrix[0][2] * normal.z;
+  multiplied.y = matrix[1][0] * normal.x + matrix[1][1] * normal.y + matrix[1][2] * normal.z;
+  multiplied.z = matrix[2][0] * normal.x + matrix[2][1] * normal.y + matrix[2][2] * normal.z;
+  multiplied.normalize();
+  return multiplied;
 };
 
 Ray Matrix::operator*(const Ray& ray) const {
