@@ -13,6 +13,8 @@ public:
 
 	Point(float x, float y, float z);
 
+	void print() const;
+
 	Vector operator-(const Point& point);
 
 	Point operator+(const Vector& vector);

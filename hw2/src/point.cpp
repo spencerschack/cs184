@@ -4,6 +4,10 @@ Point::Point() : x(0), y(0), z(0) { };
 
 Point::Point(float x, float y, float z) : x(x), y(y), z(z) { };
 
+void Point::print() const {
+	printf("Point<x: %f, y: %f, z: %f>\n", x, y, z);
+}
+
 Vector Point::operator-(const Point& point) {
 	return Vector(x - point.x, y - point.y, z - point.z);
 };

@@ -20,6 +20,8 @@ public:
 
 	float t_min, t_max;
 
+	void print();
+
 };
 
 #endif
