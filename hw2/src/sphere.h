@@ -7,7 +7,7 @@ class Sphere : public Shape {
 
 public:
 
-	bool intersect(Ray& ray, float& t_hit, LocalGeo& local);
+	bool intersect(Ray& ray, float& t_hit, LocalGeo& local) const;
 
 };
 

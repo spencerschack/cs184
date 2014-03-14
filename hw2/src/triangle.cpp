@@ -7,7 +7,7 @@ Triangle::Triangle(Point v1, Point v2, Point v3) : v1(v1), v2(v2), v3(v3) { };
 
 // Returns intersection point and normal to it if given ray intersects the sphere
 // Need to implement "Intersection with ray at t outside range [t_min, t_max] should return false"
-bool Triangle::intersect(Ray& ray, float& t_hit, LocalGeo& local) {
+bool Triangle::intersect(Ray& ray, float& t_hit, LocalGeo& local) const {
 	Vector edge1, edge2, edge3, pvec, qvec, tvec, pointOfInt, normal;
 	float det, inv_det, t, u, v, c1, c2, c3;
 	edge1 = Vector(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);

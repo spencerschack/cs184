@@ -78,8 +78,8 @@ Options::Options(char* commands_filename) {
 			Matrix matrix = translate * scale;
 			Transformation transformation(matrix);
 			Sphere sphere;
-			GeometricPrimitive primitive(transformation, sphere);
-			root_primitive.primitives.push_back(&primitive);
+			GeometricPrimitive* primitive = new GeometricPrimitive(transformation, sphere);
+			root_primitive.primitives.push_back(primitive);
 		}
 	}
 	if(width == 0) {

@@ -2,6 +2,6 @@
 
 Shape::Shape() { };
 
-bool Shape::intersect(Ray& ray, float& t_hit, LocalGeo& local) {
+bool Shape::intersect(Ray& ray, float& t_hit, LocalGeo& local) const {
 	return false;
 };

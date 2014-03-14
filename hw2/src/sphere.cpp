@@ -4,7 +4,7 @@
 
 // Returns intersection point and normal to it if given ray intersects the sphere
 // Need to implement "Intersection with ray at t outside range [t_min, t_max] should return false"
-bool Sphere::intersect(Ray& ray, float& t_hit, LocalGeo& local) {
+bool Sphere::intersect(Ray& ray, float& t_hit, LocalGeo& local) const {
 	// ray.position is a Point, but this formula treats it as a vector.
 	Vector ray_position = Vector(ray.position.x, ray.position.y, ray.position.z);
 	float a = ray.direction.dot(ray.direction);

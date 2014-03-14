@@ -16,7 +16,7 @@ public:
 
 	Transformation obj_to_world, world_to_obj;
 
-	Shape& shape;
+	Shape shape;
 
 	GeometricPrimitive(Transformation& world_to_obj, Shape& s);
 

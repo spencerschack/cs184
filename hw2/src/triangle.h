@@ -11,7 +11,7 @@ public:
 
 	Triangle(Point v1, Point v2, Point v3);
 
-	bool intersect(Ray& ray, float& t_hit, LocalGeo& local);
+	bool intersect(Ray& ray, float& t_hit, LocalGeo& local) const;
 
 };
 
