@@ -208,7 +208,7 @@ Matrix Matrix::inverse() {
     return Matrix(invOut);
 }
 
-Matrix Matrix::operator*(Matrix& factor) {
+Matrix Matrix::operator*(Matrix& factor) const {
 	Matrix product;
 	int i, j, k;
 	for(i = 0; i < 4; i++) {
@@ -221,21 +221,26 @@ Matrix Matrix::operator*(Matrix& factor) {
 	return product;
 }
 
-Vector Matrix::operator*(const Vector& vector) {
+Vector Matrix::operator*(const Vector& vector) const {
   Vector multiplied;
-  int x, y;
-  for(y = 0; y < 4; y++) {
-    for(x = 0; x < 0; x++) {
-
-    }
-  }
+  multiplied.x = matrix[0][0] * vector.x + matrix[0][1] * vector.y + matrix[0][2] * vector.z + matrix[0][3];
+  multiplied.y = matrix[1][0] * vector.x + matrix[1][1] * vector.y + matrix[1][2] * vector.z + matrix[1][3];
+  multiplied.z = matrix[2][0] * vector.x + matrix[2][1] * vector.y + matrix[2][2] * vector.z + matrix[2][3];
   return multiplied;
 };
 
-Point Matrix::operator*(const Point& point);
+Point Matrix::operator*(const Point& point) const {
+  Point multiplied;
+  multiplied.x = matrix[0][0] * point.x + matrix[0][1] * point.y + matrix[0][2] * point.z;
+  multiplied.y = matrix[1][0] * point.x + matrix[1][1] * point.y + matrix[1][2] * point.z;
+  multiplied.z = matrix[2][0] * point.x + matrix[2][1] * point.y + matrix[2][2] * point.z;
+  return multiplied;
+};
 
-Normal Matrix::operator*(const Normal& normal);
+Normal Matrix::operator*(const Normal& normal) const {
+  return Normal(*this * Vector(normal.x, normal.y, normal.z));
+};
 
-Ray Matrix::operator*(const Ray& ray);
+Ray Matrix::operator*(const Ray& ray) const;
 
-LocalGeo Matrix::operator*(const LocalGeo& local);
+LocalGeo Matrix::operator*(const LocalGeo& local) const;

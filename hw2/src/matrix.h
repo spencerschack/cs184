@@ -35,17 +35,17 @@ public:
 
 	Matrix transpose();
 
-	Matrix operator*(Matrix& matrix);
+	Matrix operator*(Matrix& matrix) const;
 
-	Vector operator*(const Vector& vector);
+	Vector operator*(const Vector& vector) const;
 
-	Point operator*(const Point& point);
+	Point operator*(const Point& point) const;
 
-	Normal operator*(const Normal& normal);
+	Normal operator*(const Normal& normal) const;
 
-	Ray operator*(const Ray& ray);
+	Ray operator*(const Ray& ray) const;
 
-	LocalGeo operator*(const LocalGeo& local);
+	LocalGeo operator*(const LocalGeo& local) const;
 
 };
 
