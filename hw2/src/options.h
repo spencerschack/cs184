@@ -30,11 +30,15 @@ private:
 
 	unsigned int parse_uint();
 
+	unsigned int parse_pint();
+
 	float parse_float();
 
 	void fail();
 
 public:
+
+	bool antialias;
 
 	AggregatePrimitive root_primitive;
 
@@ -48,7 +52,7 @@ public:
 
 	std::vector<Sphere*> spheres;
 
-	unsigned int width, height, maxdepth, maxvertex = 0, maxvertexnormal = 0;
+	unsigned int width = 640, height = 480, maxdepth, maxvertex = 0, maxvertexnormal = 0;
 
 	Point camera_position;
 

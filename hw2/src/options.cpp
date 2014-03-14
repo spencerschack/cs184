@@ -34,6 +34,15 @@ int Options::parse_int() {
 unsigned int Options::parse_uint() {
 	int n = parse_int();
 	if(n < 0) {
+		printf("Expected non-negative number, got: '%d'\n.", n);
+		fail();
+	}
+	return (unsigned int) n;
+}
+
+unsigned int Options::parse_pint() {
+	int n = parse_int();
+	if(n <= 0) {
 		printf("Expected positive number, got: '%d'\n.", n);
 		fail();
 	}
@@ -62,10 +71,10 @@ Options::Options(char* commands_filename) {
 		if(line.empty() || line[0] == '#') { continue; }
 		string command = parse_string();
 		if(command == "size") {
-			width = parse_uint();
-			height = parse_uint();
+			width = parse_pint();
+			height = parse_pint();
 		} else if(command == "maxdepth") {
-			maxdepth = parse_uint();
+			maxdepth = parse_pint();
 		} else if(command == "output") {
 			filename = parse_string();
 		} else if(command == "camera") {
@@ -193,18 +202,12 @@ Options::Options(char* commands_filename) {
 				parse_float(),
 				parse_float());
 			lights.push_back(light);
+		} else if(command == "antialias") {
+			antialias = true;
 		} else {
 			cout << "Unknown command: '" << command << "'.\n";
 			exit(1);
 		}
-	}
-	if(width == 0) {
-		printf("Must specify a non-zero width, got: '%d'.\n", width);
-		fail();
-	}
-	if(height == 0) {
-		printf("Must specify a non-zero height, got: '%d'.\n", height);
-		fail();
 	}
 	if(filename.empty()) {
 		printf("Must specify a filename.\n");

@@ -2,6 +2,7 @@
 #define FILM_H
 
 #include <vector>
+#include <utility>
 
 #include "sample.h"
 #include "color.h"
@@ -9,11 +10,16 @@
 
 using namespace std;
 
+struct ColorCount {
+	Color color;
+	int count = 0;
+};
+
 class Film {
 
 private:
 
-	vector<Color> film;
+	vector<ColorCount> film;
 
 public:
 
