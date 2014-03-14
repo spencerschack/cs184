@@ -1,4 +1,4 @@
-#ifndef TRANSFORMATIO_H
+#ifndef TRANSFORMATION_H
 #define TRANSFORMATION_H
 
 #include "matrix.h"

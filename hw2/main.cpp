@@ -18,6 +18,7 @@
 #include "src/light.cpp"
 #include "src/shape.cpp"
 #include "src/sphere.cpp"
+#include "src/triangle.cpp"
 
 using namespace std;
 
