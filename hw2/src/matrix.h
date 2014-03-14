@@ -21,6 +21,8 @@ public:
 
 	static Matrix Scale(float x, float y, float z);
 
+	Matrix inverse();
+
 	Matrix operator*(Matrix& matrix);
 
 	Vector operator*(const Vector& vector);

@@ -2,6 +2,10 @@
 
 Transformation::Transformation(Matrix& matrix) : matrix(matrix) { };
 
+Transformation Transformation::inverse() {
+	return Transformation(matrix.inverse());
+};
+
 Vector operator*(Vector& vector) {
 	exit(1);
 };

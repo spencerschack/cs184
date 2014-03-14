@@ -45,6 +45,10 @@ Matrix Matrix::Scale(float x, float y, float z) {
 		0, 0, 0, 1);
 }
 
+Matrix Matrix::inverse() {
+	
+}
+
 Matrix Matrix::operator*(Matrix& factor) {
 	Matrix product;
 	int i, j, k;

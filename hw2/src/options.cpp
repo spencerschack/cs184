@@ -66,7 +66,9 @@ Options::Options(char* commands_filename) {
 			camera_up_z = parse_float();
 			camera_fov_y = parse_float();
 		} else if(command == "sphere") {
-			
+			Transformation transformation;
+			GeometricPrimitive primitive(transformation, Sphere());
+			root_primitive.primitives.push_back(primitive);
 		}
 	}
 	if(width == 0) {

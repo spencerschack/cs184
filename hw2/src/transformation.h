@@ -11,6 +11,8 @@ public:
 
 	Transformation(Matrix& matrix);
 
+	Transformation inverse();
+
 	Vector operator*(Vector& vector);
 
 	Point operator*(Point& point);

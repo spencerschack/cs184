@@ -5,8 +5,8 @@ bool AggregatePrimitive::intersect(Ray& ray, float& t_hit, Intersection& in) {
 	float t_min = std::numeric_limits<float>::infinity(), t_test;
 	Intersection in_min, in_test;
 	bool intersected = false;
-	for (i = 0; i < len; i++) {
-		if (primitives[i]->intersect(ray, t_test, in_test)) {
+	for(i = 0; i < len; i++) {
+		if(primitives[i]->intersect(ray, t_test, in_test)) {
 			intersected = true;
 			if(t_test < t_min) {
 				t_min = t_test;

@@ -18,7 +18,7 @@ public:
 
 	Shape& shape;
 
-	GeometricPrimitive(Transformation& otw, Transformation& wto, Shape& s);
+	GeometricPrimitive(Transformation& world_to_obj, Shape& s);
 
 	bool intersect(Ray& ray, float& t_hit, Intersection& in);
 

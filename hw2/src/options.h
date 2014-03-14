@@ -27,7 +27,7 @@ private:
 
 public:
 
-	vector<Primitive*> primitives;
+	AggregatePrimitive root_primitive;
 
 	string filename;
 
