@@ -8,11 +8,11 @@ void Point::print() const {
 	printf("Point<x: %f, y: %f, z: %f>\n", x, y, z);
 }
 
-Vector Point::operator-(const Point& point) {
+Vector Point::operator-(const Point& point) const {
 	return Vector(x - point.x, y - point.y, z - point.z);
 };
 
-Point Point::operator+(const Vector& vector) {
+Point Point::operator+(const Vector& vector) const {
 	return Point(x + vector.x, y + vector.y, z + vector.z);
 }
 

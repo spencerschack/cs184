@@ -1,15 +1,21 @@
 #include "matrix.h"
 
-Matrix::Matrix() { };
+Matrix::Matrix() {
+	int i, j;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
+			matrix[i][j] = 0;
+		}
+	}
+};
 
 Matrix::Matrix(float m[16]) {
-	int i, j, k=0;
-    for (i = 0; i < 4; i++) {
-    	for (j = 0; j < 4; j++) {
-    		matrix[i][j] = m[k];
-    		k++;
-    	}
-    }
+	int i, j, k = 0;
+	for(i = 0; i < 4; i++) {
+		for(j = 0; j < 4; j++) {
+			matrix[i][j] = m[k++];
+		}
+	}
 }
 
 Matrix::Matrix(
@@ -57,6 +63,28 @@ Matrix Matrix::Scale(float x, float y, float z) {
 		0, y, 0, 0,
 		0, 0, z, 0,
 		0, 0, 0, 1);
+}
+
+Matrix Matrix::Rotate(float x, float y, float z, float degree) {
+  printf("Implement rotation matrix!");
+  return Matrix(
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0);
+}
+
+void Matrix::print() {
+  printf("Matrix<{");
+  int x, y;
+  for(y = 0; y < 4; y++) {
+    printf("{");
+    for(x = 0; x < 3; x++) {
+      printf("%f, ", matrix[y][x]);
+    }
+    printf("%f}, ", matrix[y][3]);
+  }
+  printf("}>\n");
 }
 
 Matrix Matrix::transpose() {

@@ -18,23 +18,34 @@ Normal Normal::operator=(const Normal& normal) {
 	return *this;
 }
 
-Normal Normal::operator+(const Normal& normal) {
+Normal Normal::operator+(const Normal& normal) const {
 	return Normal(x + normal.x, y + normal.y, z + normal.z);
 }
 
-Normal Normal::operator-(const Normal& normal) {
+Normal Normal::operator-(const Normal& normal) const {
 	return Normal(x - normal.x, y - normal.y, z - normal.z);
 }
 
-Vector Normal::operator*(float factor) {
+Vector Normal::operator*(float factor) const {
 	return Vector(x * factor, y * factor, z * factor);
 }
 
-Normal Normal::cross(const Normal& normal) {
+float Normal::dot(const Normal& normal) const {
+	return x * normal.x + y * normal.y + z * normal.z;
+}
+
+Normal Normal::cross(const Normal& normal) const {
 	return Normal(
 		y * normal.z - z * normal.y,
 		-x * normal.z + z * normal.x,
 		x * normal.y - y * normal.x);
+}
+
+Normal Normal::reflect(const Normal& normal) const {
+	Vector reflection(x, y, z);
+	// This is the negation of some reflection formulas because we want the
+	// reflection across the normal, not against the plane the normal defines.
+	return Normal(reflection * dot(normal) * 2 - reflection);
 }
 
 void Normal::normalize() {

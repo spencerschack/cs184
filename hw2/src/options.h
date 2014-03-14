@@ -8,6 +8,11 @@
 #include "primitive.h"
 #include "aggregate_primitive.h"
 #include "light.h"
+#include "matrix.h"
+#include "point.h"
+#include "local_geo.h"
+#include "sphere.h"
+#include "triangle.h"
 
 using namespace std;
 
@@ -33,33 +38,29 @@ public:
 
 	AggregatePrimitive root_primitive;
 
-	vector<Light> lights;
+	vector<Light*> lights;
 
 	string filename;
 
-	std::stack<Matrix> transformStack;
+	std::vector<Triangle*> triangles;
 
-	std::vector<Point> v;
+	std::vector<Triangle*> trianglesN;
 
-	std::vector<LocalGeo> vn;
-
-	std::vector<Triangle> triangles;
-
-	std::vector<Triangle> trianglesN;
-
-	stf::vector<Sphere> spheres;
+	std::vector<Sphere*> spheres;
 
 	unsigned int width, height, maxdepth, maxvertex = 0, maxvertexnormal = 0;
 
-	float camera_position_x, camera_position_y, camera_position_z,
-		camera_direction_x, camera_direction_y, camera_direction_z,
-		camera_up_x, camera_up_y, camera_up_z, camera_fov_y;
+	Point camera_position;
+
+	Vector camera_direction, camera_up;
+
+	float camera_fov_y;
 
 	Options(char* commands_filename);
 
 	float im[16] = {1,0,0,0,0,1,0,1,0,0,1,0,0,0,0,1};
-	Matrix identity = new Matrix(im);
-	transformStack.push(identity);
+
+	bool push = false;
 };
 
 #endif

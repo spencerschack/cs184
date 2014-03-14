@@ -1,7 +1,7 @@
 #include "geometric_primitive.h"
 
-GeometricPrimitive::GeometricPrimitive(Transformation& world_to_obj, Shape* shape) :
-	world_to_obj(world_to_obj), shape(shape) {
+GeometricPrimitive::GeometricPrimitive(Transformation& world_to_obj, Shape* shape, Material& material) :
+	world_to_obj(world_to_obj), shape(shape), material(material) {
 	obj_to_world = world_to_obj.inverse();
 };
 
@@ -14,6 +14,10 @@ bool GeometricPrimitive::intersect(const Ray& ray, float& t_hit, Intersection& i
 	in.primitive = this;
 	in.local = obj_to_world * obj_local;
 	return true;
+}
+
+bool GeometricPrimitive::intersect(const Ray& ray) const {
+	return Primitive::intersect(ray);
 }
 
 void GeometricPrimitive::getBRDF(LocalGeo& local, BRDF& brdf) const {

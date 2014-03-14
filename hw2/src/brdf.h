@@ -7,13 +7,17 @@ class BRDF {
 
 public:
 
-	Color kd, ks, ka, kr;
+	Color ka, kd, ks, kr, ke;
+
+	float sp;
 
 	BRDF();
 
-	BRDF(Color kd, Color ks, Color ka, Color kr);
+	BRDF(Color ka, Color kd, Color ks, Color kr, Color ke, float sp);
 
 	BRDF operator=(const BRDF& brdf);
+
+	void reset();
 
 };
 

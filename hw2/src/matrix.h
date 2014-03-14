@@ -31,6 +31,10 @@ public:
 
 	static Matrix Scale(float x, float y, float z);
 
+	static Matrix Rotate(float x, float y, float z, float degree);
+	
+	void print();
+
 	Matrix inverse();
 
 	Matrix transpose();

@@ -1,5 +1,6 @@
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "options.h"
 #include "scene.h"
@@ -7,6 +8,7 @@
 #include "transformation.h"
 #include "geometric_primitive.h"
 #include "sphere.h"
+#include "directional_light.h"
 
 using namespace std;
 
@@ -48,6 +50,13 @@ void Options::fail() {
 
 Options::Options(char* commands_filename) {
 	ifstream commands(commands_filename);
+	Material material;
+	material.brdf.ka = Color(0.2, 0.2, 0.2);	
+	std::stack<Matrix> transformStack;
+	std::vector<Point> v;
+	std::vector<LocalGeo> vn;
+	Matrix identity = Matrix(im);
+	transformStack.push(identity);
 	while(getline(commands, line)) {
 		if(line.empty() || line[0] == '#') { continue; }
 		string command = parse_string();
@@ -59,15 +68,15 @@ Options::Options(char* commands_filename) {
 		} else if(command == "output") {
 			filename = parse_string();
 		} else if(command == "camera") {
-			camera_position_x = parse_float();
-			camera_position_y = parse_float();
-			camera_position_z = parse_float();
-			camera_direction_x = parse_float();
-			camera_direction_y = parse_float();
-			camera_direction_z = parse_float();
-			camera_up_x = parse_float();
-			camera_up_y = parse_float();
-			camera_up_z = parse_float();
+			camera_position.x = parse_float();
+			camera_position.y = parse_float();
+			camera_position.z = parse_float();
+			camera_direction.x = parse_float();
+			camera_direction.y = parse_float();
+			camera_direction.z = parse_float();
+			camera_up.x = parse_float();
+			camera_up.y = parse_float();
+			camera_up.z = parse_float();
 			camera_fov_y = parse_float();
 		} else if(command == "sphere") {
 			Matrix translate = Matrix::Translation(
@@ -78,46 +87,47 @@ Options::Options(char* commands_filename) {
 			Matrix matrix = translate * scale;
 			Transformation transformation(matrix);
 			Sphere* sphere = new Sphere();
-			GeometricPrimitive* primitive = new GeometricPrimitive(transformation, sphere);
+			GeometricPrimitive* primitive =
+				new GeometricPrimitive(transformation, sphere, material);
 			root_primitive.primitives.push_back(primitive);
 		} else if (command == "maxverts") { 
 			// Always check thet vector v does not grow bigger than this
-			maxverts = parse_uint(); 
+			maxvertex = parse_uint(); 
 		} else if (command == "maxvertsnorms") { 
 			// Always check thet vector vn does not grow bigger than this
-			maxvertsnorms = parse_uint();
+			maxvertexnormal = parse_uint();
 		} else if (command == "vertex") {
 			// Put this vertex in the vertex vector if size(v) <= maxverts
-			if (v.size() <= maxverts) {
-				v.push_back(new Point(parse_float(), parse_float(), parse_float()));
+			if (v.size() <= maxvertex) {
+				v.push_back(Point(parse_float(), parse_float(), parse_float()));
 			}
 		} else if (command == "vertexnormal") {
 			// Put the vertexes and vertexnormals in the vertexnormal vector if size(vn) <= maxvertsnorms
-			if (vn.size() <= maxvertsnorms) {
-				v.push_back(new LocalGeo(
-							new Point(parse_float(), parse_float(), parse_float()), 
-							new Normal(new Vector(parse_float(), parse_float(), parse_float()));
+			if (vn.size() <= maxvertexnormal) {
+				vn.push_back(LocalGeo(
+							Point(parse_float(), parse_float(), parse_float()), 
+							Normal(Vector(parse_float(), parse_float(), parse_float()))));
 			}
 		} else if (command == "tri") {
 			// Take next 3 numbers as vertex indexes
 			// And put them into a triangle
 			Matrix tr = transformStack.top();
-			triangles.push_back(new Triangle(tr * (new Point(v[parse_uint()])),
-											 tr * (new Point(v[parse_uint()])),
-											 tr * (new Point(v[parse_uint()]))));
+			triangles.push_back(new Triangle(tr * (Point(v[parse_uint()])),
+											 tr * (Point(v[parse_uint()])),
+											 tr * (Point(v[parse_uint()]))));
 			transformStack.pop();
 			transformStack.push(tr);
 		} else if (command == "trinormal") {
 			Matrix tr = transformStack.top();
-			trianglesN.push_back(new Triangle(tr * (new LocalGeo(vn[parse_uint()])),
-											  tr * (new LocalGeo(vn[parse_uint()])),
-											  tr * (new LocalGeo(vn[parse_uint()]))));
+			trianglesN.push_back(new Triangle(tr * (LocalGeo(vn[parse_uint()])),
+											  tr * (LocalGeo(vn[parse_uint()])),
+											  tr * (LocalGeo(vn[parse_uint()]))));
 			transformStack.pop();
 			transformStack.push(tr);
 		} else if (command == "translate") {
 			// Get translation matrix
 			if (push) {
-				Matrix toMult = new Matrix::translation(parse_float(), parse_float(), parse_float());
+				Matrix toMult = Matrix::Translation(parse_float(), parse_float(), parse_float());
 				Matrix toPush = toMult * transformStack.top();
 				transformStack.pop();
 				transformStack.push(toPush);
@@ -125,7 +135,7 @@ Options::Options(char* commands_filename) {
 		} else if (command == "rotate") {
 			// Get the rotation matrix
 			if (push) {
-				Matrix toMult = new Matrix::rotate(parse_float(), parse_float(), parse_float(), parse_float());
+				Matrix toMult = Matrix::Rotate(parse_float(), parse_float(), parse_float(), parse_float());
 				Matrix toPush = toMult * transformStack.top();
 				transformStack.pop();
 				transformStack.push(toPush);
@@ -133,7 +143,7 @@ Options::Options(char* commands_filename) {
 		} else if (command == "scale") {
 			// Get the scaling matrix
 			if (push) {
-				Matrix toMult = new Matrix::scale(parse_float(), parse_float(), parse_float());
+				Matrix toMult = Matrix::Scale(parse_float(), parse_float(), parse_float());
 				Matrix toPush = toMult * transformStack.top();
 				transformStack.pop();
 				transformStack.push(toPush);
@@ -145,24 +155,34 @@ Options::Options(char* commands_filename) {
 			// Pop one matrix off the transformation stack
 			push = false;
 			transformStack.pop();
-			if (transformStack.size() == 0) transformStack.push(im);
-		} else if (command == "directional") {
-			// Parse next args as light
-			
+			if (transformStack.size() == 0) transformStack.push(identity);
 		} else if (command == "point") {
 			//	Parse next args as point 
 		} else if (command == "attenuation") {
 			//	Sets attenuation
-		} else if (command == "ambient") {
-			//	Sets ambient light source
-		} else if (command == "diffuse") {
-			//	Sets diffuse coefficients
 		} else if (command == "specular") {
 			//	Sets specular coefficients
 		} else if (command == "shininess") {
 			//	Sets shininess coefficient (specular power)
 		} else if (command == "emission") {
 			// Set emissive color of the surface
+		} else if(command == "diffuse") {
+			material.brdf.kd.r = parse_float();
+			material.brdf.kd.g = parse_float();
+			material.brdf.kd.b = parse_float();
+		} else if(command == "ambient") {
+			material.brdf.ka.r = parse_float();
+			material.brdf.ka.g = parse_float();
+			material.brdf.ka.b = parse_float();
+		} else if(command == "directional") {
+			Light* light = new DirectionalLight(
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float(),
+				parse_float());
+			lights.push_back(light);
 		}
 	}
 	if(width == 0) {
@@ -177,6 +197,5 @@ Options::Options(char* commands_filename) {
 		printf("Must specify a filename.\n");
 		fail();
 	}
-	if(maxdepth == 0) { maxdepth = 5; }
 	commands.close();
 }

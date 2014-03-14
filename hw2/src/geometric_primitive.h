@@ -18,9 +18,11 @@ public:
 
 	Shape* shape;
 
-	GeometricPrimitive(Transformation& world_to_obj, Shape* s);
+	GeometricPrimitive(Transformation& world_to_obj, Shape* s, Material& material);
 
 	bool intersect(const Ray& ray, float& t_hit, Intersection& in) const;
+
+	bool intersect(const Ray& ray) const;
 
 	void getBRDF(LocalGeo& local, BRDF& brdf) const;
 

@@ -5,18 +5,9 @@
 Camera::Camera(const Options& options) {
 	width = options.width;
 	height = options.height;
-	position = Point(
-		options.camera_position_x,
-		options.camera_position_y,
-		options.camera_position_z);
-	Vector up = Vector(
-		options.camera_up_x,
-		options.camera_up_y,
-		options.camera_up_z);
-	z = Vector(
-		options.camera_direction_x,
-		options.camera_direction_y,
-		options.camera_direction_z);
+	position = options.camera_position;
+	Vector up = options.camera_up;
+	z = options.camera_direction;
 	x = up.cross(z);
 	y = x.cross(z);
 	// Normalize to create an orthonormal basis.
@@ -24,8 +15,8 @@ Camera::Camera(const Options& options) {
 	y.normalize();
 	z.normalize();
 	// Assumes the view plane is 1 unit away from the camera position.
-	float world_height = tan(options.camera_fov_y);
-	v = up * world_height;
+	float world_height = tan(options.camera_fov_y * M_PI / 180);
+	v = y * world_height;
 	u = x * (width / height * world_height);
 };
 

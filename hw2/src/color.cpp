@@ -21,26 +21,37 @@ Color Color::operator=(const Color& color) {
 	return *this;
 };
 
-Color Color::operator+(const Color& color) {
+Color Color::operator+(const Color& color) const {
 	return Color(r + color.r, g + color.g, b + color.b);
 };
 
-Color Color::operator-(const Color& color) {
+Color Color::operator+=(const Color& color) {
+	r += color.r;
+	g += color.g;
+	b += color.b;
+	return *this;
+}
+
+Color Color::operator-(const Color& color) const {
 	return Color(r - color.r, g - color.g, b - color.b);
 };
 
-Color Color::operator*(const Color& color) {
+Color Color::operator*(const Color& color) const {
 	return Color(r * color.r, g * color.g, b * color.b);
 };
 
-Color Color::operator/(const Color& color) {
+Color Color::operator/(const Color& color) const {
 	return Color(r / color.r, g / color.g, b / color.b);
 };
 
-Color Color::operator*(float factor) {
+Color Color::operator*(float factor) const {
 	return Color(r * factor, g * factor, b * factor);
 };
 
-Color Color::operator/(float divisor) {
+Color Color::operator/(float divisor) const {
 	return Color(r / divisor, g / divisor, b / divisor);
 };
+
+bool Color::black() {
+	return r <= 0 && g <= 0 && b <= 0;
+}
