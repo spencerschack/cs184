@@ -15,7 +15,7 @@ public:
 
 	Primitive();
 
-	virtual bool intersect(const Ray& ray, float& t_hit, Intersection& in) const = 0;
+	virtual bool intersect(const Ray& ray, float& t_hit, Intersection& in, const Primitive* ignore) const = 0;
 
 	bool intersect(const Ray& ray, const Primitive* ignore) const;
 

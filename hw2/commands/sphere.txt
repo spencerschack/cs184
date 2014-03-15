@@ -1,6 +1,6 @@
 # Generates a sphere with ambient, diffuse, and specular shading.
-size 800 600
-#antialias
+size 1440 900
+antialias
 camera 1 1 -2 0 0 1 0 1 0 45
 diffuse 0.4 0.4 0.4
 specular 1 1 1

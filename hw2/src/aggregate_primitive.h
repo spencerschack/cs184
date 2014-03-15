@@ -14,7 +14,7 @@ public:
 
 	vector<Primitive*> primitives;
 
-	bool intersect(const Ray& ray, float& t_hit, Intersection& in) const;
+	bool intersect(const Ray& ray, float& t_hit, Intersection& in, const Primitive* ignore) const;
 
 	bool intersect(const Ray& ray, const Primitive* ignore) const;
 

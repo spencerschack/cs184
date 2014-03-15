@@ -5,7 +5,8 @@ GeometricPrimitive::GeometricPrimitive(Transformation& obj_to_world, Shape* shap
 	world_to_obj = obj_to_world.inverse();
 };
 
-bool GeometricPrimitive::intersect(const Ray& ray, float& t_hit, Intersection& in) const {
+bool GeometricPrimitive::intersect(const Ray& ray, float& t_hit, Intersection& in, const Primitive* ignore) const {
+	if(this == ignore) { return false; }
 	Ray obj_ray = world_to_obj * ray;
 	LocalGeo obj_local;
 	float t_test;

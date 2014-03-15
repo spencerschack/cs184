@@ -4,11 +4,15 @@
 RayTracer::RayTracer() { };
 
 void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsigned int depth) {
+	trace(options, ray, color, depth, NULL);
+}
+
+void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsigned int depth, const Primitive* ignore) {
 	color.reset();
 	float t_hit;
 	Intersection in;
 	const AggregatePrimitive& primitive = options.root_primitive;
-	if(!primitive.intersect(ray, t_hit, in)) { return; }
+	if(!primitive.intersect(ray, t_hit, in, ignore)) { return; }
 	BRDF brdf;
 	in.primitive->getBRDF(in.local, brdf);
 	// Material ambient light.
@@ -28,7 +32,8 @@ void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsi
 	if(!brdf.kr.black() && depth > 1) {
 		Ray reflected_ray = ray.reflect(in.local);
 		Color reflected_color;
-		trace(options, reflected_ray, reflected_color, depth - 1);
+		// Pass in.primitive to stop self reflection.
+		trace(options, reflected_ray, reflected_color, depth - 1, in.primitive);
 		color += brdf.kr * reflected_color;
 	}
 };

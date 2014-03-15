@@ -1,0 +1,10 @@
+camera 0 0 -5 0 0 0 0 1 0 45
+ambient 0.2 0.2 0.9
+diffuse 0.5 0.5 0.5
+specular 0.9 0.9 0.9
+shininess 100
+reflectivity 0.5 0.5 0.5
+sphere 1.1 0 0 1
+sphere -1.1 0 0 1
+point 3 3 -3 0.5 0.5 0.5
+output raytracer.png
