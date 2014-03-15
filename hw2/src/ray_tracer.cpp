@@ -38,11 +38,15 @@ Color RayTracer::shading(const LocalGeo& local, const BRDF& brdf,
 	Color color;
 	Normal light_normal(light_ray.direction);
 	// Diffuse.
-	color += brdf.kd * light_color * fmax(0.0, local.normal.dot(light_normal));
+	float diffuse_dot = local.normal.dot(light_normal);
+	color += brdf.kd * light_color * fmax(0.0, diffuse_dot);
 	// Specular.
-	Normal viewer = Normal(camera - local.position);
-	Normal reflection = light_normal.reflect(local.normal);
-	Color specular = brdf.ks * light_color * pow(fmax(0.0, viewer.dot(reflection)), brdf.sp);
-	color += specular;
+	// Only include if the dot product of the diffuse term is positive.
+	if(diffuse_dot > 0) {
+		Normal viewer = Normal(camera - local.position);
+		Normal reflection = light_normal.reflect(local.normal);
+		Color specular = brdf.ks * light_color * pow(fmax(0.0, viewer.dot(reflection)), brdf.sp);
+		color += specular;
+	}
 	return color;
 }
