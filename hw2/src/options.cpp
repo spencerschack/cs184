@@ -165,7 +165,9 @@ Options::Options(char* commands_filename) {
 		} else if (command == "attenuation") {
 			//	Sets attenuation
 		} else if (command == "emission") {
-			// Set emissive color of the surface
+			material.brdf.ke.r = parse_float();
+			material.brdf.ke.g = parse_float();
+			material.brdf.ke.b = parse_float();
 		} else if(command == "diffuse") {
 			material.brdf.kd.r = parse_float();
 			material.brdf.kd.g = parse_float();

@@ -25,7 +25,6 @@ bool Triangle::intersect(Ray& ray, float& t_hit, LocalGeo& local) const {
 	qvec = tvec.cross(edge1);
 	v = ray.direction.dot(qvec) * inv_det;
 	if(v < 0.0 || u + v > 1.0) { return false; }
-	printf("here");
 	t_hit = edge2.dot(qvec) * inv_det;
 	local.position = ray.position + ray.direction * t_hit;
 	local.normal = Normal(edge1.cross(edge2));
