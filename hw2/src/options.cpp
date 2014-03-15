@@ -181,27 +181,28 @@ Options::Options(char* commands_filename) {
 		} else if (command == "translate") {
 			// Get translation matrix
 			Matrix toMult = Matrix::Translation(parse_float(), parse_float(), parse_float());
-			Matrix toPush = toMult * transformStack.top();
+			Matrix toPush = transformStack.top() * toMult;
 			transformStack.pop();
 			transformStack.push(toPush);
 		} else if (command == "rotate") {
 			// Get the rotation matrix
 			Matrix toMult = Matrix::Rotate(parse_float(), parse_float(), parse_float(), parse_float());
-			Matrix toPush = toMult * transformStack.top();
+			Matrix toPush = transformStack.top() * toMult;
 			transformStack.pop();
 			transformStack.push(toPush);
 		} else if (command == "scale") {
 			// Get the scaling matrix
 			Matrix toMult = Matrix::Scale(parse_float(), parse_float(), parse_float());
-			Matrix toPush = toMult * transformStack.top();
+			Matrix toPush = transformStack.top() * toMult;
 			transformStack.pop();
 			transformStack.push(toPush);
 		} else if (command == "pushTransform") {
 			// Push the incoming transformations onto transformation stack
-			transformStack.push(identity);
+			transformStack.push(transformStack.top());
 		} else if (command == "popTransform") {
 			// Pop one matrix off the transformation stack
 			transformStack.pop();
+			if(transformStack.size() == 0) { transformStack.push(identity); }
 		} else if (command == "point") {
 			Light* light = new PointLight(
 				parse_float(),
