@@ -7,7 +7,7 @@ Camera::Camera(const Options& options) {
 	height = options.height;
 	position = options.camera_position;
 	Vector up = options.camera_up;
-	z = options.camera_direction;
+	z = options.camera_direction - options.camera_position;
 	x = z.cross(up);
 	y = x.cross(z);
 	// Normalize to create an orthonormal basis.

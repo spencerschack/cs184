@@ -50,9 +50,9 @@ public:
 
 	unsigned int width = 640, height = 480, maxdepth = 5;
 
-	Point camera_position;
+	Point camera_position, camera_direction;
 
-	Vector camera_direction, camera_up;
+	Vector camera_up;
 
 	float camera_fov_y;
 

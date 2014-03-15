@@ -61,3 +61,7 @@ void Vector::normalize() {
 	y /= mag;
 	z /= mag;
 }
+
+Vector Vector::reflect(const Vector& vector) const {
+	return *this - vector * dot(vector) * 2;
+}

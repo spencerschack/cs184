@@ -35,6 +35,8 @@ public:
 
 	void normalize();
 
+	Vector reflect(const Vector& vector) const;
+
 };
 
 #endif

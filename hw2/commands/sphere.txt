@@ -15,7 +15,7 @@ ambient 0.1 0.5 0.5
 reflectivity 0.5 0.5 0.5
 vertex 1 0 0
 vertex 0 1 0
-vertex 0 0 1
+vertex 0 0 0
 tri 0 1 2
 point 2 2 -2 0.5 0.5 0.5
 output raytracer.png

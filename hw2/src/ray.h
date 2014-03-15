@@ -5,6 +5,7 @@
 
 #include "point.h"
 #include "vector.h"
+#include "local_geo.h"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ public:
 
 	float t_min = 0.00001, t_max = numeric_limits<float>::infinity();
 
-	void print();
+	Ray reflect(const LocalGeo& local) const;
 
 };
 

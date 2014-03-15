@@ -5,7 +5,6 @@ RayTracer::RayTracer() { };
 
 void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsigned int depth) {
 	color.reset();
-	if(depth == 0) { return; }
 	float t_hit;
 	Intersection in;
 	const AggregatePrimitive& primitive = options.root_primitive;
@@ -26,8 +25,15 @@ void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsi
 			color += shading(in.local, brdf, options.camera_position, light_ray, light_color);
 		}
 	}
-	if(!brdf.kr.black()) {
-		
+	if(!brdf.kr.black() && depth > 1) {
+		in.local.normal.print();
+		ray.direction.print();
+		Ray reflected_ray = ray.reflect(in.local);
+		reflected_ray.direction.print();
+		printf("\n");
+		Color reflected_color;
+		trace(options, reflected_ray, reflected_color, depth - 1);
+		color += brdf.kr * reflected_color;
 	}
 };
 
