@@ -1,7 +1,7 @@
 # Generates 2 spheres and 2 lights. One sphere blocks one light on the other.
 size 300 200
 antialias
-camera 0 0 -5 0 0 1 0 1 0 45
+camera 0 0 -10 0 0 1 0 1 0 45
 point 5 5 -5 0.7 0.7 0.7
 point 5 -5 0 0.7 0.7 0.7
 specular 0.5 0.5 1

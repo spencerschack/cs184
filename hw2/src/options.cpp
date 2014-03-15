@@ -99,7 +99,7 @@ Options::Options(char* commands_filename) {
 				parse_float(),
 				parse_float());
 			Matrix scale = Matrix::Scale(parse_float());
-			Matrix matrix = translate * scale;
+			Matrix matrix = scale * translate;
 			Transformation transformation(matrix);
 			Sphere* sphere = new Sphere();
 			GeometricPrimitive* primitive =
