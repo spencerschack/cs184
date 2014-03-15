@@ -28,6 +28,6 @@ bool Sphere::intersect(Ray& ray, float& t_hit, LocalGeo& local) const {
 	// Because all spheres are radius 1 positioned at (0,0,0), the normal at
 	// the intersection can be calculated by simply normalizing the
 	// intersection position.
-	local.normal = Normal(local.position.x, local.position.y, local.position.z);
+	local.normal = -Normal(local.position.x, local.position.y, local.position.z);
 	return true;
 };
