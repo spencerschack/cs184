@@ -1,6 +1,9 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <map>
+#include <iostream>
+#include <iterator>
 
 #include "options.h"
 #include "scene.h"
@@ -63,8 +66,10 @@ Options::Options(char* commands_filename) {
 	Material material;
 	material.brdf.ka = Color(0.2, 0.2, 0.2);	
 	std::stack<Matrix> transformStack;
-	std::vector<Point> v;
+	std::vector<Point> v, objv;
 	std::vector<LocalGeo> vn;
+	std::vector<Normal> objvn;
+	std::map<char, Point> objChar;
 	Matrix identity = Matrix(im);
 	transformStack.push(identity);
 	while(getline(commands, line)) {
@@ -102,9 +107,53 @@ Options::Options(char* commands_filename) {
 			root_primitive.primitives.push_back(primitive);
 		} else if (command == "maxverts" || command == "maxvertsnorms") { 
 			// We can ignore these because we're using vectors which are
-			// dynamically sized.
+			// dynamically sized. -SS
+			// BUT IT ONLY TAKES ONE LINE FOR EACH! -AK
 		} else if (command == "vertex") {
 			v.push_back(Point(parse_float(), parse_float(), parse_float()));
+		} else if (command == "v") {
+			objv.push_back(Point(parse_float(), parse_float(), parse_float()));
+		} else if (command == "f") {
+			string args[3] = {parse_string(), parse_string(), parse_string()};
+			std::string str (args[0]);
+			std::string str2 ("//");
+			std::size_t found = str.find(str2);
+			int c, d = 0;
+			if (found!=std::string::npos) {
+	   			std::vector<std::string> tokens;
+				for (c = 0; c < 3; c++) {
+				std::string s = args[c];
+				std::string delimiter = "//";
+					size_t pos = 0;
+					std::string token;
+					while ((pos = s.find(delimiter)) != std::string::npos) {
+					    token = s.substr(0, pos);
+					    tokens[d] = token;
+					    d++;
+					    s.erase(0, pos + delimiter.length());
+					}
+				}
+    			Triangle* triangle = new Triangle(
+					LocalGeo(objv[std::stoi(tokens[0])], objvn[std::stoi(tokens[1])]),
+					LocalGeo(objv[std::stoi(tokens[2])], objvn[std::stoi(tokens[3])]),
+					LocalGeo(objv[std::stoi(tokens[4])], objvn[std::stoi(tokens[5])]));
+				Transformation transform(transformStack.top());
+				GeometricPrimitive* primitive =
+					new GeometricPrimitive(transform, triangle, material);
+				root_primitive.primitives.push_back(primitive);
+			} else {
+				Triangle* triangle = new Triangle(Point(objv[std::stoi(args[0])]),
+												  Point(objv[std::stoi(args[1])]),
+												  Point(objv[std::stoi(args[2])]));
+				Transformation transform(transformStack.top());
+				GeometricPrimitive* primitive =
+					new GeometricPrimitive(transform, triangle, material);
+				root_primitive.primitives.push_back(primitive);
+			}
+			// Check what type of f it is (u_int_v, u_int_v//u_int_vn)
+			// Parse accordingly 
+		} else if (command == "vn") {
+			objvn.push_back(Normal(parse_float(), parse_float(), parse_float()));
 		} else if (command == "vertexnormal") {
 			vn.push_back(LocalGeo(
 				Point(parse_float(), parse_float(), parse_float()), 
