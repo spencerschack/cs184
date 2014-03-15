@@ -4,9 +4,6 @@
 
 // Vertexes are ALWAYS in teh counter clockwise direction
 Triangle::Triangle(Point v1, Point v2, Point v3) : v1(v1), v2(v2), v3(v3) { };
-Triangle::Triangle(LocalGeo l1, LocalGeo l2, LocalGeo l3) : l1(l1), l2(l2), l3(l3) {
-	printf("Check this implementation!");
-};
 
 // Returns intersection point and normal to it if given ray intersects the sphere
 // Need to implement "Intersection with ray at t outside range [t_min, t_max] should return false"

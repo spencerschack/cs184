@@ -21,6 +21,7 @@
 #include "src/shape.cpp"
 #include "src/sphere.cpp"
 #include "src/triangle.cpp"
+#include "src/triangle_n.cpp"
 #include "src/transformation.cpp"
 #include "src/intersection.cpp"
 #include "src/primitive.cpp"

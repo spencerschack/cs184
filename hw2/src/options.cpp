@@ -12,6 +12,8 @@
 #include "geometric_primitive.h"
 #include "sphere.h"
 #include "directional_light.h"
+#include "triangle.h"
+#include "triangle_n.h"
 #include "point_light.h"
 
 using namespace std;
@@ -133,7 +135,7 @@ Options::Options(char* commands_filename) {
 					    s.erase(0, pos + delimiter.length());
 					}
 				}
-    			Triangle* triangle = new Triangle(
+    			TriangleN* triangle = new TriangleN(
 					LocalGeo(objv[std::stoi(tokens[0])], objvn[std::stoi(tokens[1])]),
 					LocalGeo(objv[std::stoi(tokens[2])], objvn[std::stoi(tokens[3])]),
 					LocalGeo(objv[std::stoi(tokens[4])], objvn[std::stoi(tokens[5])]));
@@ -170,7 +172,7 @@ Options::Options(char* commands_filename) {
 				new GeometricPrimitive(transform, triangle, material);
 			root_primitive.primitives.push_back(primitive);
 		} else if (command == "trinormal") {
-			Triangle* triangle = new Triangle(
+			TriangleN* triangle = new TriangleN(
 				LocalGeo(vn[parse_uint()]),
 				LocalGeo(vn[parse_uint()]),
 				LocalGeo(vn[parse_uint()]));
