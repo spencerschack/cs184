@@ -47,10 +47,6 @@ public:
 
 	Normal operator*(const Normal& normal) const;
 
-	Ray operator*(const Ray& ray) const;
-
-	LocalGeo operator*(const LocalGeo& local) const;
-
 };
 
 #endif

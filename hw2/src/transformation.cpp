@@ -24,9 +24,15 @@ Normal Transformation::operator*(const Normal& normal) const {
 };
 
 Ray Transformation::operator*(const Ray& ray) const {
-	return matrix * ray;
+	Ray ret;
+	ret.position = matrix * ray.position;
+	ret.direction = matrix * ray.direction;
+	return ret;
 };
 
 LocalGeo Transformation::operator*(const LocalGeo& local) const {
-	return matrix * local;
+	LocalGeo ret;
+	ret.normal = minvt * local.normal;
+	ret.position = matrix * local.position;
+	return ret;
 };

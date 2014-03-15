@@ -279,17 +279,9 @@ Matrix Matrix::operator*(Matrix& factor) const {
 
 Vector Matrix::operator*(const Vector& vector) const {
   Vector multiplied;
-  multiplied.x = matrix[0][0] * vector.x + matrix[0][1] * vector.y + matrix[0][2] * vector.z + matrix[0][3];
-  multiplied.y = matrix[1][0] * vector.x + matrix[1][1] * vector.y + matrix[1][2] * vector.z + matrix[1][3];
-  multiplied.z = matrix[2][0] * vector.x + matrix[2][1] * vector.y + matrix[2][2] * vector.z + matrix[2][3];
-  return multiplied;
-};
-
-Point Matrix::operator*(const Point& point) const {
-  Point multiplied;
-  multiplied.x = matrix[0][0] * point.x + matrix[0][1] * point.y + matrix[0][2] * point.z;
-  multiplied.y = matrix[1][0] * point.x + matrix[1][1] * point.y + matrix[1][2] * point.z;
-  multiplied.z = matrix[2][0] * point.x + matrix[2][1] * point.y + matrix[2][2] * point.z;
+  multiplied.x = matrix[0][0] * vector.x + matrix[0][1] * vector.y + matrix[0][2] * vector.z;
+  multiplied.y = matrix[1][0] * vector.x + matrix[1][1] * vector.y + matrix[1][2] * vector.z;
+  multiplied.z = matrix[2][0] * vector.x + matrix[2][1] * vector.y + matrix[2][2] * vector.z;
   return multiplied;
 };
 
@@ -302,14 +294,10 @@ Normal Matrix::operator*(const Normal& normal) const {
   return multiplied;
 };
 
-Ray Matrix::operator*(const Ray& ray) const {
-  Point p = *this * ray.position;
-  Vector dir = *this * ray.direction;
-  return Ray(p, dir);
-}
-
-LocalGeo Matrix::operator*(const LocalGeo& local) const {
-  Point point = *this * local.position;
-  Normal normal = *this * local.normal;
-  return LocalGeo(point, normal);   
-}
+Point Matrix::operator*(const Point& point) const {
+  Point multiplied;
+  multiplied.x = matrix[0][0] * point.x + matrix[0][1] * point.y + matrix[0][2] * point.z + matrix[0][3];
+  multiplied.y = matrix[1][0] * point.x + matrix[1][1] * point.y + matrix[1][2] * point.z + matrix[1][3];
+  multiplied.z = matrix[2][0] * point.x + matrix[2][1] * point.y + matrix[2][2] * point.z + matrix[2][3];
+  return multiplied;
+};

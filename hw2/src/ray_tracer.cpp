@@ -26,11 +26,7 @@ void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsi
 		}
 	}
 	if(!brdf.kr.black() && depth > 1) {
-		in.local.normal.print();
-		ray.direction.print();
 		Ray reflected_ray = ray.reflect(in.local);
-		reflected_ray.direction.print();
-		printf("\n");
 		Color reflected_color;
 		trace(options, reflected_ray, reflected_color, depth - 1);
 		color += brdf.kr * reflected_color;
