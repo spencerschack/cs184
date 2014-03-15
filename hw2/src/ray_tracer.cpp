@@ -38,7 +38,7 @@ Color RayTracer::shading(const LocalGeo& local, const BRDF& brdf,
 	// Diffuse.
 	color += brdf.kd * light_color * fmax(0.0, local.normal.dot(light_normal));
 	// Specular.
-	Normal viewer = Normal(local.position - camera);
+	Normal viewer = Normal(camera - local.position);
 	Normal reflection = light_normal.reflect(local.normal);
 	Color specular = brdf.ks * light_color * pow(fmax(0.0, viewer.dot(reflection)), brdf.sp);
 	color += specular;

@@ -22,7 +22,7 @@ public:
 	
 	Vector direction;
 
-	float t_min = 0.1, t_max = numeric_limits<float>::infinity();
+	float t_min = 0.00001, t_max = numeric_limits<float>::infinity();
 
 	void print();
 

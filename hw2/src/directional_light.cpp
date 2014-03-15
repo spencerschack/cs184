@@ -8,5 +8,5 @@ DirectionalLight::DirectionalLight(float x, float y, float z, float r, float g, 
 void DirectionalLight::generate_ray(const LocalGeo& local, Ray& ray, Color& light) const {
 	light = color;
 	ray.position = local.position;
-	ray.direction = -Vector(position.x, position.y, position.z);
+	ray.direction = position - Point(0, 0, 0);
 }
