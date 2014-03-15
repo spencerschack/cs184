@@ -1,6 +1,3 @@
-# Generates a sphere with ambient, diffuse, and specular shading.
-size 300 200
-antialias
 camera 0 0 -5 0 0 1 0 1 0 30
 diffuse 0.4 0.4 0.4
 specular 1 1 1
@@ -10,4 +7,4 @@ sphere 0.5 0.5 0 0.4
 ambient 0.1 0.1 0.5
 sphere 0 0 0 0.2
 point 2 2 0 0.5 0.5 0.5
-output raytracer.png
+output image-02.png

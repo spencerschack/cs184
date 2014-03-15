@@ -2,6 +2,12 @@ Assignment 02 for CS184 Spring 2014
 --------------------------------------------------------------------------------
 Spencer Schack and Aditya Kaulagi
 
+Extra Credit Features
+--------------------------------------------------------------------------------
+Antialiasing:
+To enable antialiasing, simply put a line in the input file containing
+'antialias'. This will sub-sample each pixel 4 times.
+
 Resource Used
 --------------------------------------------------------------------------------
 Ray-Sphere Intersection: 
