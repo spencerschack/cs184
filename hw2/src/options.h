@@ -58,7 +58,7 @@ public:
 
 	Options(char* commands_filename);
 
-	float im[16] = {1,0,0,0,0,1,0,1,0,0,1,0,0,0,0,1};
+	float im[16] = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
 
 	bool push = false;
 };
