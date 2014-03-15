@@ -27,7 +27,7 @@ void RayTracer::trace(const Options& options, const Ray& ray, Color& color, unsi
 		}
 	}
 	if(!brdf.kr.black()) {
-		// TODO: reflection.
+		
 	}
 };
 

@@ -231,6 +231,10 @@ Options::Options(char* commands_filename) {
 			material.brdf.ks.b = parse_float();
 		} else if(command == "shininess") {
 			material.brdf.sp = parse_float();
+		} else if(command == "reflectivity") {
+			material.brdf.kr.r = parse_float();
+			material.brdf.kr.g = parse_float();
+			material.brdf.kr.b = parse_float();
 		} else if(command == "directional") {
 			Light* light = new DirectionalLight(
 				parse_float(),
