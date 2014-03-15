@@ -1,0 +1,5 @@
+task :reload do
+
+	`cd ~/Documents/Berkeley/cs184/hw/hw2 && make && ./raytracer commands/sphere.txt && open raytracer.png`
+
+end
