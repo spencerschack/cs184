@@ -60,3 +60,7 @@ void Normal::normalize() {
 	y /= mag;
 	z /= mag;
 }
+
+float Normal::angle_with(const Vector& vector) const {
+	return acos(dot(vector) / vector.magnitude());
+}

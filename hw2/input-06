@@ -1,0 +1,33 @@
+camera 3 3 -5 0 0 0 0 1 0 45
+ambient 0.1 0.1 0.5
+diffuse 0.5 0.5 0.5
+specular 1 1 1
+shininess 10
+vertexnormal 1 1 1 1 1 1
+vertexnormal 1 1 -1 1 1 -1
+vertexnormal 1 -1 1 1 -1 1
+vertexnormal 1 -1 -1 1 -1 -1
+vertexnormal -1 1 1 -1 1 1
+vertexnormal -1 1 -1 -1 1 -1
+vertexnormal -1 -1 1 -1 -1 1
+vertexnormal -1 -1 -1 -1 -1 -1
+# +X
+trinormal 0 1 2
+trinormal 1 2 3
+# -X
+trinormal 4 5 6
+trinormal 5 6 7
+# +Y
+trinormal 0 1 4
+trinormal 1 4 5
+# -Y
+trinormal 2 3 6
+trinormal 3 6 7
+# +Z
+trinormal 0 2 4
+trinormal 2 4 6
+# -Z
+trinormal 1 3 5
+trinormal 3 5 7
+point 2 2 -2 1 1 1
+output image-06.png

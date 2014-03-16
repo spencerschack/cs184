@@ -37,6 +37,8 @@ public:
 
 	Vector reflect(const Vector& vector) const;
 
+	float angle_with(const Vector& vector) const;
+
 };
 
 #endif

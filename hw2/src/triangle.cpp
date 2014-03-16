@@ -26,6 +26,10 @@ bool Triangle::intersect(Ray& ray, float& t_hit, LocalGeo& local) const {
 	if(t < ray.t_min || t > ray.t_max) { return false; }
 	t_hit = t;
 	local.position = ray.position + ray.direction * t_hit;
-	local.normal = Normal(edge1.cross(edge2));
+	Vector face1 = edge1.cross(edge2), face2 = -face1;
+	if(face1.angle_with(-ray.direction) > face2.angle_with(-ray.direction)) {
+		face1 = face2;
+	}
+	local.normal = Normal(face1);
 	return true;
 }

@@ -65,3 +65,7 @@ void Vector::normalize() {
 Vector Vector::reflect(const Vector& vector) const {
 	return *this - vector * dot(vector) * 2;
 }
+
+float Vector::angle_with(const Vector& vector) const {
+	return acos(dot(vector) / (magnitude() * vector.magnitude()));
+}

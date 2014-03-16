@@ -37,6 +37,8 @@ public:
 
 	void normalize();
 
+	float angle_with(const Vector& vector) const;
+
 };
 
 #endif

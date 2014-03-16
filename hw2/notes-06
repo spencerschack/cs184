@@ -1,0 +1,13 @@
+Command
+--------------------------------------------------------------------------------
+./raytracer input-05
+
+Time
+--------------------------------------------------------------------------------
+1.249s
+
+Features
+--------------------------------------------------------------------------------
+Triangles with normals specified at the vertices. The normals for shading are
+calculated by interpolating the normals at the vertices. The vertices of the
+cube are specified with normals pointing away from the center of the cube.
