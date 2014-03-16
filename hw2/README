@@ -2,6 +2,14 @@ Assignment 02 for CS184 Spring 2014
 --------------------------------------------------------------------------------
 Spencer Schack and Aditya Kaulagi
 
+Usage
+--------------------------------------------------------------------------------
+After running `make`:
+./raytracer FILENAME
+where FILENAME is either an obj file or a file in the format specified here:
+http://inst.eecs.berkeley.edu/~cs184/fa12/assignments/hw5.pdf.
+Then the image will be output to the filename specified by the input file.
+
 Extra Credit Features
 --------------------------------------------------------------------------------
 Antialiasing:
