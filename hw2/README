@@ -1,10 +1,18 @@
 Assignment 02 for CS184 Spring 2014
 --------------------------------------------------------------------------------
-Spencer Schack and Aditya Kaulagi
+Spencer Schack (cs184-cf) and Aditya Kaulagi
+
+Location of source code
+--------------------------------------------------------------------------------
+~cs184-cf/Documents/hw/hw2
+
+Platform
+--------------------------------------------------------------------------------
+Mac/Linux
 
 Usage
 --------------------------------------------------------------------------------
-After running `make`:
+After running make,
 ./raytracer FILENAME
 where FILENAME is either an obj file or a file in the format specified here:
 http://inst.eecs.berkeley.edu/~cs184/fa12/assignments/hw5.pdf.
@@ -16,7 +24,7 @@ Antialiasing:
 To enable antialiasing, simply put a line in the input file containing
 'antialias'. This will sub-sample each pixel 4 times.
 
-Resource Used
+Resources Used
 --------------------------------------------------------------------------------
 Ray-Sphere Intersection: 
 http://wiki.cgsociety.org/index.php/Ray_Sphere_Intersection

@@ -1,0 +1,13 @@
+Command
+--------------------------------------------------------------------------------
+./raytracer input-08
+
+Time
+--------------------------------------------------------------------------------
+4.658s
+
+Features
+--------------------------------------------------------------------------------
+Shadowing. Shading. Transforms. There are only four vertices defined in the
+input file. Each section of each side of the cube is rotated into position from
+the original section.
