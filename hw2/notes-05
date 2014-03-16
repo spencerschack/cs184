@@ -1,0 +1,14 @@
+Command
+--------------------------------------------------------------------------------
+./raytracer input-05
+
+Time
+--------------------------------------------------------------------------------
+2.870s
+
+Features
+--------------------------------------------------------------------------------
+Antialiasing.
+Transforms.
+Shading.
+All ellipsoids are unit spheres with translate and scale transforms applied.
