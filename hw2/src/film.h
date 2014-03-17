@@ -12,7 +12,7 @@ using namespace std;
 
 struct ColorCount {
 	Color color;
-	int count = 0;
+	int count;
 };
 
 class Film {

@@ -48,7 +48,7 @@ public:
 
 	std::vector<Sphere*> spheres;
 
-	unsigned int width = 640, height = 480, maxdepth = 5;
+	unsigned int width, height, maxdepth;
 
 	Point camera_position, camera_direction;
 
@@ -57,10 +57,6 @@ public:
 	float camera_fov_y;
 
 	Options(char* commands_filename);
-
-	float im[16] = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
-
-	bool push = false;
 };
 
 #endif

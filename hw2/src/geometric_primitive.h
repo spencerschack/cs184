@@ -26,8 +26,6 @@ public:
 
 	void getBRDF(LocalGeo& local, BRDF& brdf) const;
 
-	bool is_base_class = true;
-
 };
 
 #endif

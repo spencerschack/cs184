@@ -1,7 +1,8 @@
 #include "sampler.h"
 
 Sampler::Sampler(const Options& options) :
-	width(options.width), height(options.height), antialias(options.antialias) { };
+	width(options.width), height(options.height), antialias(options.antialias),
+	pixel(0), sub(0) { };
 
 bool Sampler::generate_sample(Sample& sample) {
 	if(pixel >= width * height) { return false; }

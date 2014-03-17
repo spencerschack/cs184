@@ -5,8 +5,7 @@
 
 class Sampler {
 
-	int pixel = 0;
-	int sub = 0;
+	int pixel, sub;
 
 	bool antialias;
 

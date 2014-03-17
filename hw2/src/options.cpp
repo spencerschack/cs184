@@ -63,7 +63,7 @@ void Options::fail() {
 	exit(1);
 }
 
-Options::Options(char* commands_filename) {
+Options::Options(char* commands_filename) : width(640), height(480), maxdepth(5) {
 	ifstream commands(commands_filename);
 	Material material;
 	material.brdf.ka = Color(0.2, 0.2, 0.2);	
@@ -72,6 +72,7 @@ Options::Options(char* commands_filename) {
 	std::vector<LocalGeo> vn;
 	std::vector<Normal> objvn;
 	std::map<char, Point> objChar;
+	float im[16] = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
 	Matrix identity = Matrix(im);
 	transformStack.push(identity);
 	while(getline(commands, line)) {
