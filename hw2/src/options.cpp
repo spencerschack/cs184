@@ -125,7 +125,7 @@ Options::Options(char* commands_filename) : width(640), height(480), maxdepth(5)
 			std::size_t found = str.find(str2);
 			int c, d = 0;
 			if (found!=std::string::npos) {
-	   			std::vector<std::string> tokens;
+	   			std::vector<const char*> tokens;
 				for (c = 0; c < 3; c++) {
 				std::string s = args[c];
 				std::string delimiter = "//";
@@ -133,23 +133,23 @@ Options::Options(char* commands_filename) : width(640), height(480), maxdepth(5)
 					std::string token;
 					while ((pos = s.find(delimiter)) != std::string::npos) {
 					    token = s.substr(0, pos);
-					    tokens[d] = token;
+					    tokens[d] = token.c_str();
 					    d++;
 					    s.erase(0, pos + delimiter.length());
 					}
 				}
     			TriangleN* triangle = new TriangleN(
-					LocalGeo(objv[std::stoi(tokens[0])], objvn[std::stoi(tokens[1])]),
-					LocalGeo(objv[std::stoi(tokens[2])], objvn[std::stoi(tokens[3])]),
-					LocalGeo(objv[std::stoi(tokens[4])], objvn[std::stoi(tokens[5])]));
+					LocalGeo(objv[atoi(tokens[0])], objvn[atoi(tokens[1])]),
+					LocalGeo(objv[atoi(tokens[2])], objvn[atoi(tokens[3])]),
+					LocalGeo(objv[atoi(tokens[4])], objvn[atoi(tokens[5])]));
 				Transformation transform(transformStack.top());
 				GeometricPrimitive* primitive =
 					new GeometricPrimitive(transform, triangle, material);
 				root_primitive.primitives.push_back(primitive);
 			} else {
-				Triangle* triangle = new Triangle(Point(objv[std::stoi(args[0])]),
-												  Point(objv[std::stoi(args[1])]),
-												  Point(objv[std::stoi(args[2])]));
+				Triangle* triangle = new Triangle(Point(objv[atoi(args[0].c_str())]),
+												  Point(objv[atoi(args[1].c_str())]),
+												  Point(objv[atoi(args[2].c_str())]));
 				Transformation transform(transformStack.top());
 				GeometricPrimitive* primitive =
 					new GeometricPrimitive(transform, triangle, material);
