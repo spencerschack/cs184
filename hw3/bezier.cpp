@@ -18,45 +18,23 @@
 #include <math.h>
 
 
-#define PI 3.14159265  // Should be used from mathlib
+#define PI 3.14159265
 inline float sqr(float x) { return x*x; }
 
 using namespace std;
 
-//****************************************************
-// Some Classes
-//****************************************************
-
-class Viewport;
-
 class Viewport {
   public:
-    int w, h; // width and height
+    int w, h;
 };
 
+Viewport viewport;
 
-//****************************************************
-// Global Variables
-//****************************************************
-Viewport	viewport;
-
-
-
-
-//****************************************************
-// Simple init function
-//****************************************************
-void initScene(){
-
-  // Nothing to do here for this simple example.
+void init_scene(){
 
 }
 
-
-//****************************************************
-// reshape viewport if the window is resized
-//****************************************************
-void myReshape(int w, int h) {
+void reshape(int w, int h) {
   viewport.w = w;
   viewport.h = h;
 
@@ -64,28 +42,12 @@ void myReshape(int w, int h) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluOrtho2D(0, viewport.w, 0, viewport.h);
-
 }
-
-
-//****************************************************
-// A routine to set a pixel by drawing a GL point.  This is not a
-// general purpose routine as it assumes a lot of stuff specific to
-// this example.
-//****************************************************
 
 void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
   glColor3f(r, g, b);
-  glVertex2f(x + 0.5, y + 0.5);   // The 0.5 is to target pixel
-  // centers 
-  // Note: Need to check for gap
-  // bug on inst machines.
+  glVertex2f(x + 0.5, y + 0.5);
 }
-
-//****************************************************
-// Draw a filled circle.  
-//****************************************************
-
 
 void circle(float centerX, float centerY, float radius) {
   // Draw inner circle
@@ -130,63 +92,31 @@ void circle(float centerX, float centerY, float radius) {
     }
   }
 
-
   glEnd();
 }
-//****************************************************
-// function that does the actual drawing of stuff
-//***************************************************
-void myDisplay() {
 
-  glClear(GL_COLOR_BUFFER_BIT);				// clear the color buffer
+void display() {
+  glClear(GL_COLOR_BUFFER_BIT);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
-  glMatrixMode(GL_MODELVIEW);			        // indicate we are specifying camera transformations
-  glLoadIdentity();				        // make sure transformation is "zero'd"
-
-
-  // Start drawing
   circle(viewport.w / 2.0 , viewport.h / 2.0 , min(viewport.w, viewport.h) / 3.0);
 
   glFlush();
-  glutSwapBuffers();					// swap buffers (we earlier set double buffer)
+  glutSwapBuffers();
 }
 
-
-
-//****************************************************
-// the usual stuff, nothing exciting here
-//****************************************************
 int main(int argc, char *argv[]) {
-  //This initializes glut
   glutInit(&argc, argv);
-
-  //This tells glut to use a double-buffered window with red, green, and blue channels 
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-
-  // Initalize theviewport size
   viewport.w = 400;
   viewport.h = 400;
-
-  //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
   glutInitWindowPosition(0,0);
   glutCreateWindow(argv[0]);
-
-  initScene();							// quick function to set up scene
-
-  glutDisplayFunc(myDisplay);				// function to run when its time to draw something
-  glutReshapeFunc(myReshape);				// function to run when the window gets resized
-
-  glutMainLoop();							// infinite loop that will keep drawing and resizing
-  // and whatever else
-
+  init_scene();
+  glutDisplayFunc(display);
+  glutReshapeFunc(reshape);
+  glutMainLoop();
   return 0;
 }
-
-
-
-
-
-
-
-
