@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cmath>
 
 #include <sys/time.h>
@@ -28,32 +29,57 @@ public:
   int w, h;
 };
 
-class Curve {
+class Printable {
 public:
-  float p0, p1, p2, p3;
-  Curve(float p0, float p1, float p2, float p3) :
-    p0(p0), p1(p1), p2(p2), p3(p3) { };
+  virtual string inspect() const = 0;
   void print() const {
-    printf("Curve<p0: %f, p1: %f, p2: %f, p3: %f>", p0, p1, p2, p3);
+    cout << inspect() << '\n';
   }
 };
 
-class Patch {
+class Point : public Printable {
+public:
+  float x, y, z;
+  Point(float x, float y, float z) : x(x), y(y), z(z) { }
+  string inspect() const {
+    stringstream str;
+    str << "Point<"
+        << "x: " << x << ", "
+        << "y: " << y << ", "
+        << "z: " << z << ">";
+    return str.str();
+  }
+};
+
+class Curve : public Printable {
+public:
+  Point p0, p1, p2, p3;
+  Curve(Point p0, Point p1, Point p2, Point p3) :
+    p0(p0), p1(p1), p2(p2), p3(p3) { };
+  string inspect() const {
+    stringstream str;
+    str << "Curve<"
+        << "p0: " << p0.inspect() << ", "
+        << "p1: " << p1.inspect() << ", "
+        << "p2: " << p2.inspect() << ", "
+        << "p3: " << p3.inspect() << ">";
+    return str.str();
+  }
+};
+
+class Patch : public Printable {
 public:
   Curve c0, c1, c2, c3;
   Patch(Curve c0, Curve c1, Curve c2, Curve c3) :
     c0(c0), c1(c1), c2(c2), c3(c3) { }
-  void print() const {
-    printf("Patch<"
-        "c0: Curve<p0: %f, p1: %f, p2: %f, p3: %f>"
-        "c2: Curve<p0: %f, p1: %f, p2: %f, p3: %f>"
-        "c3: Curve<p0: %f, p1: %f, p2: %f, p3: %f>"
-        "c4: Curve<p0: %f, p1: %f, p2: %f, p3: %f>"
-      ">",
-      c0.p0, c0.p1, c0.p2, c0.p3,
-      c1.p0, c1.p1, c1.p2, c1.p3,
-      c2.p0, c2.p1, c2.p2, c2.p3,
-      c3.p0, c3.p1, c3.p2, c3.p3);
+  string inspect() const {
+    stringstream str;
+    str << "Patch<"
+        << "c0: " << c0.inspect() << ", "
+        << "c1: " << c1.inspect() << ", "
+        << "c2: " << c2.inspect() << ", "
+        << "c3: " << c3.inspect() << ">";
+    return str.str();
   }
 };
 
@@ -154,23 +180,28 @@ void keyboard(unsigned char key, int x, int y) {
 
 char* parseOption(int argc, char *argv[], int &i) {
   if(++i >= argc) {
-    printf("Not enough arguments");
+    printf("Not enough argument\n");
     exit(1);
   } else {
     return argv[i];
   }
 }
 
+Point parsePoint(ifstream &file) {
+  float x, y, z;
+  file >> x >> y >> z;
+  return Point(x, y, z);
+}
+
 Curve parseCurve(ifstream &file) {
-  float p0, p1, p2, p3;
-  file >> p0 >> p1 >> p2 >> p3;
-  return Curve(p0, p1, p2, p3);
+  return Curve(parsePoint(file), parsePoint(file),
+    parsePoint(file), parsePoint(file));
 }
 
 void parseOptions(int argc, char *argv[]) {
   int i;
   char* filename = NULL;
-  for(i = 0; i < argc; i++) {
+  for(i = 1; i < argc; i++) {
     char* option = argv[i];
     if(option[0] == '-') {
       switch(option[1]) {
@@ -184,22 +215,22 @@ void parseOptions(int argc, char *argv[]) {
           } else if(strcmp(mode, "adaptive") == 0) {
             tesselation = AdaptiveTesselation;
           } else {
-            printf("Unknown tesselation mode: %s", mode);
+            printf("Unknown tesselation mode: %s\n", mode);
             exit(1);
           }
           break;
         } default: {
-          printf("Unknown flag: %s", option);
+          printf("Unknown flag: %s\n", option);
           exit(1);
         }
       }
     } else {
-      printf("Expected flag, got: %s", option);
+      printf("Expected flag, got: %s\n", option);
       exit(1);
     }
   }
   if(filename == NULL) {
-    printf("Must specify a patch file with '-f'");
+    printf("Must specify a patch file with '-f'\n");
     exit(1);
   } else {
     ifstream file(filename);
@@ -216,12 +247,12 @@ void parseOptions(int argc, char *argv[]) {
       }
       file.close();
     } else {
-      printf("Could not open patch file: %s", filename);
+      printf("Could not open patch file: %s\n", filename);
       exit(1);
     }
   }
   if(tesselation == NullTesselation) {
-    printf("Must specify a tesselation mode with '-t'");
+    printf("Must specify a tesselation mode with '-t'\n");
     exit(1);
   }
 }
