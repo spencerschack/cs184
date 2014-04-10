@@ -1,0 +1,1 @@
+To run: `make` and then: `./bezier`
