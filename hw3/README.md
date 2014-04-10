@@ -1,2 +1,2 @@
 Before running, run make.
-USAGE: ./bezier -f PATCH_FILE.bez [-t uniform|adaptive]
+USAGE: ./bezier inputfile.bez 0.1 [-a]

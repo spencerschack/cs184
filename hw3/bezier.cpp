@@ -84,7 +84,6 @@ public:
 };
 
 typedef enum {
-  NullTesselation,
   UniformTesselation,
   AdaptiveTesselation
 } TesselationMode;
@@ -100,7 +99,8 @@ typedef enum {
 } RenderingMode;
 
 Viewport viewport;
-TesselationMode tesselationMode = NullTesselation;
+float subdivisionParameter;
+TesselationMode tesselationMode = UniformTesselation;
 ShadingMode shadingMode = SmoothShading;
 RenderingMode renderingMode = FilledRendering;
 vector<Patch> patches;
@@ -193,15 +193,6 @@ void keyboard(unsigned char key, int x, int y) {
   }
 }
 
-char* parseOption(int argc, char *argv[], int &i) {
-  if(++i >= argc) {
-    printf("Not enough argument\n");
-    exit(1);
-  } else {
-    return argv[i];
-  }
-}
-
 Point parsePoint(ifstream &file) {
   float x, y, z;
   file >> x >> y >> z;
@@ -214,61 +205,37 @@ Curve parseCurve(ifstream &file) {
 }
 
 void parseOptions(int argc, char *argv[]) {
-  int i;
-  char* filename = NULL;
-  for(i = 1; i < argc; i++) {
-    char* option = argv[i];
-    if(option[0] == '-') {
-      switch(option[1]) {
-        case 'f': {
-          filename = parseOption(argc, argv, i);
-          break;
-        } case 't': {
-          char* mode = parseOption(argc, argv, i);
-          if(strcmp(mode, "uniform") == 0) {
-            tesselationMode = UniformTesselation;
-          } else if(strcmp(mode, "adaptive") == 0) {
-            tesselationMode = AdaptiveTesselation;
-          } else {
-            printf("Unknown tesselationMode mode: %s\n", mode);
-            exit(1);
-          }
-          break;
-        } default: {
-          printf("Unknown flag: %s\n", option);
-          exit(1);
-        }
-      }
-    } else {
-      printf("Expected flag, got: %s\n", option);
-      exit(1);
-    }
-  }
-  if(filename == NULL) {
-    printf("Must specify a patch file with '-f'\n");
+  if(argc < 3 || argc > 4) {
+    printf("USAGE: ./bezier inputfile.bez 0.1 [-a]");
     exit(1);
+  }
+  char* filename = argv[1];
+  ifstream file(filename);
+  if(file.is_open()) {
+    string line;
+    getline(file, line);
+    int numPatches = atoi(line.c_str());
+    file >> skipws; // Ignore all whitespace in the file.
+    while(numPatches--) {
+      patches.push_back(Patch(
+        parseCurve(file), parseCurve(file),
+        parseCurve(file), parseCurve(file)));
+      getline(file, line); // Throw out line in between patches.
+    }
+    file.close();
   } else {
-    ifstream file(filename);
-    if(file.is_open()) {
-      string line;
-      getline(file, line);
-      int numPatches = atoi(line.c_str());
-      file >> skipws; // Ignore all whitespace in the file.
-      while(numPatches--) {
-        patches.push_back(Patch(
-          parseCurve(file), parseCurve(file),
-          parseCurve(file), parseCurve(file)));
-        getline(file, line); // Throw out line in between patches.
-      }
-      file.close();
+    printf("Could not open patch file: %s\n", filename);
+    exit(1);
+  }
+  subdivisionParameter = atof(argv[2]);
+  if(argc == 4) {
+    char* tesselationOption = argv[3];
+    if(strcmp(tesselationOption, "-a") == 0) {
+      tesselationMode = AdaptiveTesselation;
     } else {
-      printf("Could not open patch file: %s\n", filename);
+      printf("Unknown tesselation mode: %s\n", tesselationOption);
       exit(1);
     }
-  }
-  if(tesselationMode == NullTesselation) {
-    printf("Must specify a tesselation mode with '-t'\n");
-    exit(1);
   }
 }
 
