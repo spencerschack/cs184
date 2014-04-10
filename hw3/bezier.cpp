@@ -4,11 +4,7 @@
 #include <fstream>
 #include <cmath>
 
-#ifdef _WIN32
-#include <windows.h>
-#else
 #include <sys/time.h>
-#endif
 
 #ifdef OSX
 #include <GLUT/glut.h>
