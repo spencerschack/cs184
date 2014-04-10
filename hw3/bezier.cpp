@@ -89,8 +89,20 @@ typedef enum {
   AdaptiveTesselation
 } TesselationMode;
 
+typedef enum {
+  SmoothShading,
+  FlatShading
+} ShadingMode;
+
+typedef enum {
+  FilledRendering,
+  WireframeRendering
+} RenderingMode;
+
 Viewport viewport;
-TesselationMode tesselation = NullTesselation;
+TesselationMode tesselationMode = NullTesselation;
+ShadingMode shadingMode = SmoothShading;
+RenderingMode renderingMode = FilledRendering;
 vector<Patch> patches;
 
 void initScene(){
@@ -171,10 +183,13 @@ void display() {
 
 void keyboard(unsigned char key, int x, int y) {
   switch(key) {
-    case 's':
+    case 's': {
+      shadingMode = shadingMode == SmoothShading ? FlatShading : SmoothShading;
       break;
-    case 'w':
+    } case 'w': {
+      renderingMode = renderingMode == FilledRendering ? FilledRendering : WireframeRendering;
       break;
+    }
   }
 }
 
@@ -211,11 +226,11 @@ void parseOptions(int argc, char *argv[]) {
         } case 't': {
           char* mode = parseOption(argc, argv, i);
           if(strcmp(mode, "uniform") == 0) {
-            tesselation = UniformTesselation;
+            tesselationMode = UniformTesselation;
           } else if(strcmp(mode, "adaptive") == 0) {
-            tesselation = AdaptiveTesselation;
+            tesselationMode = AdaptiveTesselation;
           } else {
-            printf("Unknown tesselation mode: %s\n", mode);
+            printf("Unknown tesselationMode mode: %s\n", mode);
             exit(1);
           }
           break;
@@ -251,7 +266,7 @@ void parseOptions(int argc, char *argv[]) {
       exit(1);
     }
   }
-  if(tesselation == NullTesselation) {
+  if(tesselationMode == NullTesselation) {
     printf("Must specify a tesselation mode with '-t'\n");
     exit(1);
   }
