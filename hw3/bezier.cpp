@@ -54,14 +54,6 @@ public:
   int w, h;
 };
 
-Viewport viewport;
-float subdivisionParameter;
-TesselationMode tesselationMode = UniformTesselation;
-ShadingMode shadingMode = SmoothShading;
-RenderingMode renderingMode = FilledRendering;
-vector<Patch> patches;
-vector<Quad> quads;
-
 class Printable {
 public:
   virtual string inspect() const = 0;
@@ -73,7 +65,7 @@ public:
 class Point : public Printable {
 public:
   float x, y, z;
-  Point() { }
+  Point() : x(0), y(0), z(0) { }
   Point(float x, float y, float z) : x(x), y(y), z(z) { }
   string inspect() const {
     stringstream str;
@@ -82,6 +74,15 @@ public:
         << "y: " << y << ", "
         << "z: " << z << ">";
     return str.str();
+  }
+  Point operator+(Point point) const {
+    return Point(x + point.x, y + point.y, z + point.z);
+  }
+  Point operator-(Point point) const {
+    return Point(x - point.x, y - point.y, z - point.z);
+  }
+  Point operator*(float factor) const {
+    return Point(x * factor, y * factor, z * factor);
   }
 };
 
@@ -113,6 +114,16 @@ public:
     return str.str();
   }
 };
+
+Viewport viewport;
+float subdivisionParameter;
+TesselationMode tesselationMode = UniformTesselation;
+ShadingMode shadingMode = SmoothShading;
+RenderingMode renderingMode = FilledRendering;
+Point position(0, 0, -5);
+int rotationX = 0, rotationY = 0;
+vector<Patch> patches;
+vector<Quad> quads;
 
 class Quad : public Printable {
 public:
@@ -147,7 +158,11 @@ public:
     return str.str();
   }
   Point interpolate(float u) const {
-
+    float iu = 1.0 - u;
+    Point a, b;
+    a = p0 * iu + p1 * u;
+    b = p2 * iu + p3 * u;
+    return a * iu + b * u;
   }
 };
 
@@ -193,7 +208,6 @@ public:
 };
 
 void initScene(){
-  Patch patch;
   for(vector<Patch>::iterator p = patches.begin(); p != patches.end(); ++p) {
     p->subdivide();
   }
@@ -202,71 +216,36 @@ void initScene(){
 void reshape(int w, int h) {
   viewport.w = w;
   viewport.h = h;
-
-  glViewport (0,0,viewport.w,viewport.h);
+  glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, viewport.w, 0, viewport.h);
-}
-
-void setPixel(int x, int y, GLfloat r, GLfloat g, GLfloat b) {
-  glColor3f(r, g, b);
-  glVertex2f(x + 0.5, y + 0.5);
-}
-
-void circle(float centerX, float centerY, float radius) {
-  // Draw inner circle
-  glBegin(GL_POINTS);
-
-  // We could eliminate wasted work by only looping over the pixels
-  // inside the sphere's radius.  But the example is more clear this
-  // way.  In general drawing an object by loopig over the whole
-  // screen is wasteful.
-
-  int i,j;  // Pixel indices
-
-  int minI = max(0,(int)floor(centerX-radius));
-  int maxI = min(viewport.w-1,(int)ceil(centerX+radius));
-
-  int minJ = max(0,(int)floor(centerY-radius));
-  int maxJ = min(viewport.h-1,(int)ceil(centerY+radius));
-
-
-
-  for (i=0;i<viewport.w;i++) {
-    for (j=0;j<viewport.h;j++) {
-
-      // Location of the center of pixel relative to center of sphere
-      float x = (i+0.5-centerX);
-      float y = (j+0.5-centerY);
-
-      float dist = sqrt(sqr(x) + sqr(y));
-
-      if (dist<=radius) {
-
-        // This is the front-facing Z coordinate
-        float z = sqrt(radius*radius-dist*dist);
-
-        setPixel(i,j, 1.0, 0.0, 0.0);
-
-        // This is amusing, but it assumes negative color values are treated reasonably.
-        // setPixel(i,j, x/radius, y/radius, z/radius );
-      }
-
-
-    }
-  }
-
-  glEnd();
+  // Do camera movements here.
+  gluPerspective(45, w / h, 0.1, 100);
+  glMatrixMode(GL_MODELVIEW);
 }
 
 void display() {
-  glClear(GL_COLOR_BUFFER_BIT);
+  if(renderingMode == WireframeRendering) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  } else if(renderingMode == FilledRendering) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  }
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
-  circle(viewport.w / 2.0 , viewport.h / 2.0 , min(viewport.w, viewport.h) / 3.0);
-
+  glTranslatef(position.x, position.y, position.z);
+  glRotatef(rotationX, 0, 1, 0);
+  glRotatef(rotationY, 1, 0, 0);
+  glColor3f(0.0, 0.0, 1.0);
+  for(vector<Quad>::iterator q = quads.begin(); q != quads.end(); ++q) {
+    Quad quad = *q;
+    glBegin(GL_QUADS);
+    glVertex3f(quad.p0.x, quad.p0.y, quad.p0.z);
+    glVertex3f(quad.p1.x, quad.p1.y, quad.p1.z);
+    glVertex3f(quad.p2.x, quad.p2.y, quad.p2.z);
+    glVertex3f(quad.p3.x, quad.p3.y, quad.p3.z);
+    glEnd();
+  }
   glFlush();
   glutSwapBuffers();
 }
@@ -274,17 +253,44 @@ void display() {
 void keyPress(unsigned char key, int x, int y) {
   switch(key) {
     case 's': {
-      shadingMode = shadingMode == SmoothShading ? FlatShading : SmoothShading;
+      shadingMode = shadingMode == SmoothShading ?
+        FlatShading : SmoothShading;
       break;
     } case 'w': {
-      renderingMode = renderingMode == FilledRendering ? FilledRendering : WireframeRendering;
+      renderingMode = renderingMode == FilledRendering ?
+        WireframeRendering : FilledRendering;
+      break;
+    } case '+': {
+      position.z += 0.1;
+      break;
+    } case '-': {
+      position.z -= 0.1;
       break;
     }
   }
 }
 
 void specialPress(int key, int x, int y) {
-
+  int shifted = glutGetModifiers() & GLUT_ACTIVE_SHIFT;
+  switch(key) {
+    case GLUT_KEY_UP: {
+      if(shifted) rotationY = rotationY == 359 ? 0 : rotationY + 1;
+      else position.y += 0.1;
+      break;
+    } case GLUT_KEY_RIGHT: {
+      if(shifted) rotationX = rotationX == 359 ? 0 : rotationX + 1;
+      else position.x += 0.1;
+      break;
+    } case GLUT_KEY_DOWN: {
+      if(shifted) rotationY = rotationY == 0 ? 359 : rotationY - 1;
+      else position.y -= 0.1;
+      break;
+    } case GLUT_KEY_LEFT: {
+      if(shifted) rotationX = rotationX == 0 ? 359 : rotationX - 1;
+      else position.x -= 0.1;
+      break;
+    }
+  }
 }
 
 Point parsePoint(ifstream &file) {
@@ -340,10 +346,11 @@ int main(int argc, char *argv[]) {
   viewport.w = 400;
   viewport.h = 400;
   glutInitWindowSize(viewport.w, viewport.h);
-  glutInitWindowPosition(0,0);
-  glutCreateWindow(argv[0]);
+  glutInitWindowPosition(0, 0);
+  glutCreateWindow("Bezier");
   initScene();
   glutDisplayFunc(display);
+  glutIdleFunc(display);
   glutReshapeFunc(reshape);
   glutKeyboardFunc(keyPress);
   glutSpecialFunc(specialPress);
