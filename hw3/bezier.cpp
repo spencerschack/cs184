@@ -182,15 +182,15 @@ public:
     return str.str();
   }
   void subdivide() const {
-    float numDivs = (1.0f + FLT_EPSILON) / subdivisionParameter;
+    float max = 1.0 + subdivisionParameter + FLT_EPSILON;
     float u, v;
     Point lastFrontPoint, lastBackPoint, currentFrontPoint, currentBackPoint;
     Curve currentCurve, lastCurve = interpolate(0);
-    for(u = subdivisionParameter; u < 1.0; u += subdivisionParameter) {
+    for(u = subdivisionParameter; u < max; u += subdivisionParameter) {
       currentCurve = interpolate(u);
       lastBackPoint = lastCurve.interpolate(0);
       lastFrontPoint = currentCurve.interpolate(0);
-      for(v = subdivisionParameter; v < 1.0; v += subdivisionParameter) {
+      for(v = subdivisionParameter; v < max; v += subdivisionParameter) {
         currentFrontPoint = currentCurve.interpolate(v);
         currentBackPoint = lastCurve.interpolate(v);
         quads.push_back(Quad(lastBackPoint, currentBackPoint,
@@ -261,10 +261,10 @@ void keyPress(unsigned char key, int x, int y) {
         WireframeRendering : FilledRendering;
       break;
     } case '+': {
-      position.z += 0.1;
+      position.z += 0.05;
       break;
     } case '-': {
-      position.z -= 0.1;
+      position.z -= 0.05;
       break;
     }
   }
@@ -275,19 +275,19 @@ void specialPress(int key, int x, int y) {
   switch(key) {
     case GLUT_KEY_UP: {
       if(shifted) rotationY = rotationY == 359 ? 0 : rotationY + 1;
-      else position.y += 0.1;
+      else position.y += 0.05;
       break;
     } case GLUT_KEY_RIGHT: {
       if(shifted) rotationX = rotationX == 359 ? 0 : rotationX + 1;
-      else position.x += 0.1;
+      else position.x += 0.05;
       break;
     } case GLUT_KEY_DOWN: {
       if(shifted) rotationY = rotationY == 0 ? 359 : rotationY - 1;
-      else position.y -= 0.1;
+      else position.y -= 0.05;
       break;
     } case GLUT_KEY_LEFT: {
       if(shifted) rotationX = rotationX == 0 ? 359 : rotationX - 1;
-      else position.x -= 0.1;
+      else position.x -= 0.05;
       break;
     }
   }
