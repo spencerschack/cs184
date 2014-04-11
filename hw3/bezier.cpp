@@ -104,20 +104,9 @@ public:
         << "normal: " << normal.inspect() << ">";
     return str.str();
   }
-};
-
-class PointDerivative : public Printable {
-public:
-  Point point, derivative;
-  PointDerivative() { }
-  PointDerivative(Point point, Point derivative) :
-    point(point), derivative(derivative) { }
-  string inspect() const {
-    stringstream str;
-    str << "PointDerivative<"
-        << "point: " << point.inspect() << ", "
-        << "derivative: " << derivative.inspect() << ">";
-    return str.str();
+  void draw() const {
+    glNormal3f(normal.x, normal.y, normal.z);
+    glVertex3f(point.x,  point.y,  point.z);
   }
 };
 
@@ -138,18 +127,17 @@ vector<Quad> quads;
 
 class Quad : public Printable {
 public:
-  Point p0, p1, p2, p3, normal;
+  PointNormal p0, p1, p2, p3;
   Quad() { }
-  Quad(Point p0, Point p1, Point p2, Point p3, Point normal) :
-    p0(p0), p1(p1), p2(p2), p3(p3), normal(normal) { }
+  Quad(PointNormal p0, PointNormal p1, PointNormal p2, PointNormal p3) :
+    p0(p0), p1(p1), p2(p2), p3(p3) { }
   string inspect() const {
     stringstream str;
     str << "Quad<"
         << "p0: " << p0.inspect() << ", "
         << "p1: " << p1.inspect() << ", "
         << "p2: " << p2.inspect() << ", "
-        << "p3: " << p3.inspect() << ", "
-        << "normal: " << normal.inspect() << ">";
+        << "p3: " << p3.inspect() << ">";
     return str.str();
   }
 };
@@ -169,7 +157,7 @@ public:
         << "p3: " << p3.inspect() << ">";
     return str.str();
   }
-  Point interpolate(float u) const {
+  PointNormal interpolate(float u) const {
     float iu = 1.0 - u;
     Point a, b, c, d, e;
     // First interpolation
@@ -180,53 +168,57 @@ public:
     d = a * iu + b * u;
     e = b * iu + c * u;
     // Third interpolation
-    return d * iu + e * u;
+    return PointNormal(d * iu + e * u, (e - d) * 3);
   }
 };
 
 class Patch : public Printable {
 public:
-  Curve c0, c1, c2, c3;
+  Curve u0, u1, u2, u3, v0, v1, v2, v3;
   Patch() { }
-  Patch(Curve c0, Curve c1, Curve c2, Curve c3) :
-    c0(c0), c1(c1), c2(c2), c3(c3) { }
+  Patch(Curve u0, Curve u1, Curve u2, Curve u3) :
+    u0(u0), u1(u1), u2(u2), u3(u3) {
+      v0 = Curve(u0.p0, u1.p0, u2.p0, u3.p0);
+      v1 = Curve(u0.p1, u1.p1, u2.p1, u3.p1);
+      v2 = Curve(u0.p2, u1.p2, u2.p2, u3.p2);
+      v3 = Curve(u0.p3, u1.p3, u2.p3, u3.p3);
+    }
   string inspect() const {
     stringstream str;
     str << "Patch<"
-        << "c0: " << c0.inspect() << ", "
-        << "c1: " << c1.inspect() << ", "
-        << "c2: " << c2.inspect() << ", "
-        << "c3: " << c3.inspect() << ">";
+        << "u0: " << u0.inspect() << ", "
+        << "u1: " << u1.inspect() << ", "
+        << "u2: " << u2.inspect() << ", "
+        << "u3: " << u3.inspect() << ">";
     return str.str();
   }
   void subdivide() const {
-    float max = 1.0 + subdivisionParameter + FLT_EPSILON;
-    float u, v;
-    Point lastFrontPoint, lastBackPoint,
-      currentFrontPoint, currentBackPoint,
-      normal;
-    Curve currentCurve, lastCurve = interpolate(0);
-    for(u = subdivisionParameter; u < max; u += subdivisionParameter) {
-      currentCurve = interpolate(u);
-      lastBackPoint = lastCurve.interpolate(0);
-      lastFrontPoint = currentCurve.interpolate(0);
-      for(v = subdivisionParameter; v < max; v += subdivisionParameter) {
-        currentFrontPoint = currentCurve.interpolate(v);
-        currentBackPoint = lastCurve.interpolate(v);
-        normal = (currentFrontPoint - lastBackPoint).cross(
-          currentBackPoint - lastBackPoint);
-        quads.push_back(Quad(lastBackPoint, currentBackPoint,
-          currentFrontPoint, lastFrontPoint,
-          normal));
-        lastFrontPoint = currentFrontPoint;
-        lastBackPoint = currentBackPoint;
+    float u, v, max = 1.0 + FLT_EPSILON;
+    for(u = 0; u < max; u += subdivisionParameter) {
+      for(v = 0; v < max; v += subdivisionParameter) {
+        quads.push_back(Quad(
+          interpolate(u, v),
+          interpolate(u + subdivisionParameter, v),
+          interpolate(u + subdivisionParameter, v + subdivisionParameter),
+          interpolate(u, v + subdivisionParameter)));
       }
-      lastCurve = currentCurve;
     }
   }
-  Curve interpolate(float u) const {
-    return Curve(c0.interpolate(u), c1.interpolate(u),
-      c2.interpolate(u), c3.interpolate(u));
+  PointNormal interpolate(float u, float v) const {
+    PointNormal uPointNormal = interpolateU(u).interpolate(v),
+      vPointNormal = interpolateV(v).interpolate(u);
+    // The choice between vPointNormal and uPointNormal for the first arg
+    // is arbitrary, their points should be the same.
+    return PointNormal(vPointNormal.point,
+      vPointNormal.normal.cross(uPointNormal.normal));
+  }
+  Curve interpolateU(float u) const {
+    return Curve(u0.interpolate(u).point, u1.interpolate(u).point,
+      u2.interpolate(u).point, u3.interpolate(u).point);
+  }
+  Curve interpolateV(float v) const {
+    return Curve(v0.interpolate(v).point, v1.interpolate(v).point,
+      v2.interpolate(v).point, v3.interpolate(v).point);
   }
 };
 
@@ -277,12 +269,12 @@ void display() {
   glRotatef(rotationY, 1, 0, 0);
   for(vector<Quad>::iterator q = quads.begin(); q != quads.end(); ++q) {
     Quad quad = *q;
+    Point p, n;
     glBegin(GL_QUADS);
-    glNormal3f(quad.normal.x, quad.normal.y, quad.normal.z);
-    glVertex3f(quad.p0.x, quad.p0.y, quad.p0.z);
-    glVertex3f(quad.p1.x, quad.p1.y, quad.p1.z);
-    glVertex3f(quad.p2.x, quad.p2.y, quad.p2.z);
-    glVertex3f(quad.p3.x, quad.p3.y, quad.p3.z);
+    quad.p0.draw();
+    quad.p1.draw();
+    quad.p2.draw();
+    quad.p3.draw();
     glEnd();
   }
   glFlush();
