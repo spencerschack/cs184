@@ -75,14 +75,20 @@ public:
         << "z: " << z << ">";
     return str.str();
   }
-  Point operator+(Point point) const {
+  Point operator+(const Point point) const {
     return Point(x + point.x, y + point.y, z + point.z);
   }
-  Point operator-(Point point) const {
+  Point operator-(const Point point) const {
     return Point(x - point.x, y - point.y, z - point.z);
   }
   Point operator*(float factor) const {
     return Point(x * factor, y * factor, z * factor);
+  }
+  Point cross(const Point& point) const {
+    return Point(
+      y * point.z - z * point.y,
+      -x * point.z + z * point.x,
+      x * point.y - y * point.x);
   }
 };
 
@@ -115,6 +121,11 @@ public:
   }
 };
 
+float ambientShading[3] = { 0, 0, 0.5 },
+  diffuseShading[3] = { 0, 0, 0.8 },
+  specularShading[3] = { 0, 0, 0.8 },
+  lightPosition[3] = { -5.0, 5.0, -5.0 },
+  shininess[1] = { 16.0 };
 Viewport viewport;
 float subdivisionParameter;
 TesselationMode tesselationMode = UniformTesselation;
@@ -127,17 +138,18 @@ vector<Quad> quads;
 
 class Quad : public Printable {
 public:
-  Point p0, p1, p2, p3;
+  Point p0, p1, p2, p3, normal;
   Quad() { }
-  Quad(Point p0, Point p1, Point p2, Point p3) :
-    p0(p0), p1(p1), p2(p2), p3(p3) { }
+  Quad(Point p0, Point p1, Point p2, Point p3, Point normal) :
+    p0(p0), p1(p1), p2(p2), p3(p3), normal(normal) { }
   string inspect() const {
     stringstream str;
     str << "Quad<"
         << "p0: " << p0.inspect() << ", "
         << "p1: " << p1.inspect() << ", "
         << "p2: " << p2.inspect() << ", "
-        << "p3: " << p3.inspect() << ">";
+        << "p3: " << p3.inspect() << ", "
+        << "normal: " << normal.inspect() << ">";
     return str.str();
   }
 };
@@ -184,7 +196,9 @@ public:
   void subdivide() const {
     float max = 1.0 + subdivisionParameter + FLT_EPSILON;
     float u, v;
-    Point lastFrontPoint, lastBackPoint, currentFrontPoint, currentBackPoint;
+    Point lastFrontPoint, lastBackPoint,
+      currentFrontPoint, currentBackPoint,
+      normal;
     Curve currentCurve, lastCurve = interpolate(0);
     for(u = subdivisionParameter; u < max; u += subdivisionParameter) {
       currentCurve = interpolate(u);
@@ -193,8 +207,11 @@ public:
       for(v = subdivisionParameter; v < max; v += subdivisionParameter) {
         currentFrontPoint = currentCurve.interpolate(v);
         currentBackPoint = lastCurve.interpolate(v);
+        normal = (currentFrontPoint - lastBackPoint).cross(
+          currentBackPoint - lastBackPoint);
         quads.push_back(Quad(lastBackPoint, currentBackPoint,
-          currentFrontPoint, lastFrontPoint));
+          currentFrontPoint, lastFrontPoint,
+          normal));
         lastFrontPoint = currentFrontPoint;
         lastBackPoint = currentBackPoint;
       }
@@ -225,21 +242,37 @@ void reshape(int w, int h) {
 }
 
 void display() {
-  if(renderingMode == WireframeRendering) {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  } else if(renderingMode == FilledRendering) {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  }
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+  if(shadingMode == SmoothShading) {
+    glShadeModel(GL_SMOOTH);
+  } else if(shadingMode == FlatShading) {
+    glShadeModel(GL_FLAT);
+  }
+  if(renderingMode == WireframeRendering) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDisable(GL_LIGHTING);
+    glColor3f(0.0, 0.0, 1.0);
+  } else if(renderingMode == FilledRendering) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_LIGHTING);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientShading);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseShading);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specularShading);
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+    glEnable(GL_LIGHT0);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, ambientShading);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specularShading);
+    glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+  }
   glTranslatef(position.x, position.y, position.z);
   glRotatef(rotationX, 0, 1, 0);
   glRotatef(rotationY, 1, 0, 0);
-  glColor3f(0.0, 0.0, 1.0);
   for(vector<Quad>::iterator q = quads.begin(); q != quads.end(); ++q) {
     Quad quad = *q;
     glBegin(GL_QUADS);
+    glNormal3f(quad.normal.x, quad.normal.y, quad.normal.z);
     glVertex3f(quad.p0.x, quad.p0.y, quad.p0.z);
     glVertex3f(quad.p1.x, quad.p1.y, quad.p1.z);
     glVertex3f(quad.p2.x, quad.p2.y, quad.p2.z);
@@ -259,6 +292,9 @@ void keyPress(unsigned char key, int x, int y) {
     } case 'w': {
       renderingMode = renderingMode == FilledRendering ?
         WireframeRendering : FilledRendering;
+      break;
+    } case 'h': {
+      // TODO
       break;
     } case '+': {
       position.z += 0.05;
@@ -342,12 +378,14 @@ void parseOptions(int argc, char *argv[]) {
 int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
   parseOptions(argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   viewport.w = 400;
   viewport.h = 400;
   glutInitWindowSize(viewport.w, viewport.h);
   glutInitWindowPosition(0, 0);
   glutCreateWindow("Bezier");
+  glEnable(GL_NORMALIZE);
+  glEnable(GL_DEPTH_TEST);
   initScene();
   glutDisplayFunc(display);
   glutIdleFunc(display);
