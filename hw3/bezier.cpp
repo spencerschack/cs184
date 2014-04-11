@@ -171,10 +171,16 @@ public:
   }
   Point interpolate(float u) const {
     float iu = 1.0 - u;
-    Point a, b;
+    Point a, b, c, d, e;
+    // First interpolation
     a = p0 * iu + p1 * u;
-    b = p2 * iu + p3 * u;
-    return a * iu + b * u;
+    b = p1 * iu + p2 * u;
+    c = p2 * iu + p3 * u;
+    // Second interpolation
+    d = a * iu + b * u;
+    e = b * iu + c * u;
+    // Third interpolation
+    return d * iu + e * u;
   }
 };
 
