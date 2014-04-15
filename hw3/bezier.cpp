@@ -25,7 +25,6 @@ inline float sqr(float x) { return x*x; }
 
 using namespace std;
 
-class Viewport;
 class Printable;
 class Point;
 class PointNormal;
@@ -33,6 +32,7 @@ class PointDerivative;
 class Quad;
 class Curve;
 class Patch;
+class Drawable;
 
 typedef enum {
   UniformTesselation,
@@ -49,17 +49,17 @@ typedef enum {
   WireframeRendering
 } RenderingMode;
 
-class Viewport {
-public:
-  int w, h;
-};
-
 class Printable {
 public:
   virtual string inspect() const = 0;
   void print() const {
     cout << inspect() << '\n';
   }
+};
+
+class Drawable {
+public:
+  virtual void draw() const = 0;
 };
 
 class Point : public Printable {
@@ -92,7 +92,7 @@ public:
   }
 };
 
-class PointNormal : public Printable {
+class PointNormal : public Printable, public Drawable {
 public:
   Point point, normal;
   PointNormal() { }
@@ -115,17 +115,16 @@ float ambientShading[3] = { 0, 0, 0.5 },
   specularShading[3] = { 0, 0, 0.8 },
   lightPosition[3] = { -5.0, 5.0, -5.0 },
   shininess[1] = { 16.0 };
-Viewport viewport;
 float subdivisionParameter;
 TesselationMode tesselationMode = UniformTesselation;
 ShadingMode shadingMode = SmoothShading;
 RenderingMode renderingMode = FilledRendering;
-Point position(0, 0, -5);
+Point position(0, 0, -12);
 int rotationX = 0, rotationY = 0;
 vector<Patch> patches;
-vector<Quad> quads;
+vector<Drawable*> faces;
 
-class Quad : public Printable {
+class Quad : public Printable, public Drawable {
 public:
   PointNormal p0, p1, p2, p3;
   Quad() { }
@@ -139,6 +138,37 @@ public:
         << "p2: " << p2.inspect() << ", "
         << "p3: " << p3.inspect() << ">";
     return str.str();
+  }
+  void draw() const {
+    glBegin(GL_QUADS);
+    p0.draw();
+    p1.draw();
+    p2.draw();
+    p3.draw();
+    glEnd();
+  }
+};
+
+class Triangle : public Printable, public Drawable {
+public:
+  PointNormal p0, p1, p2;
+  Triangle() { }
+  Triangle(PointNormal p0, PointNormal p1, PointNormal p2) :
+    p0(p0), p1(p1), p2(p2) { }
+  string inspect() {
+    stringstream str;
+    str << "Triangle<"
+        << "p0: " << p0.inspect() << ", "
+        << "p1: " << p1.inspect() << ", "
+        << "p2: " << p2.inspect() << ">";
+    return str.str();
+  }
+  void draw() const {
+    glBegin(GL_TRIANGLES);
+    p0.draw();
+    p1.draw();
+    p2.draw();
+    glEnd();
   }
 };
 
@@ -192,17 +222,20 @@ public:
         << "u3: " << u3.inspect() << ">";
     return str.str();
   }
-  void subdivide() const {
+  void uniformSubdivide() const {
     float u, v, max = 1.0 + FLT_EPSILON;
     for(u = 0; u < max; u += subdivisionParameter) {
       for(v = 0; v < max; v += subdivisionParameter) {
-        quads.push_back(Quad(
+        faces.push_back(new Quad(
           interpolate(u, v),
           interpolate(u + subdivisionParameter, v),
           interpolate(u + subdivisionParameter, v + subdivisionParameter),
           interpolate(u, v + subdivisionParameter)));
       }
     }
+  }
+  void adaptiveSubdivide() const {
+
   }
   PointNormal interpolate(float u, float v) const {
     PointNormal uPointNormal = interpolateU(u).interpolate(v),
@@ -224,18 +257,20 @@ public:
 
 void initScene(){
   for(vector<Patch>::iterator p = patches.begin(); p != patches.end(); ++p) {
-    p->subdivide();
+    if(tesselationMode == UniformTesselation) {
+      p->uniformSubdivide();
+    } else if(tesselationMode == AdaptiveTesselation) {
+      p->adaptiveSubdivide();
+    }
   }
 }
 
 void reshape(int w, int h) {
-  viewport.w = w;
-  viewport.h = h;
   glViewport(0, 0, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   // Do camera movements here.
-  gluPerspective(45, w / h, 0.1, 100);
+  gluPerspective(45, (float) w / h, 0.001, 1000);
   glMatrixMode(GL_MODELVIEW);
 }
 
@@ -267,15 +302,8 @@ void display() {
   glTranslatef(position.x, position.y, position.z);
   glRotatef(rotationX, 0, 1, 0);
   glRotatef(rotationY, 1, 0, 0);
-  for(vector<Quad>::iterator q = quads.begin(); q != quads.end(); ++q) {
-    Quad quad = *q;
-    Point p, n;
-    glBegin(GL_QUADS);
-    quad.p0.draw();
-    quad.p1.draw();
-    quad.p2.draw();
-    quad.p3.draw();
-    glEnd();
+  for(vector<Drawable*>::iterator f = faces.begin(); f != faces.end(); ++f) {
+    (*f)->draw();
   }
   glFlush();
   glutSwapBuffers();
@@ -308,20 +336,20 @@ void specialPress(int key, int x, int y) {
   int shifted = glutGetModifiers() & GLUT_ACTIVE_SHIFT;
   switch(key) {
     case GLUT_KEY_UP: {
-      if(shifted) rotationY = rotationY == 359 ? 0 : rotationY + 1;
-      else position.y += 0.05;
+      if(shifted) position.y += 0.05;
+      else rotationY = rotationY == 359 ? 0 : rotationY + 1;
       break;
     } case GLUT_KEY_RIGHT: {
-      if(shifted) rotationX = rotationX == 359 ? 0 : rotationX + 1;
-      else position.x += 0.05;
+      if(shifted) position.x += 0.05;
+      else rotationX = rotationX == 359 ? 0 : rotationX + 1;
       break;
     } case GLUT_KEY_DOWN: {
-      if(shifted) rotationY = rotationY == 0 ? 359 : rotationY - 1;
-      else position.y -= 0.05;
+      if(shifted) position.y -= 0.05;
+      else rotationY = rotationY == 0 ? 359 : rotationY - 1;
       break;
     } case GLUT_KEY_LEFT: {
-      if(shifted) rotationX = rotationX == 0 ? 359 : rotationX - 1;
-      else position.x -= 0.05;
+      if(shifted) position.x -= 0.05;
+      else rotationX = rotationX == 0 ? 359 : rotationX - 1;
       break;
     }
   }
@@ -377,9 +405,7 @@ int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
   parseOptions(argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  viewport.w = 400;
-  viewport.h = 400;
-  glutInitWindowSize(viewport.w, viewport.h);
+  glutInitWindowSize(400, 400);
   glutInitWindowPosition(0, 0);
   glutCreateWindow("Bezier");
   glEnable(GL_NORMALIZE);
