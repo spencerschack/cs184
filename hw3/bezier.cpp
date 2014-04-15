@@ -1,4 +1,3 @@
-
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -7,6 +6,9 @@
 #include <cfloat>
 
 #include <sys/time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef OSX
 #include <GLUT/glut.h>
