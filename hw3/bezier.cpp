@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #ifdef OSX
 #include <GLUT/glut.h>
@@ -112,6 +113,28 @@ public:
   }
 };
 
+class Vertex : public Printable, public Drawable {
+public:
+  Point point, normal;
+  float u,v;
+  Vertex() { }
+  Vertex(Point point, Point normal, float u, float v) : point(point), normal(normal), u(u), v(v) { }
+  string inspect() const {
+    stringstream str;
+    str << "Vertex<"
+        << "u: " << u << ", "
+        << "u: " << v << ", "
+        << "point: " << point.inspect() << ", "
+        << "normal: " << normal.inspect() << ">";
+    return str.str();
+  }
+  void draw() const {
+    glNormal3f(normal.x, normal.y, normal.z);
+    glVertex3f(point.x,  point.y,  point.z);
+  }
+};
+
+float THRESHOLD = 0.1;
 float ambientShading[3] = { 0, 0, 0.5 },
   diffuseShading[3] = { 0, 0, 0.8 },
   specularShading[3] = { 0, 0, 0.8 },
@@ -154,9 +177,13 @@ public:
 class Triangle : public Printable, public Drawable {
 public:
   PointNormal p0, p1, p2;
+  Patch p;
   Triangle() { }
   Triangle(PointNormal p0, PointNormal p1, PointNormal p2) :
     p0(p0), p1(p1), p2(p2) { }
+  Triangle(PointNormal p0, PointNormal p1, PointNormal p2, Patch p) :
+    p0(p0), p1(p1), p2(p2), p(p) { }
+  
   string inspect() {
     stringstream str;
     str << "Triangle<"
@@ -237,8 +264,66 @@ public:
     }
   }
   void adaptiveSubdivide() const {
+    vector<Triangle> adaptiveTriangles;
+    int pc, tc;
+    for (pc = 0; pc < patches.size(); pc++) {
+      // Divide every quad we get from .bez file into two triangles, and store all these triangles
+      // into a Triangle vector using bezierpatchinterpolate
+    }
+    for (tc = 0; tc < adaptiveTriangles.size(); tc++) {
+      subdivide(adaptiveTriangles[tc]);
+    }
 
   }
+
+  void subdivide(Triangle t) const {
+    Vertex v12, v23, v31;
+    bool e12 = edge_test(v1, v2, v12, t);
+    bool e23 = edge_test(v2, v3, v23, t);
+    bool e31 = edge_test(v3, v1, v31, t);
+    if (e12 && e23 && e31) {
+      // render this triangle
+    }
+    if (!e12 && e23 && e31) {
+      subdivide(new Triangle(v1, v12, v3, t.p));
+      subdivide(new Triangle(v12, v3, v2, t.p));
+    }
+    if (e12 && !e23 && e31) {
+      subdivide(new Triangle(v1, v23, v3, t.p));
+      subdivide(new Triangle(v1, v23, v2, t.p));
+    }
+    if (e12 && e23 && !e31) {
+      subdivide(new Triangle(v1, v31, v2, t.p));
+      subdivide(new Triangle(v31, v3, v2, t.p));
+    }
+    if (!e12 && !e23 && e31) {
+    }
+    if (!e12 && e23 && !e31) {
+    }
+    if (e12 && !e23 && !e31) {
+    }
+    if (!e12 && !e23 && !e31) {
+      subdivide(new Triangle(v1, v31, v12, t.p));
+      subdivide(new Triangle(v2, v23, v12, t.p));
+      subdivide(new Triangle(v3, v31, v23, t.p));
+      subdivide(new Triangle(v23, v31, v12, t.p));
+    }
+  }
+
+  bool edge_test(Vertex v1, Vertex v2, Vertex &v12, Triangle t) {
+    v12 = bezierpatchinterpolate(0.5*(v1.u + v2.u), 0.5*(v1.v + v2.v), t.p);
+    Point midp = (v1.point + v2.point)*0.5;
+    return (distance(midp, v12.point) < THRESHOLD);
+  }
+
+  void bezierpatchinterpolate(float u, float v, Patch p, Vertex &vertex) {
+    // Calculates Vertex for the current vertex with given u,v and belonging to given patch.
+  }
+
+  float distance(Point p1, Point p2) {
+    return sqrt(pow((p1.x - p2.x), 2.0) + pow((p1.y - p2.y), 2.0) + pow((p1.z - p2.z), 2.0));
+  }
+
   PointNormal interpolate(float u, float v) const {
     PointNormal uPointNormal = interpolateU(u).interpolate(v),
       vPointNormal = interpolateV(v).interpolate(u);
