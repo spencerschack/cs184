@@ -288,10 +288,19 @@ public:
       subdivide(Triangle(v31, v3, v2));
     }
     if (!e12 && !e23 && e31) {
+      subdivide(Triangle(v1, v3, v12));
+      subdivide(Triangle(v12, v23, v2));
+      subdivide(Triangle(v3, v12, v23));
     }
     if (!e12 && e23 && !e31) {
+      subdivide(Triangle(v1, v31, v12));
+      subdivide(Triangle(v12, v31, v2));
+      subdivide(Triangle(v3, v2, v31));
     }
     if (e12 && !e23 && !e31) {
+      subdivide(Triangle(v3, v31, v23));
+      subdivide(Triangle(v1, v31, v23));
+      subdivide(Triangle(v1, v2, v23));
     }
     if (!e12 && !e23 && !e31) {
       subdivide(Triangle(v1, v31, v12));
