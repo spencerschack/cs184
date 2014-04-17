@@ -98,30 +98,14 @@ public:
 class PointNormal : public Printable, public Drawable {
 public:
   Point point, normal;
+  float u, v;
   PointNormal() { }
   PointNormal(Point point, Point normal) : point(point), normal(normal) { }
+  PointNormal(Point point, Point normal, float u, float v) :
+    point(point), normal(normal), u(u), v(v) { }
   string inspect() const {
     stringstream str;
     str << "PointNormal<"
-        << "point: " << point.inspect() << ", "
-        << "normal: " << normal.inspect() << ">";
-    return str.str();
-  }
-  void draw() const {
-    glNormal3f(normal.x, normal.y, normal.z);
-    glVertex3f(point.x,  point.y,  point.z);
-  }
-};
-
-class Vertex : public Printable, public Drawable {
-public:
-  Point point, normal;
-  float u, v;
-  Vertex() { }
-  Vertex(Point point, Point normal, float u, float v) : point(point), normal(normal), u(u), v(v) { }
-  string inspect() const {
-    stringstream str;
-    str << "Vertex<"
         << "u: " << u << ", "
         << "v: " << v << ", "
         << "point: " << point.inspect() << ", "
@@ -175,24 +159,24 @@ public:
 
 class Triangle : public Printable, public Drawable {
 public:
-  Vertex v0, v1, v2;
+  PointNormal p0, p1, p2;
   Triangle() { }
-  Triangle(Vertex v0, Vertex v1, Vertex v2) :
-    v0(v0), v1(v1), v2(v2) { }
-  Triangle(Triangle t) : v0(t.v0), v1(t.v1), v2(t.v2) { }
-  string inspect() {
+  Triangle(PointNormal p0, PointNormal p1, PointNormal p2) :
+    p0(p0), p1(p1), p2(p2) { }
+  Triangle(Triangle &t) : p0(t.p0), p1(t.p1), p2(t.p2) { }
+  string inspect() const {
     stringstream str;
     str << "Triangle<"
-        << "v0: " << v0.inspect() << ", "
-        << "v1: " << v1.inspect() << ", "
-        << "v2: " << v2.inspect() << ">";
+        << "p0: " << p0.inspect() << ", "
+        << "p1: " << p1.inspect() << ", "
+        << "p2: " << p2.inspect() << ">";
     return str.str();
   }
   void draw() const {
     glBegin(GL_TRIANGLES);
-    v0.draw();
-    v1.draw();
-    v2.draw();
+    p0.draw();
+    p1.draw();
+    p2.draw();
     glEnd();
   }
 };
@@ -264,57 +248,57 @@ public:
                 p1 = interpolate(0, 1),
                 p2 = interpolate(1, 1),
                 p3 = interpolate(1, 0);
-    subdivide(Triangle(p0, p1, p2));
-    subdivide(Triangle(p2, p3, p0));
+    subdivide(p0, p1, p2);
+    subdivide(p2, p3, p0);
   }
-  void subdivide(Triangle &t) const {
-    Vertex v12, v23, v31;
-    bool e12 = edge_test(v1, v2, v12, t);
-    bool e23 = edge_test(v2, v3, v23, t);
-    bool e31 = edge_test(v3, v1, v31, t);
+  void subdivide(PointNormal v1, PointNormal v2, PointNormal v3) const {
+    PointNormal v12, v23, v31;
+    bool e12 = edge_test(v1, v2, v12);
+    bool e23 = edge_test(v2, v3, v23);
+    bool e31 = edge_test(v3, v1, v31);
     if (e12 && e23 && e31) {
-      faces.push_back(new Triangle(t));
+      faces.push_back(new Triangle(v1, v2, v3));
     }
     if (!e12 && e23 && e31) {
-      subdivide(Triangle(v1, v12, v3));
-      subdivide(Triangle(v12, v3, v2));
+      subdivide(v1, v12, v3);
+      subdivide(v12, v3, v2);
     }
     if (e12 && !e23 && e31) {
-      subdivide(Triangle(v1, v23, v3));
-      subdivide(Triangle(v1, v23, v2));
+      subdivide(v1, v23, v3);
+      subdivide(v1, v23, v2);
     }
     if (e12 && e23 && !e31) {
-      subdivide(Triangle(v1, v31, v2));
-      subdivide(Triangle(v31, v3, v2));
+      subdivide(v1, v31, v2);
+      subdivide(v31, v3, v2);
     }
     if (!e12 && !e23 && e31) {
-      subdivide(Triangle(v1, v3, v12));
-      subdivide(Triangle(v12, v23, v2));
-      subdivide(Triangle(v3, v12, v23));
+      subdivide(v1, v3, v12);
+      subdivide(v12, v23, v2);
+      subdivide(v3, v12, v23);
     }
     if (!e12 && e23 && !e31) {
-      subdivide(Triangle(v1, v31, v12));
-      subdivide(Triangle(v12, v31, v2));
-      subdivide(Triangle(v3, v2, v31));
+      subdivide(v1, v31, v12);
+      subdivide(v12, v31, v2);
+      subdivide(v3, v2, v31);
     }
     if (e12 && !e23 && !e31) {
-      subdivide(Triangle(v3, v31, v23));
-      subdivide(Triangle(v1, v31, v23));
-      subdivide(Triangle(v1, v2, v23));
+      subdivide(v3, v31, v23);
+      subdivide(v1, v31, v23);
+      subdivide(v1, v2, v23);
     }
     if (!e12 && !e23 && !e31) {
-      subdivide(Triangle(v1, v31, v12));
-      subdivide(Triangle(v2, v23, v12));
-      subdivide(Triangle(v3, v31, v23));
-      subdivide(Triangle(v23, v31, v12));
+      subdivide(v1, v31, v12);
+      subdivide(v2, v23, v12);
+      subdivide(v3, v31, v23);
+      subdivide(v23, v31, v12);
     }
   }
-  bool edge_test(Vertex v1, Vertex v2, Vertex &v12, Triangle t) {
-    v12 = interpolate(0.5*(v1.u + v2.u), 0.5*(v1.v + v2.v), t.p);
+  bool edge_test(PointNormal v1, PointNormal v2, PointNormal &v12) const {
+    v12 = interpolate(0.5*(v1.u + v2.u), 0.5*(v1.v + v2.v));
     Point midp = (v1.point + v2.point)*0.5;
     return (distance(midp, v12.point) < subdivisionParameter);
   }
-  float distance(Point p1, Point p2) {
+  float distance(Point p1, Point p2) const {
     return sqrt(pow((p1.x - p2.x), 2.0) + pow((p1.y - p2.y), 2.0) + pow((p1.z - p2.z), 2.0));
   }
   PointNormal interpolate(float u, float v) const {
