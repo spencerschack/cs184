@@ -307,7 +307,7 @@ public:
     // The choice between vPointNormal and uPointNormal for the first arg
     // is arbitrary, their points should be the same.
     return PointNormal(vPointNormal.point,
-      vPointNormal.normal.cross(uPointNormal.normal));
+      vPointNormal.normal.cross(uPointNormal.normal), u, v);
   }
   Curve interpolateU(float u) const {
     return Curve(u0.interpolate(u).point, u1.interpolate(u).point,
