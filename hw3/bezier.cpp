@@ -177,12 +177,12 @@ public:
 class Triangle : public Printable, public Drawable {
 public:
   PointNormal p0, p1, p2;
-  Patch p;
+  Vertex v1, v2, v3;
   Triangle() { }
   Triangle(PointNormal p0, PointNormal p1, PointNormal p2) :
     p0(p0), p1(p1), p2(p2) { }
-  Triangle(PointNormal p0, PointNormal p1, PointNormal p2, Patch p) :
-    p0(p0), p1(p1), p2(p2), p(p) { }
+  Triangle(Vertex v1, Vertex v2, Vertex v3) :
+    v1(v1), v2(v2), v3(v3) { }
   
   string inspect() {
     stringstream str;
@@ -275,7 +275,6 @@ public:
     }
 
   }
-
   void subdivide(Triangle t) const {
     Vertex v12, v23, v31;
     bool e12 = edge_test(v1, v2, v12, t);
@@ -285,45 +284,50 @@ public:
       // render this triangle
     }
     if (!e12 && e23 && e31) {
-      subdivide(new Triangle(v1, v12, v3, t.p));
-      subdivide(new Triangle(v12, v3, v2, t.p));
+      subdivide(new Triangle(v1, v12, v3));
+      subdivide(new Triangle(v12, v3, v2));
     }
     if (e12 && !e23 && e31) {
-      subdivide(new Triangle(v1, v23, v3, t.p));
-      subdivide(new Triangle(v1, v23, v2, t.p));
+      subdivide(new Triangle(v1, v23, v3));
+      subdivide(new Triangle(v1, v23, v2));
     }
     if (e12 && e23 && !e31) {
-      subdivide(new Triangle(v1, v31, v2, t.p));
-      subdivide(new Triangle(v31, v3, v2, t.p));
+      subdivide(new Triangle(v1, v31, v2));
+      subdivide(new Triangle(v31, v3, v2));
     }
     if (!e12 && !e23 && e31) {
+      subdivide(new Triangle(v1, v3, v12));
+      subdivide(new Triangle(v12, v23, v2));
+      subdivide(new Triangle(v3, v12, v23));
     }
     if (!e12 && e23 && !e31) {
+      subdivide(new Triangle(v1, v31, v12));
+      subdivide(new Triangle(v12, v31, v2));
+      subdivide(new Triangle(v3, v2, v31));
     }
     if (e12 && !e23 && !e31) {
+      subdivide(new Triangle(v3, v31, v23));
+      subdivide(new Triangle(v1, v31, v23));
+      subdivide(new Triangle(v1, v2, v23));
     }
     if (!e12 && !e23 && !e31) {
-      subdivide(new Triangle(v1, v31, v12, t.p));
-      subdivide(new Triangle(v2, v23, v12, t.p));
-      subdivide(new Triangle(v3, v31, v23, t.p));
-      subdivide(new Triangle(v23, v31, v12, t.p));
+      subdivide(new Triangle(v1, v31, v12));
+      subdivide(new Triangle(v2, v23, v12));
+      subdivide(new Triangle(v3, v31, v23));
+      subdivide(new Triangle(v23, v31, v12));
     }
   }
-
   bool edge_test(Vertex v1, Vertex v2, Vertex &v12, Triangle t) {
     v12 = bezierpatchinterpolate(0.5*(v1.u + v2.u), 0.5*(v1.v + v2.v), t.p);
     Point midp = (v1.point + v2.point)*0.5;
     return (distance(midp, v12.point) < THRESHOLD);
   }
-
   void bezierpatchinterpolate(float u, float v, Patch p, Vertex &vertex) {
     // Calculates Vertex for the current vertex with given u,v and belonging to given patch.
   }
-
   float distance(Point p1, Point p2) {
     return sqrt(pow((p1.x - p2.x), 2.0) + pow((p1.y - p2.y), 2.0) + pow((p1.z - p2.z), 2.0));
   }
-
   PointNormal interpolate(float u, float v) const {
     PointNormal uPointNormal = interpolateU(u).interpolate(v),
       vPointNormal = interpolateV(v).interpolate(u);
