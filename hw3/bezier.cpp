@@ -118,9 +118,9 @@ public:
   }
 };
 
-float ambientShading[3] = { 0, 0, 0.5 },
-  diffuseShading[3] = { 0, 0, 0.8 },
-  specularShading[3] = { 0, 0, 0.8 },
+float ambientShading[3] = { 0, 0.5, 0.1 },
+  diffuseShading[3] = { 0, 0.8, 0 },
+  specularShading[3] = { 0, 0.8, 0 },
   lightPosition[3] = { -5.0, 5.0, -5.0 },
   shininess[1] = { 16.0 };
 float subdivisionParameter;
@@ -350,7 +350,7 @@ void display() {
   if(renderingMode == WireframeRendering) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDisable(GL_LIGHTING);
-    glColor3f(0.0, 0.0, 1.0);
+    glColor3f(0.0, 0.5, 0.1);
   } else if(renderingMode == FilledRendering) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_LIGHTING);
