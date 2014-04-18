@@ -3,8 +3,5 @@ as1
 hw2/raytracer
 *.o
 #*.*#
-*.bmp
-*.ppm
-*.png
 *~
 hw2/raytracer.dSYM/*
