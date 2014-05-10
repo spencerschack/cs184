@@ -26,6 +26,7 @@ using namespace std;
 
 class Vector;
 class Normal;
+class Quaternion;
 class Bone;
 class Skeleton;
 
@@ -121,6 +122,39 @@ private:
   }
 };
 
+class Quaternion {
+public:
+  float s;
+  Vector v;
+  Quaternion() : s(1) { }
+  Quaternion(float s, float x, float y, float z) : s(s) {
+    v = Vector(x, y, z);
+  }
+  Quaternion(Normal axis, float angle) {
+    angle *= 0.5f;
+    s = cos(angle);
+    v = axis * sin(angle);
+  }
+  Quaternion operator*(const Quaternion& q) const {
+    return Quaternion(
+      s * q.s   - v.x * q.v.x - v.y * q.v.y - v.z * q.v.z,
+      s * q.v.x + v.x * q.s   + v.y * q.v.z - v.z * q.v.y,
+      s * q.v.y - v.x * q.v.z + v.y * q.s   + v.z * q.v.x,
+      s * q.v.z + v.x * q.v.y - v.y * q.v.x + v.z * q.s
+    );
+  }
+  Quaternion conjugate() const {
+    return Quaternion(s, -v.x, -v.y, -v.z);
+  }
+  Normal rotate(const Normal& n) const {
+    Quaternion res = *this * (Quaternion(0, n.x, n.y, n.z) * conjugate());
+    return Normal(res.v.x, res.v.y, res.v.z);
+  }
+  void print() const {
+    printf("Quaternion<s: %f, x: %f, y: %f, z: %f>\n", s, v.x, v.y, v.z);
+  }
+};
+
 class VectorNormal {
 public:
   Vector vector;
@@ -132,17 +166,14 @@ public:
 class Bone {
 public:
   float length;
-  Vector rotation, begin, end;
+  Vector begin, end;
+  Quaternion rotation;
   Bone(float length) : length(length) { }
   VectorNormal project(const VectorNormal& geo) {
-    float angle = rotation.magnitude();
-    Normal axis(rotation);
-    Vector rotated = geo.normal * cos(angle) +
-      axis.cross(geo.normal) * sin(angle) +
-      axis * ((1 - cos(angle)) * axis.dot(geo.normal));
+    Normal rotated = rotation.rotate(geo.normal);
     begin = geo.vector;
     end = begin + rotated * length;
-    return VectorNormal(end, Normal(rotated));
+    return VectorNormal(end, rotated);
   }
   void draw() const {
     drawSphere(end.x, end.y, end.z, 0.1, 1, 0, 0);
@@ -164,29 +195,24 @@ public:
   void reach(const Vector& target) {
     int iterations = 0;
     Vector toEnd, toTarget, end = project(), lastEnd;
+    Normal axis;
     float angle;
     do {
       lastEnd = end;
       for(vector<Bone>::reverse_iterator it = bones.rbegin(); it != bones.rend(); ++it) {
-        /*
-          Move end effector closest to goal by adjusting the rotation of the
-          current bone.
-            - Find vector from current joint to end effector.
-            - Find vector from current joint to target.
-            - Calculate angle between those two vectors.
-            - Add that rotation to the current rotation.
-        */
         toEnd = end - it->begin;
         toTarget = target - it->begin;
-        angle = acos(toEnd.dot(toTarget) /
-          (toEnd.magnitude() * toTarget.magnitude()));
-        // Here's the problem, I don't think you can simply add these.
-        it->rotation = it->rotation + toEnd.cross(toTarget).magnitude(angle);
-        end = project();
+        axis = Normal(toEnd.cross(toTarget));
+        angle = min(acos(min(toEnd.dot(toTarget) /
+          (toEnd.magnitude() * toTarget.magnitude()), 1.0f)), 0.5f);
+        if(angle > 0.01) {
+          it->rotation = it->rotation * Quaternion(axis, angle);
+          end = project();
+        }
       }
-    } while(++iterations < 100 &&
-      target.distance(end) > 0.01 &&
-      lastEnd.distance(end) > 0.0001);
+    } while(++iterations < 500 &&
+      target.distance(end) > 0.001 &&
+      lastEnd.distance(end) > 0.001);
     // TODO: tune these heuristics.
   }
   Vector project() {
@@ -204,10 +230,40 @@ public:
   }
 };
 
+class Circle {
+public:
+  float x, y, z, r;
+  Circle(float x, float y, float z, float r) : x(x), y(y), z(z), r(r) { }
+  void move(Vector& v) const {
+    Vector p = interpolate();
+    v.x = p.x;
+    v.y = p.y;
+    v.z = p.z;
+  }
+  Vector interpolate() const {
+    float t = ((float) (clock() % (CLOCKS_PER_SEC / 8))) / ((float) (CLOCKS_PER_SEC / 8)) * 2.0f * M_PI;
+    return interpolate(t);
+  }
+  Vector interpolate(float t) const {
+    return Vector(cos(t) * r + x, sin(t) * r + y, z);
+  }
+  void draw() const {
+    Vector v;
+    glBegin(GL_LINE_LOOP);
+    for(int i = 0; i < 32; i++) {
+      v = interpolate((float) i / 32.0f * 2 * M_PI);
+      glVertex3f(v.x, v.y, v.z);
+    }
+    glEnd();
+  }
+};
+
 float rotationX = 0, rotationY = 0,
       positionX = 0, positionZ = -25;
 Skeleton skeleton;
-Vector target(1, 1, 1);
+Circle circle(0, 7, 0, 7);
+Vector target(0, 10, 0);
+bool moved = true, interactive = true;
 
 void initScene(){
   skeleton.bones.push_back(Bone(4));
@@ -233,30 +289,34 @@ void display() {
   glRotatef(rotationX, 1, 0, 0);
   glRotatef(rotationY, 0, 0, 1);
   drawSphere(target.x, target.y, target.z, 0.1, 1.0, 0.5, 0);
-  skeleton.reach(target);
+  if(!interactive) {
+    circle.move(target);
+    circle.draw();
+  }
+  if(!interactive || moved) {
+    moved = false;
+    skeleton.reach(target);
+  }
   skeleton.draw();
   glFlush();
   glutSwapBuffers();
 }
 
 void keyPress(unsigned char key, int x, int y) {
-  if(glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
-    switch(key) {
-      case 'w': target.z += 0.1; break;
-      case 's': target.z -= 0.1; break;
-    }
-  } else {
-    switch(key) {
-      case 'w': positionZ += 0.05; break;
-      case 'd': positionX += 0.05; break;
-      case 's': positionZ -= 0.05; break;
-      case 'a': positionX -= 0.05; break;
-    }
+  switch(key) {
+    case 'w': positionZ += 0.05; break;
+    case 'd': positionX += 0.05; break;
+    case 's': positionZ -= 0.05; break;
+    case 'a': positionX -= 0.05; break;
+    case 'W': if(interactive) { target.z += 0.1; moved = true; } break;
+    case 'S': if(interactive) { target.z -= 0.1; moved = true; } break;
+    case 'i': interactive = !interactive;
   }
 }
 
 void specialPress(int key, int x, int y) {
-  if(glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+  if(glutGetModifiers() & GLUT_ACTIVE_SHIFT && interactive) {
+    moved = true;
     switch(key) {
       case GLUT_KEY_UP:    target.y += 0.1; break;
       case GLUT_KEY_RIGHT: target.x += 0.1; break;
