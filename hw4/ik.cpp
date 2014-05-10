@@ -25,6 +25,7 @@
 using namespace std;
 
 class Vector;
+class Normal;
 class Bone;
 class Skeleton;
 
@@ -33,22 +34,161 @@ public:
   float x, y, z;
   Vector() : x(0), y(0), z(0) { }
   Vector(float x, float y, float z) : x(x), y(y), z(z) { }
+  Vector(const Vector& v) : x(v.x), y(v.y), z(v.z) { }
+  Vector operator+(const Vector v) const {
+    return Vector(x + v.x, y + v.y, z + v.z);
+  }
+  Vector operator-(const Vector v) const {
+    return Vector(x - v.x, y - v.y, z - v.z);
+  }
+  Vector cross(const Vector v) const {
+    return Vector(
+      y * v.z - z * v.y,
+      -x * v.z + z * v.x,
+      x * v.y - y * v.x);
+  }
+  float dot(const Vector& v) const {
+    return x * v.x + y * v.y + z * v.z;
+  }
+  Vector operator*(float factor) {
+    return Vector(factor * x, factor * y, factor * z);
+  }
+  Vector operator/(float factor) {
+    return Vector(factor / x, factor / y, factor / z);
+  }
+  float distance(const Vector& v) const {
+    return sqrt(pow(x - v.x, 2) + pow(y - v.y, 2) + pow(z - v.z, 2));
+  }
+  float magnitude() const {
+    return sqrt(x * x + y * y + z * z);
+  }
+  Vector magnitude(float m) const {
+    return normalized() * m;
+  }
+  Vector normalized() const {
+    return Vector(*this) / magnitude();
+  }
+  void print() const {
+    printf("Vector<x: %f, y: %f, z: %f>\n", x, y, z);
+  }
+};
+
+class Normal {
+public:
+  float x, y, z;
+  Normal() : x(0), y(0), z(0) { }
+  Normal(float x, float y, float z) : x(x), y(y), z(z) {
+    normalize();
+  }
+  Normal(const Vector& v) : x(v.x), y(v.y), z(v.z) {
+    normalize();
+  }
+  float dot(const Normal& n) const {
+    return x * n.x + y * n.y + z * n.z;
+  }
+  Vector cross(const Normal& v) const {
+    return Vector(
+      y * v.z - z * v.y,
+      -x * v.z + z * v.x,
+      x * v.y - y * v.x);
+  }
+  Vector operator*(float factor) const {
+    return Vector(factor * x, factor * y, factor * z);
+  }
+  void print() const {
+    printf("Normal<x: %f, y: %f, z: %f>\n", x, y, z);
+  }
+private:
+  void normalize() {
+    float mag = sqrt(x * x + y * y + z * z);
+    if(mag < FLT_MIN) {
+      x = 0;
+      y = 0;
+      z = 0;
+    } else {
+      x /= mag;
+      y /= mag;
+      z /= mag;
+    }
+  }
+};
+
+class VectorNormal {
+public:
+  Vector vector;
+  Normal normal;
+  VectorNormal() { }
+  VectorNormal(Vector vector, Normal normal) : vector(vector), normal(normal) { }
 };
 
 class Bone {
 public:
-  float length, angleX, angleY;
-  Bone(float length) : length(length), angleY(0), angleX(0) { }
-  void draw() {
-
+  float length;
+  Vector rotation, begin, end;
+  Bone(float length) : length(length) { }
+  VectorNormal project(const VectorNormal& geo) {
+    float angle = rotation.magnitude();
+    Normal axis(rotation);
+    Vector rotated = geo.normal * cos(angle) +
+      axis.cross(geo.normal) * sin(angle) +
+      axis * ((1 - cos(angle)) * axis.dot(geo.normal));
+    begin = geo.vector;
+    end = begin + rotated * length;
+    return VectorNormal(end, Normal(rotated));
+  }
+  void draw() const {
+    glColor3f(0, 0, 1);
+    glBegin(GL_LINES);
+    glVertex3f(begin.x, begin.y, begin.z);
+    glVertex3f(end.x, end.y, end.z);
+    glEnd();
   }
 };
 
 class Skeleton {
 public:
   vector<Bone> bones;
-  void draw() {
-
+  VectorNormal base;
+  Skeleton() {
+    base = VectorNormal(Vector(0, 0, 0), Normal(0, 1, 0));
+  }
+  void reach(const Vector& target) {
+    int iterations = 0;
+    Vector toEnd, toTarget, end = project(), lastEnd;
+    float angle;
+    do {
+      lastEnd = end;
+      for(vector<Bone>::reverse_iterator it = bones.rbegin(); it != bones.rend(); ++it) {
+        /*
+          Move end effector closest to goal by adjusting the rotation of the
+          current bone.
+            - Find vector from current joint to end effector.
+            - Find vector from current joint to target.
+            - Calculate angle between those two vectors.
+            - Add that rotation to the current rotation.
+        */
+        toEnd = end - it->begin;
+        toTarget = target - it->begin;
+        angle = acos(toEnd.dot(toTarget) /
+          (toEnd.magnitude() * toTarget.magnitude()));
+        it->rotation = it->rotation + toEnd.cross(toTarget).magnitude(angle);
+        end = project();
+      }
+    } while(++iterations < 100 &&
+      target.distance(end) > 0.0001 &&
+      lastEnd.distance(end) > 0.0001);
+  }
+  Vector project() {
+    VectorNormal point = base;
+    for(vector<Bone>::iterator it = bones.begin(); it != bones.end(); ++it) {
+      point = it->project(point);
+    }
+    return point.vector;
+  }
+  void draw() const {
+    for(vector<const Bone>::iterator it = bones.begin(); it != bones.end(); ++it) {
+      it->draw();
+    }
   }
 };
 
@@ -59,7 +199,7 @@ public:
   Sphere(float x, float y, float z, float r) : radius(r) {
     position = Vector(x, y, z);
   }
-  void draw() {
+  void draw() const {
     glPushMatrix();
     glColor3f(1.0, 0, 0);
     glBegin(GL_LINE_LOOP);
@@ -75,9 +215,9 @@ public:
 };
 
 float rotationX = 0, rotationY = 0,
-      positionX = 0, positionZ = 0;
+      positionX = 0, positionZ = -15;
 Skeleton skeleton;
-Sphere sphere(0, 0, 0, 1.0);
+Sphere sphere(0, 0, 0, 0.1);
 
 void initScene(){
   skeleton.bones.push_back(Bone(4));
@@ -102,8 +242,9 @@ void display() {
   glTranslatef(positionX, 0, positionZ);
   glRotatef(rotationX, 1, 0, 0);
   glRotatef(rotationY, 0, 1, 0);
-  skeleton.draw();
   sphere.draw();
+  skeleton.reach(sphere.position);
+  skeleton.draw();
   glFlush();
   glutSwapBuffers();
 }

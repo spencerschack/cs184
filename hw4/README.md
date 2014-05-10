@@ -11,3 +11,8 @@ Linux
 
 Links to Animations
 --------------------------------------------------------------------------------
+
+
+Resources
+--------------------------------------------------------------------------------
+http://en.wikipedia.org/wiki/Axis–angle_representation#Rotating_a_vector
