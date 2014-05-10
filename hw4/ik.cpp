@@ -29,6 +29,14 @@ class Normal;
 class Bone;
 class Skeleton;
 
+void drawSphere(float x, float y, float z, float d, float r, float g, float b) {
+  glPushMatrix();
+  glColor3f(r, g, b);
+  glTranslatef(x, y, z);
+  glutSolidSphere(d, 8, 8);
+  glPopMatrix();
+}
+
 class Vector {
 public:
   float x, y, z;
@@ -51,10 +59,10 @@ public:
     return x * v.x + y * v.y + z * v.z;
   }
   Vector operator*(float factor) {
-    return Vector(factor * x, factor * y, factor * z);
+    return Vector(x * factor, y * factor, z * factor);
   }
-  Vector operator/(float factor) {
-    return Vector(factor / x, factor / y, factor / z);
+  Vector operator/(float divisor) {
+    return Vector(x / divisor, y / divisor, z / divisor);
   }
   float distance(const Vector& v) const {
     return sqrt(pow(x - v.x, 2) + pow(y - v.y, 2) + pow(z - v.z, 2));
@@ -137,6 +145,7 @@ public:
     return VectorNormal(end, Normal(rotated));
   }
   void draw() const {
+    drawSphere(end.x, end.y, end.z, 0.1, 1, 0, 0);
     glColor3f(0, 0, 1);
     glBegin(GL_LINES);
     glVertex3f(begin.x, begin.y, begin.z);
@@ -171,12 +180,14 @@ public:
         toTarget = target - it->begin;
         angle = acos(toEnd.dot(toTarget) /
           (toEnd.magnitude() * toTarget.magnitude()));
+        // Here's the problem, I don't think you can simply add these.
         it->rotation = it->rotation + toEnd.cross(toTarget).magnitude(angle);
         end = project();
       }
     } while(++iterations < 100 &&
-      target.distance(end) > 0.0001 &&
+      target.distance(end) > 0.01 &&
       lastEnd.distance(end) > 0.0001);
+    // TODO: tune these heuristics.
   }
   Vector project() {
     VectorNormal point = base;
@@ -186,38 +197,17 @@ public:
     return point.vector;
   }
   void draw() const {
+    drawSphere(base.vector.x, base.vector.y, base.vector.z, 0.1, 0, 1, 0);
     for(vector<const Bone>::iterator it = bones.begin(); it != bones.end(); ++it) {
       it->draw();
     }
   }
 };
 
-class Sphere {
-public:
-  float radius;
-  Vector position;
-  Sphere(float x, float y, float z, float r) : radius(r) {
-    position = Vector(x, y, z);
-  }
-  void draw() const {
-    glPushMatrix();
-    glColor3f(1.0, 0, 0);
-    glBegin(GL_LINE_LOOP);
-    glTranslatef(position.x, position.y, position.z);
-    GLUquadric* quadric = gluNewQuadric();
-    gluQuadricDrawStyle(quadric, GLU_FILL);
-    gluSphere(quadric, radius, 16, 16);
-    gluDeleteQuadric(quadric);
-    glEndList();
-    glEnd();
-    glPopMatrix();
-  }
-};
-
 float rotationX = 0, rotationY = 0,
-      positionX = 0, positionZ = -15;
+      positionX = 0, positionZ = -25;
 Skeleton skeleton;
-Sphere sphere(0, 0, 0, 0.1);
+Vector target(1, 1, 1);
 
 void initScene(){
   skeleton.bones.push_back(Bone(4));
@@ -241,34 +231,46 @@ void display() {
   glLoadIdentity();
   glTranslatef(positionX, 0, positionZ);
   glRotatef(rotationX, 1, 0, 0);
-  glRotatef(rotationY, 0, 1, 0);
-  sphere.draw();
-  skeleton.reach(sphere.position);
+  glRotatef(rotationY, 0, 0, 1);
+  drawSphere(target.x, target.y, target.z, 0.1, 1.0, 0.5, 0);
+  skeleton.reach(target);
   skeleton.draw();
   glFlush();
   glutSwapBuffers();
 }
 
 void keyPress(unsigned char key, int x, int y) {
-  switch(key) {
-    case 'w': positionZ += 0.05; break;
-    case 'd': positionX += 0.05; break;
-    case 's': positionZ -= 0.05; break;
-    case 'a': positionX -= 0.05; break;
+  if(glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+    switch(key) {
+      case 'w': target.z += 0.1; break;
+      case 's': target.z -= 0.1; break;
+    }
+  } else {
+    switch(key) {
+      case 'w': positionZ += 0.05; break;
+      case 'd': positionX += 0.05; break;
+      case 's': positionZ -= 0.05; break;
+      case 'a': positionX -= 0.05; break;
+    }
   }
 }
 
 void specialPress(int key, int x, int y) {
-  int shifted = glutGetModifiers() & GLUT_ACTIVE_SHIFT;
-  switch(key) {
-    case GLUT_KEY_UP:    rotationX += 0.5; break;
-    case GLUT_KEY_RIGHT: rotationY -= 0.5; break;
-    case GLUT_KEY_DOWN:  rotationX -= 0.5; break;
-    case GLUT_KEY_LEFT:  rotationY += 0.5; break;
+  if(glutGetModifiers() & GLUT_ACTIVE_SHIFT) {
+    switch(key) {
+      case GLUT_KEY_UP:    target.y += 0.1; break;
+      case GLUT_KEY_RIGHT: target.x += 0.1; break;
+      case GLUT_KEY_DOWN:  target.y -= 0.1; break;
+      case GLUT_KEY_LEFT:  target.x -= 0.1; break;
+    }
+  } else {
+    switch(key) {
+      case GLUT_KEY_UP:    rotationX -= 0.5; break;
+      case GLUT_KEY_RIGHT: rotationY -= 0.5; break;
+      case GLUT_KEY_DOWN:  rotationX += 0.5; break;
+      case GLUT_KEY_LEFT:  rotationY += 0.5; break;
+    }
   }
-}
-
-void mouseDrag(int x, int y) {
 }
 
 int main(int argc, char *argv[]) {
@@ -276,7 +278,7 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(400, 400);
   glutInitWindowPosition(0, 0);
-  glutCreateWindow("Bezier");
+  glutCreateWindow("Inverse Kinematics");
   glEnable(GL_NORMALIZE);
   glEnable(GL_DEPTH_TEST);
   initScene();
@@ -285,7 +287,6 @@ int main(int argc, char *argv[]) {
   glutReshapeFunc(reshape);
   glutKeyboardFunc(keyPress);
   glutSpecialFunc(specialPress);
-  glutMotionFunc(mouseDrag);
   glutMainLoop();
   return 0;
 }
