@@ -222,9 +222,9 @@ public:
     }
     return point.vector;
   }
-  void draw() const {
+  void draw() {
     drawSphere(base.vector.x, base.vector.y, base.vector.z, 0.1, 0, 1, 0);
-    for(vector<const Bone>::iterator it = bones.begin(); it != bones.end(); ++it) {
+    for(vector<Bone>::iterator it = bones.begin(); it != bones.end(); ++it) {
       it->draw();
     }
   }
